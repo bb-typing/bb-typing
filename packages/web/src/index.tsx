@@ -1,7 +1,11 @@
 import React from "react";
-import { Welcome } from '@bb/components'
 import { createRoot } from 'react-dom/client'
+import App from './App'
 
 const root = createRoot(document.getElementById('app') as HTMLElement)
 
-root.render(<Welcome msg="???" />)
+root.render(
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
+)

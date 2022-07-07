@@ -38,6 +38,8 @@ async function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
     },
+    // frame: false,
+    transparent: true
   })
 
   if (app.isPackaged) {
@@ -57,6 +59,8 @@ async function createWindow() {
     if (url.startsWith('https:')) shell.openExternal(url)
     return { action: 'deny' }
   })
+
+  win.webContents.openDevTools()
 }
 
 app.whenReady().then(createWindow)

@@ -14,7 +14,7 @@
     "composite": true,
     "resolveJsonModule": true,
     "paths": {
-      "@bb/*": ["./packages/*/src/index"]
+      "@bb/*": ["packages/*/src"],
     }
   },
   "include": ["packages/**/*", "packages/**/*.json", "vite", "scripts"]
