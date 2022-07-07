@@ -4,6 +4,7 @@ import react from '/react.svg'
 import vite from '/vite.svg'
 import styles from 'styles/app.module.scss'
 import { Welcome } from '@bb/components'
+import React from 'react'
 
 const App: React.FC = () => {
   const [count, setCount] = useState(0)

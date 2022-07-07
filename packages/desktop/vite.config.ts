@@ -1,10 +1,10 @@
+import react from '@vitejs/plugin-react'
 import { rmSync } from 'fs'
 import { join } from 'path'
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 import electron from 'vite-plugin-electron'
+import { alias } from '../../vite/alias'
 import pkg from './package.json'
-import { fileURLToPath } from 'url'
 
 rmSync(join(__dirname, 'dist'), { recursive: true, force: true }) // v14.14.0
 
@@ -14,7 +14,7 @@ export default defineConfig({
     alias: {
       '@': join(__dirname, 'src'),
       'styles': join(__dirname, 'src/assets/styles'),
-      "@bb/components": fileURLToPath(new URL('../components/src/index.ts', import.meta.url))
+      ...alias
     },
   },
   plugins: [

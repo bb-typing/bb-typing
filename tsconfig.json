@@ -8,13 +8,14 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "moduleResolution": "Node",
-    "baseUrl": "./",
+    "rootDir": ".",
+    "baseUrl": ".",
     "jsx": "react",
+    "composite": true,
+    "resolveJsonModule": true,
     "paths": {
-      "@bb/*": [
-        "packages/*/src"
-      ]
-    }                                 /* Skip type checking all .d.ts files. */
+      "@bb/*": ["./packages/*/src/index"]
+    }
   },
-  "include": ["packages/**/*"]
+  "include": ["packages/**/*", "packages/**/*.json", "vite", "scripts"]
 }
