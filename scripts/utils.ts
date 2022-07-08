@@ -2,7 +2,7 @@ import { readdirSync, statSync, writeFileSync } from "fs";
 import { join } from "path";
 import { fileURLToPath } from "url";
 
-export function generateIndex(path: string) {
+export function generateIndex(path: string, deep = false) {
   const fileList = readdirSync(path);
   let text = "";
   fileList.forEach((dir) => {
@@ -14,10 +14,14 @@ export function generateIndex(path: string) {
       fuleName !== "index"
     ) {
       text += `export * from './${fuleName}'\n`;
+    } else if (statSync(join(path, dir)).isDirectory() && deep && fuleName !== "index") {
+      text += `export * from './${dir}'\n`;
+      generateIndex(join(path, dir), deep)
     }
   });
-  
-  writeFileSync(join(path, "index.ts"), text, { encoding: "utf-8" });
+  if (text) {
+    writeFileSync(join(path, "index.ts"), text, { encoding: "utf-8" });
+  }
 }
 
 export function fullPath(path: string) {
