@@ -1,16 +1,17 @@
 /**
+ * @type {import('electron-builder').Configuration}
  * @see https://www.electron.build/configuration/configuration
  */
-{
-  appId: 'YourAppID',
-  productName: 'YourAppName',
+const options = {
+  appId: 'MasterXuanAPPID',
+  productName: 'MasterXuanAPP',
   copyright: 'Copyright © 2022 ${author}',
   asar: true,
   directories: {
     output: 'release/${version}',
-    buildResources: 'electron/resources'
+    buildResources: './resources'
   },
-  files: ['dist'],
+  files: ['dist', 'scripts'],
   win: {
     target: [
       {
@@ -34,4 +35,6 @@
     target: ['AppImage'],
     artifactName: '${productName}-Linux-${version}.${ext}'
   }
-}
+};
+
+module.exports = options;

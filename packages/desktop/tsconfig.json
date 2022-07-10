@@ -3,12 +3,13 @@
   "compilerOptions": {
     "baseUrl": ".",
     "composite": true,
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
     "allowJs": false,
     "moduleResolution": "Node",
+    "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./src/*"]
+      // "@/*": ["./src/*"]
     }
   },
-  "include": ["./src/**/*"]
+  "include": ["**/*", "package.json"]
 }

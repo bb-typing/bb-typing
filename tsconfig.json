@@ -11,5 +11,15 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
-  "references": [{ "path": "./configs/ts/tsconfig.node.json" }, { "path": "./configs/ts/tsconfig.renderer.json" }]
+  "references": [
+    {
+      "path": "./packages/components"
+    },
+    {
+      "path": "./packages/web"
+    },
+    {
+      "path": "./packages/desktop"
+    }
+  ]
 }

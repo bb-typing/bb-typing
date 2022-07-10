@@ -16,6 +16,7 @@ interface SystemStoreActions {
 
 const systemStore = create<SystemStoreState & SystemStoreActions>(set => ({
   currentLocale: 'zh-CN',
+
   setCurrentLocale: locale =>
     set(
       produce((state: SystemStoreState) => {

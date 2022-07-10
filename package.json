@@ -8,6 +8,7 @@
   "scripts": {
     "type-check": "esno ./scripts/type-check.ts",
     "web:dev": "cd packages/web && pnpm dev",
+    "desktop:dev": "cd packages/desktop && pnpm dev",
     "lint": "npm run type-check && lint-staged",
     "clean": "rimraf ./node_modules",
     "prepare": "husky install"

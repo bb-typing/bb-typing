@@ -3,8 +3,6 @@ import path from 'path';
 import { inspectorServer } from 'react-dev-inspector/plugins/vite';
 import { defineConfig } from 'vite';
 
-console.log('11', path.resolve(process.cwd(), 'packages/components/src') + '/');
-
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [

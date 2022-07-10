@@ -4,17 +4,17 @@
   "private": false,
   "main": "dist/electron/bootstrap.js",
   "scripts": {
-    "dev": ""
+    "dev": "vite"
   },
-  "dependencies": {
-    "twind": "^0.16.17",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
-    "react-router-dom": "^6.3.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "electron": "^19.0.3",
     "electron-builder": "^23.0.3",
-    "vite-plugin-electron": "^0.6.1"
+    "vite-plugin-electron": "^0.6.1",
+    "@bb/components": "*"
+  },
+  "env": {
+    "VITE_DEV_SERVER_HOST": "127.0.0.1",
+    "VITE_DEV_SERVER_PORT": 7777
   }
 }

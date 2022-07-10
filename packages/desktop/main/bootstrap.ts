@@ -17,25 +17,22 @@ if (!app.requestSingleInstanceLock()) {
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 let win: BrowserWindow | null = null;
-// Here you can add more preload scripts
-// const splash = join(__dirname, '../preload/splash.js');
-// 🚧 Use ['ENV_NAME'] to avoid vite:define plugin
-const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`;
-// const url = 'http://127.0.0.1:7777/';
 
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
     webPreferences: {
-      // preload: splash,
+      preload: join(__dirname, './preload.js'),
       nodeIntegration: true,
       contextIsolation: false
     }
   });
 
   if (app.isPackaged) {
-    win.loadFile(join(__dirname, '../../index.html'));
+    win.loadFile(join(__dirname, '../index.html'));
   } else {
+    const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`;
+
     win.loadURL(url);
     win.webContents.openDevTools();
   }
