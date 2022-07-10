@@ -12,5 +12,5 @@
     "esModuleInterop": false,
     "jsx": "react-jsx"
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*", "index.ts"]
 }

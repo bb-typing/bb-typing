@@ -1,16 +1,16 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "composite": true,
     "useDefineForClassFields": true,
+    "rootDir": "../../",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["../../src/render"]
     },
     "allowJs": false,
     "esModuleInterop": false,
     "jsx": "react-jsx"
   },
-  "include": ["./src/**/*"]
+  "include": ["../../src/renderer", "../../src/shared"]
 }
