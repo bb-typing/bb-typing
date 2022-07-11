@@ -1,5 +1,3 @@
-export type PlatformName = 'android' | 'win' | 'mac' | 'web';
-
 const utils = {
   isMac() {
     return __APP_ENV__ === 'mac';
