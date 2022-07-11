@@ -2,9 +2,15 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { inspectorServer } from 'react-dev-inspector/plugins/vite';
 import { defineConfig } from 'vite';
+import { aliasPathMap } from '../../config/alias-path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    alias: {
+      ...aliasPathMap
+    }
+  },
   plugins: [
     react({
       babel: {
@@ -23,13 +29,5 @@ export default defineConfig({
     brotliSize: false,
     chunkSizeWarningLimit: 2000,
     polyfillModulePreload: true
-  },
-  resolve: {
-    alias: [
-      {
-        find: /@\//,
-        replacement: path.resolve(__dirname, '../../packages/components/src') + '/'
-      }
-    ]
   }
 });

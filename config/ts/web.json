@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "rootDir": "../../",
+    "baseUrl": "../../",
+    "composite": true,
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "esModuleInterop": false,
+    "jsx": "react-jsx",
+    "paths": {
+      "@ui/*": ["packages/ui/src/*"],
+      "@shared/*": ["packages/shared/*"]
+    }
+  },
+  "include": [
+    "../../packages/ui/src/",
+    "../../packages/web/src/",
+    "../../packages/desktop/main.tsx",
+    "../../packages/desktop/main/preload/"
+  ]
+}

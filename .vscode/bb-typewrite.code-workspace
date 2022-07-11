@@ -5,8 +5,8 @@
       "path": ".."
     },
     {
-      "name": "components",
-      "path": "../packages/components"
+      "name": "ui",
+      "path": "../packages/ui"
     },
     {
       "name": "desktop",

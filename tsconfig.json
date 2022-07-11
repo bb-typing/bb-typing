@@ -1,25 +1,10 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "pretty": true,
-    "moduleResolution": "Node",
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
-  },
   "references": [
     {
-      "path": "./packages/components"
+      "path": "./config/ts/node.json"
     },
     {
-      "path": "./packages/web"
-    },
-    {
-      "path": "./packages/desktop"
+      "path": "./config/ts/web.json"
     }
   ]
 }

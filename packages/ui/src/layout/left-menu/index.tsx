@@ -1,8 +1,8 @@
+import { Button, Tooltip } from '@nextui-org/react';
+import { Platform } from '@ui/libs/platform';
 import { tw } from 'twind';
-import { Platform } from '@/libs/platform';
-import LeftMenuForWeb from './index.web';
 import { useContext } from './context';
-import { Button, Card, Text, Tooltip } from '@nextui-org/react';
+import LeftMenuForWeb from './index.web';
 
 function UnifyLeftMenu(): JSX.Element {
   const { updateFoldingStatus, useStoreState } = useContext();

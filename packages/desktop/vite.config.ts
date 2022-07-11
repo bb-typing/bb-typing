@@ -3,6 +3,7 @@ import { rmSync } from 'fs';
 import path from 'path';
 import { defineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
+import { aliasPathMap } from '../../config/alias-path';
 import pkg from './package.json';
 
 removeDistDir();
@@ -10,12 +11,9 @@ removeDistDir();
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    alias: [
-      {
-        find: /@\//,
-        replacement: path.resolve(__dirname, '../../packages/components/src') + '/'
-      }
-    ]
+    alias: {
+      ...aliasPathMap
+    }
   },
   plugins: [
     react(),
