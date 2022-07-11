@@ -1,6 +1,11 @@
 import { RouterWrapper } from './Router';
+import { Inspector } from 'react-dev-inspector';
 
-export function App(): JSX.Element {
-  return <RouterWrapper />;
-  // return <div>所以你拒绝？</div>;
+export function App() {
+  return (
+    <>
+      <RouterWrapper />
+      {import.meta.env.DEV && <Inspector />}
+    </>
+  );
 }

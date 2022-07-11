@@ -1,5 +1,4 @@
 import react from '@vitejs/plugin-react';
-import path from 'path';
 import { inspectorServer } from 'react-dev-inspector/plugins/vite';
 import { defineConfig } from 'vite';
 import { aliasPathMap } from '../../config/alias-path';

@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { rmSync } from 'fs';
 import path from 'path';
+import { inspectorServer } from 'react-dev-inspector/plugins/vite';
 import { defineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
 import { aliasPathMap } from '../../config/alias-path';
@@ -40,7 +41,9 @@ export default defineConfig({
       },
       // Enables use of Node.js API in the Renderer-process
       renderer: {}
-    })
+    }),
+    // https://github.com/zthxxx/react-dev-inspector#usage-with-vite2
+    inspectorServer()
   ],
   server: {
     host: pkg.env.VITE_DEV_SERVER_HOST,
