@@ -7,6 +7,7 @@ importers:
       '@commitlint/cli': ^17.0.2
       '@commitlint/config-conventional': ^17.0.2
       '@commitlint/types': ^17.0.0
+      '@mimi-utils/types': ^0.0.3
       '@types/lodash': ^4.14.182
       '@types/react': ^18.0.12
       '@types/react-dom': ^18.0.5
@@ -26,6 +27,7 @@ importers:
       react-dev-inspector: ^1.8.1
       react-dom: ^18.1.0
       rimraf: ^3.0.2
+      type-fest: ^2.16.0
       typescript: ^4.7.4
       vite: ^2.9.13
       vitest: ^0.16.0
@@ -33,6 +35,7 @@ importers:
       '@commitlint/cli': 17.0.3
       '@commitlint/config-conventional': 17.0.3
       '@commitlint/types': 17.0.0
+      '@mimi-utils/types': 0.0.3_typescript@4.7.4
       '@types/lodash': 4.14.182
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
@@ -52,31 +55,28 @@ importers:
       react-dev-inspector: 1.8.1_gqi5qmibjkogsznwcpqmzq76tq
       react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
+      type-fest: 2.16.0
       typescript: 4.7.4
       vite: 2.9.14
       vitest: 0.16.0
 
   packages/desktop:
     specifiers:
-      '@bb/ui': '*'
       electron: ^19.0.3
       electron-builder: ^23.0.3
       vite-plugin-electron: ^0.6.1
     devDependencies:
-      '@bb/ui': link:../ui
       electron: 19.0.8
       electron-builder: 23.1.0
       vite-plugin-electron: 0.6.2
 
-  packages/shared:
-    specifiers: {}
-
   packages/ui:
     specifiers:
-      '@bb/shared': '*'
       '@nextui-org/react': 1.0.0-beta.9
       ahooks: ^3.3.8
+      axios: ^0.27.2
       immer: ^9.0.12
+      react-error-boundary: ^3.1.4
       react-intl: ^5.24.8
       react-query: ^3.34.19
       react-router-dom: ^6.3.0
@@ -84,10 +84,11 @@ importers:
       twind: ^0.16.17
       zustand: ^4.0.0-rc.1
     dependencies:
-      '@bb/shared': link:../shared
       '@nextui-org/react': 1.0.0-beta.9
       ahooks: 3.5.2
+      axios: 0.27.2
       immer: 9.0.15
+      react-error-boundary: 3.1.4
       react-intl: 5.25.1
       react-query: 3.39.1
       react-router-dom: 6.3.0
@@ -96,10 +97,7 @@ importers:
       zustand: 4.0.0-rc.1_immer@9.0.15
 
   packages/web:
-    specifiers:
-      '@bb/ui': '*'
-    dependencies:
-      '@bb/ui': link:../ui
+    specifiers: {}
 
 packages:
 
@@ -796,6 +794,16 @@ packages:
       tmp-promise: 3.0.3
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@mimi-utils/types/0.0.3_typescript@4.7.4:
+    resolution: {integrity: sha512-j+7qaJeZRx5LLY9MKjD3z5DlpMY75tphefMtKa1zXnwkHLP1ao8W94+rKC3n3EoMT0DFaoD0MGfbfAVT7/sQFA==}
+    peerDependencies:
+      typescript: 4.7.x
+    dependencies:
+      ts-toolbelt: 9.6.0
+      type-fest: 2.16.0
+      typescript: 4.7.4
     dev: true
 
   /@nextui-org/react/1.0.0-beta.9:
@@ -2009,12 +2017,20 @@ packages:
 
   /asynckit/0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
-    dev: true
 
   /at-least-node/1.0.0:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
     engines: {node: '>= 4.0.0'}
     dev: true
+
+  /axios/0.27.2:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
+    dependencies:
+      follow-redirects: 1.15.1
+      form-data: 4.0.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
 
   /balanced-match/1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -2373,7 +2389,6 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
-    dev: true
 
   /commander/2.9.0:
     resolution: {integrity: sha512-bmkUukX8wAOjHdN26xj5c4ctEV22TQ7dQYhSmuckKhToXrkUn0iIaolHdIxYYqD55nhpSPA9zPQ1yP57GdXP2A==}
@@ -2642,7 +2657,6 @@ packages:
   /delayed-stream/1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
-    dev: true
 
   /detect-node/2.1.0:
     resolution: {integrity: sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==}
@@ -3432,6 +3446,16 @@ packages:
     resolution: {integrity: sha512-0sQoMh9s0BYsm+12Huy/rkKxVu4R1+r96YX5cG44rHV0pQ6iC3Q+mkoMFaGWObMFYQxCVT+ssG1ksneA2MI9KQ==}
     dev: true
 
+  /follow-redirects/1.15.1:
+    resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
+
   /fork-ts-checker-webpack-plugin/6.5.2_4x5o4skxv6sl53vpwefgt23khm:
     resolution: {integrity: sha512-m5cUmF30xkZ7h4tWUgTAcEaKmUW7tfyUyTqNNOz7OxWJ0v1VWKTcOvH8FWHUwSjlW/356Ijc9vi3XfcPstpQKA==}
     engines: {node: '>=10', yarn: '>=1.0.0'}
@@ -3470,7 +3494,6 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
-    dev: true
 
   /fs-extra/10.1.0:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
@@ -4426,14 +4449,12 @@ packages:
   /mime-db/1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
     engines: {node: '>= 0.6'}
-    dev: true
 
   /mime-types/2.1.35:
     resolution: {integrity: sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==}
     engines: {node: '>= 0.6'}
     dependencies:
       mime-db: 1.52.0
-    dev: true
 
   /mime/2.6.0:
     resolution: {integrity: sha512-USPkMeET31rOMiarsBNIHZKLGgvKc/LrjofAnBlOttf5ajRvqiRA8QsenbcooctK6d6Ts6aqZXBA+XbkKthiQg==}
@@ -5004,6 +5025,15 @@ packages:
       react: 18.2.0
       scheduler: 0.23.0
     dev: true
+
+  /react-error-boundary/3.1.4:
+    resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}
+    engines: {node: '>=10', npm: '>=6'}
+    peerDependencies:
+      react: '>=16.13.1'
+    dependencies:
+      '@babel/runtime': 7.18.6
+    dev: false
 
   /react-error-overlay/6.0.11:
     resolution: {integrity: sha512-/6UZ2qgEyH2aqzYZgQPxEnz33NJ2gNsnHA2o5+o4wW9bLM/JYQitNP9xPhsXwC08hMMovfGe/8retsdDsczPRg==}
@@ -5741,6 +5771,10 @@ packages:
       yn: 3.1.1
     dev: true
 
+  /ts-toolbelt/9.6.0:
+    resolution: {integrity: sha512-nsZd8ZeNUzukXPlJmTBwUAuABDe/9qtVDelJeT/qW0ow3ZS3BsQJtNkan1802aM9Uf68/Y8ljw86Hu0h5IUW3w==}
+    dev: true
+
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: true
@@ -5830,6 +5864,11 @@ packages:
   /type-fest/0.8.1:
     resolution: {integrity: sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==}
     engines: {node: '>=8'}
+    dev: true
+
+  /type-fest/2.16.0:
+    resolution: {integrity: sha512-qpaThT2HQkFb83gMOrdKVsfCN7LKxP26Yq+smPzY1FqoHRjqmjqHXA7n5Gkxi8efirtbeEUxzfEdePthQWCuHw==}
+    engines: {node: '>=12.20'}
     dev: true
 
   /typedarray-to-buffer/3.1.5:
