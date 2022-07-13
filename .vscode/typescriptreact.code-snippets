@@ -1,0 +1,8 @@
+{
+  "TSX FN JSX": {
+    "scope": "typescriptreact",
+    "prefix": "tsx-fn-jsx",
+    "body": ["interface $1Props {}", "", "function $1(props: $1Props): JSX.Element { return <div></div> }"],
+    "description": "初始化TS-React组件模板"
+  }
+}

@@ -41,7 +41,11 @@
     "type-fest": "^2.16.0",
     "typescript": "^4.7.4",
     "vite": "^2.9.13",
+    "vite-plugin-svgr": "^2.2.0",
     "vitest": "^0.16.0"
+  },
+  "dependencies": {
+    "ultra-icon": "^0.0.8"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [

@@ -1,6 +1,8 @@
 import react from '@vitejs/plugin-react';
 import { inspectorServer } from 'react-dev-inspector/plugins/vite';
 import { defineConfig } from 'vite';
+import svgr from 'vite-plugin-svgr';
+
 import { aliasPathMap } from '../../config/alias-path';
 
 // https://vitejs.dev/config/
@@ -16,6 +18,8 @@ export default defineConfig({
         // plugins: ['react-activation/babel', ['@babel/plugin-proposal-decorators', { legacy: true }]]
       }
     }),
+    // https://github.com/pd4d10/vite-plugin-svgr
+    svgr(),
     // https://github.com/zthxxx/react-dev-inspector#usage-with-vite2
     inspectorServer()
   ],

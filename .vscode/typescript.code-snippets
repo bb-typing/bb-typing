@@ -1,0 +1,17 @@
+{
+  "Twind CSS Apply": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "twcssapply",
+    "body": ["tw(css`${apply('$1')}`)"]
+  },
+  "CSS Apply": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "cssapply",
+    "body": ["css`${apply('$1')}`"]
+  },
+  "ClassName TSX": {
+    "prefix": "clsxn",
+    "scope": "javascript, javascriptreact, typescriptreact",
+    "body": ["className={clsx('${1}')}"]
+  }
+}
