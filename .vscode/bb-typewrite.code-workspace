@@ -6,7 +6,7 @@
     },
     {
       "name": "ui",
-      "path": "../packages/ui"
+      "path": "../packages/ui/src"
     },
     {
       "name": "desktop",
