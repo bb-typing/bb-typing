@@ -1,7 +1,7 @@
 import MainLayout from '@ui/components/layout/MainLayout';
 import Welcome from '@ui/components/Welcome';
-import { SettingRoutes } from '@ui/features/setting/routes';
 import { useRoutes } from 'react-router-dom';
+import SettingRoutes from '../features/setting/Routes';
 
 export function Routes(): JSX.Element {
   const element = useRoutes([
@@ -9,7 +9,7 @@ export function Routes(): JSX.Element {
       path: '/',
       element: <MainLayout />,
       children: [
-        { path: '/', element: <Welcome /> },
+        { index: true, element: <Welcome /> },
         { path: '/setting/*', element: <SettingRoutes /> }
       ]
     }
