@@ -1,10 +1,10 @@
 import type { AxiosError } from 'axios';
-import type { UseQueryOptions, UseMutationOptions, DefaultOptions } from 'react-query';
+import type { DefaultOptions, UseMutationOptions, UseQueryOptions } from 'react-query';
 import { QueryClient } from 'react-query';
 
 export { queryClient };
 
-export type { ExtractFnReturnType, QueryConfig, MutationConfig };
+export type { ExtractFnReturnType, MutationConfig, QueryConfig };
 
 const queryConfig: DefaultOptions = {
   queries: {

@@ -1,4 +1,4 @@
-import { ipcMain, app } from 'electron';
+import { app, ipcMain } from 'electron';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 

@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+
 import ViewShortcutKey from './view/ShortcutKey';
 
 function SettingRoutes(): JSX.Element {

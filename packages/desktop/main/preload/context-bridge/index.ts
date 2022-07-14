@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
+
 import type { ContextBridgeAPI } from './types';
 
 const exposedAPI: ContextBridgeAPI = {

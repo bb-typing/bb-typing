@@ -4,8 +4,9 @@ import path from 'path';
 import { inspectorServer } from 'react-dev-inspector/plugins/vite';
 import { defineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
-import { aliasPathMap } from '../../config/alias-path';
+
 import pkg from './package.json';
+import { aliasPathMap } from '../../config/alias-path';
 
 removeDistDir();
 

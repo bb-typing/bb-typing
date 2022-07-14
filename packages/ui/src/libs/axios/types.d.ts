@@ -1,5 +1,6 @@
-import type { paths } from './schema';
 import type { GetContentBetweenTwoChar } from '@mimi-utils/types';
+
+import type { paths } from './schema';
 
 type GetMethod<T> = keyof T;
 

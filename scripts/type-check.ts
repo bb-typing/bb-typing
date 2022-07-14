@@ -1,5 +1,6 @@
 import { execaSync } from 'execa';
 import path from 'path';
+
 import tsConfigJSON from '../tsconfig.json';
 
 void (function main() {

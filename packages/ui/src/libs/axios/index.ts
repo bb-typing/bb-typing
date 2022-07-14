@@ -1,5 +1,6 @@
 import type { AxiosRequestConfig } from 'axios';
 import Axios from 'axios';
+
 import { getToken } from './helper';
 
 function authRequestInterceptor(config: AxiosRequestConfig) {
