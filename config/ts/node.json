@@ -18,6 +18,8 @@
     "../../packages/desktop/**/*.ts",
     "../../packages/*/vite.config.ts",
     "../../packages/*/package.json",
-    "../../config/*"
+    "../../config/*",
+    "../../scripts",
+    "../../tsconfig.json"
   ]
 }
