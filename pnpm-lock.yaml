@@ -24,6 +24,7 @@ importers:
       husky: ^8.0.1
       lint-staged: ^13.0.3
       lodash: ^4.17.21
+      mitt: ^3.0.0
       prettier: ^2.6.2
       react: ^18.2.0
       react-dev-inspector: ^1.8.1
@@ -37,6 +38,7 @@ importers:
       vite-plugin-svgr: ^2.2.0
       vitest: ^0.16.0
     dependencies:
+      mitt: 3.0.0
       ultra-icon: 0.0.8_bb2bxwco6ptpubzwpazr52qf6i
     devDependencies:
       '@commitlint/cli': 17.0.3
@@ -89,6 +91,7 @@ importers:
       axios: ^0.27.2
       clsx: ^1.2.1
       immer: ^9.0.12
+      mitt: ^3.0.0
       react-error-boundary: ^3.1.4
       react-hotkeys: ^2.0.0
       react-intl: ^5.24.8
@@ -104,6 +107,7 @@ importers:
       axios: 0.27.2
       clsx: 1.2.1
       immer: 9.0.15
+      mitt: 3.0.0
       react-error-boundary: 3.1.4
       react-hotkeys: 2.0.0
       react-intl: 5.25.1
@@ -4770,6 +4774,10 @@ packages:
       minipass: 3.3.4
       yallist: 4.0.0
     dev: true
+
+  /mitt/3.0.0:
+    resolution: {integrity: sha512-7dX2/10ITVyqh4aOSVI9gdape+t9l2/8QxHrFmUXu4EEUpdlxl6RudZUPZoc+zuY2hk1j7XxVroIVIan/pD/SQ==}
+    dev: false
 
   /mkdirp/0.5.6:
     resolution: {integrity: sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==}
