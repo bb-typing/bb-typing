@@ -1,8 +1,10 @@
-import type { PlatformName } from '../types/base';
+import type { PlatformName } from '@shared/types/base';
+import {} from 'react-hotkeys';
 
 export interface ActionConfigOption {
   name: `${PlatformName}:${string}` | (string & {});
   commands: readonly [enCommand: string, zhCommand: string];
+  // hotkeys: string[];
   description: string;
 }
 
