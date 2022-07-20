@@ -1,5 +1,4 @@
 import { Button, Loading } from '@nextui-org/react';
-import { queryClient } from '@ui/libs/react-query';
 import * as React from 'react';
 import { Inspector } from 'react-dev-inspector';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -9,6 +8,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { tw } from 'twind';
 
 import { Routes } from './routes';
+import { queryClient } from './utils/libs/react-query';
 
 const ErrorFallback = () => {
   return (
