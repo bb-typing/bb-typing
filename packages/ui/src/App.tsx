@@ -1,4 +1,4 @@
-import { Button, Loading } from '@nextui-org/react';
+import { Button, Loading, NextUIProvider } from '@nextui-org/react';
 import * as React from 'react';
 import { Inspector } from 'react-dev-inspector';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -30,19 +30,21 @@ export function App() {
         </div>
       }
     >
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <QueryClientProvider client={queryClient}>
-          {import.meta.env.DEV && (
-            <>
-              <Inspector />
-              <ReactQueryDevtools />
-            </>
-          )}
-          <Router>
-            <Routes />
-          </Router>
-        </QueryClientProvider>
-      </ErrorBoundary>
+      <NextUIProvider>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <QueryClientProvider client={queryClient}>
+            {import.meta.env.DEV && (
+              <>
+                <Inspector />
+                <ReactQueryDevtools />
+              </>
+            )}
+            <Router>
+              <Routes />
+            </Router>
+          </QueryClientProvider>
+        </ErrorBoundary>
+      </NextUIProvider>
     </React.Suspense>
   );
 }
