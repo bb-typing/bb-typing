@@ -10,7 +10,7 @@ import { tw } from 'twind';
 import { Routes } from './routes';
 import { queryClient } from './utils/libs/react-query';
 
-const ErrorFallback = () => {
+function ErrorFallback(): JSX.Element {
   return (
     <div className={tw`text-red-500 w-screen h-screen flex(& col) justify-center items-center`} role="alert">
       <h2 className={tw`text-lg font-semibold`}>Ooops, something went wrong :( </h2>
@@ -19,9 +19,13 @@ const ErrorFallback = () => {
       </Button>
     </div>
   );
-};
+}
 
-export function App() {
+function InspectorWrapper({ children }: { children: JSX.Element }): JSX.Element {
+  return import.meta.env.DEV ? <Inspector>{children}</Inspector> : children;
+}
+
+export function App(): JSX.Element {
   return (
     <React.Suspense
       fallback={
@@ -30,21 +34,18 @@ export function App() {
         </div>
       }
     >
-      <NextUIProvider>
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
-          <QueryClientProvider client={queryClient}>
-            {import.meta.env.DEV && (
-              <>
-                <Inspector />
-                <ReactQueryDevtools />
-              </>
-            )}
-            <Router>
-              <Routes />
-            </Router>
-          </QueryClientProvider>
-        </ErrorBoundary>
-      </NextUIProvider>
+      <InspectorWrapper>
+        <NextUIProvider>
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <QueryClientProvider client={queryClient}>
+              {import.meta.env.DEV && <ReactQueryDevtools />}
+              <Router>
+                <Routes />
+              </Router>
+            </QueryClientProvider>
+          </ErrorBoundary>
+        </NextUIProvider>
+      </InspectorWrapper>
     </React.Suspense>
   );
 }
