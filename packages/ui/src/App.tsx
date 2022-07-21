@@ -7,7 +7,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { tw } from 'twind';
 
-import { Routes } from './routes';
+import Routes from './Routes';
 import { queryClient } from './utils/libs/react-query';
 
 function ErrorFallback(): JSX.Element {

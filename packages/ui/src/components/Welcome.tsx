@@ -4,8 +4,6 @@ import { HotKeys } from 'react-hotkeys';
 
 interface WelcomeProps {}
 
-type a = UIEvent;
-
 const Welcome: React.FC<WelcomeProps> = () => {
   return (
     <div>
@@ -25,7 +23,7 @@ const Welcome: React.FC<WelcomeProps> = () => {
         <div>
           <HotKeys
             keyMap={{
-              MOVE_UP_1: 'c'
+              MOVE_UP_1: ['command+k', 'ctrl+k', 'f3']
             }}
             handlers={{
               MOVE_UP_1: event => console.log('我是f3-ccc')
@@ -37,7 +35,7 @@ const Welcome: React.FC<WelcomeProps> = () => {
         </div>
       </HotKeys>
 
-      <HotKeys
+      {/* <HotKeys
         keyMap={{
           MOVE_UP: 'c'
         }}
@@ -47,7 +45,7 @@ const Welcome: React.FC<WelcomeProps> = () => {
       >
         <input />
         哦哦哦2
-      </HotKeys>
+      </HotKeys> */}
     </div>
   );
 };
