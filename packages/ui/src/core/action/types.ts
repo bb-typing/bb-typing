@@ -2,11 +2,12 @@ import type { PlatformName } from '@shared/types/base';
 import type { U } from 'ts-toolbelt';
 
 import type { actionConfigModules } from './configs';
+import type { DefaultHotkeys } from '../hotkey';
 
 export interface ActionConfigOption {
   name: `${PlatformName}:${string}` | (string & {});
   commands: readonly [enCommand: string, zhCommand: string];
-  hotkeys?: ReadonlyArray<ActionHotkey>;
+  defaultHotkeys?: DefaultHotkeys;
   description: string;
   __params_type__?: any;
 }
@@ -19,13 +20,13 @@ export interface ActionHotkey {
 
 type ActionConfigModules = typeof actionConfigModules[number];
 
-export type ActionConfigNames = ActionConfigModules['config'][number]['name'];
+export type ActionConfigName = ActionConfigModules['configs'][number]['name'];
 
-export type ActionConfigScopes = ActionConfigModules['scope'];
+export type ActionConfigScope = ActionConfigModules['scope'];
 
 //#region  //*=========== action-name-params-map ===========
 type _ActionNameParamsMap<
-  C extends ActionConfigModules['config'][number] = ActionConfigModules['config'][number],
+  C extends ActionConfigModules['configs'][number] = ActionConfigModules['configs'][number],
   B extends C = C
 > = U.Merge<
   B extends C
