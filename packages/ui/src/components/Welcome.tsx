@@ -1,12 +1,38 @@
+import { Button } from '@nextui-org/react';
+import { useActionStore, useTrackedActionStore } from '@ui/core/action';
+import { useHotkeyStore } from '@ui/core/hotkey';
 import React from 'react';
-import type { KeyMap } from 'react-hotkeys';
 import { HotKeys } from 'react-hotkeys';
+import { tw } from 'twind';
 
 interface WelcomeProps {}
 
 const Welcome: React.FC<WelcomeProps> = () => {
+  const { activeScopes, addActiveScope } = useTrackedActionStore();
+  const { defaultHotkeyMap } = useHotkeyStore();
+
+  console.log('defaultHotkeyMap', defaultHotkeyMap);
+
   return (
     <div>
+      {JSON.stringify(activeScopes)}
+      <br />
+
+      <Button
+        onClick={() => {
+          addActiveScope('global');
+        }}
+      >
+        我加加加
+      </Button>
+      <Button
+        onClick={() => {
+          useActionStore.persist.clearStorage();
+        }}
+      >
+        清除缓存咯
+      </Button>
+      <div className={tw`my-[10px] h-[1px] bg-black`}></div>
       <HotKeys
         keyMap={{
           MOVE_UP: 'f3'

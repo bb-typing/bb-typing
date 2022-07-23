@@ -1,29 +1,31 @@
+import _ from 'lodash';
 import { createTrackedSelector } from 'react-tracked';
 import create from 'zustand';
+import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import type { ActionConfigName } from '../action';
+import { defaultHotkeysInitializer } from './helper';
+import type { HotkeyStoreActions, HotkeyStoreState } from './types';
 
-export interface HotkeyStoreState {
-  // defaultMap: Record<ActionConfigName, >;
-}
+type Store = HotkeyStoreState & HotkeyStoreActions;
 
-interface HotkeyStoreActions {}
+export const useHotkeyStore = create<Store, [['zustand/persist', Store], ['zustand/immer', Store]]>(
+  persist(
+    immer(set => ({
+      //#region  //*=========== state ===========
+      defaultHotkeyMap: defaultHotkeysInitializer(),
+      localHotkeyMap: {},
+      userHotkeyMap: {}
+      //#endregion  //*======== state ===========
+      //#region  //*=========== action ===========
 
-export const useHotkeyStore = create(
-  immer<HotkeyStoreState & HotkeyStoreActions>(set => ({
-    //#region  //*=========== state ===========
-    //#endregion  //*======== state ===========
-    //#region  //*=========== action ===========
-    // addActiveScope: scope =>
-    //   set(state => {
-    //     const includeScopeInActives = state.activeScopes.includes(scope);
-    //     if (includeScopeInActives) {
-    //       state.activeScopes.push(scope);
-    //     }
-    //   })
-    //#endregion  //*======== action ===========
-  }))
+      //#endregion  //*======== action ===========
+    })),
+    {
+      name: 'bb-store-hotkey',
+      partialize: state => _.pick<any, keyof HotkeyStoreState>(state, ['localHotkeyMap']) as any
+    }
+  )
 );
 
 export const useTrackedHotkeyStore = createTrackedSelector(useHotkeyStore);

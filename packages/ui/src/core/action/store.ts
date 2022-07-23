@@ -1,34 +1,36 @@
+import _ from 'lodash';
 import { createTrackedSelector } from 'react-tracked';
 import create from 'zustand';
+import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import type { ActionConfigScope } from './types';
+import type { ActionStoreActions, ActionStoreState } from './types';
 
-export interface ActionStoreState {
-  activeScopes: ActionConfigScope[];
-}
+type Store = ActionStoreState & ActionStoreActions;
 
-interface ActionStoreActions {
-  addActiveScope: (scope: ActionConfigScope) => void;
-}
+export const useActionStore = create<Store, [['zustand/persist', Store], ['zustand/immer', Store]]>(
+  persist(
+    immer(set => ({
+      //#region  //*=========== state ===========
+      activeScopes: [],
+      //#endregion  //*======== state ===========
 
-export const useActionStore = create(
-  immer<ActionStoreState & ActionStoreActions>(set => ({
-    //#region  //*=========== state ===========
-    activeScopes: [],
-    //#endregion  //*======== state ===========
+      //#region  //*=========== action ===========
+      addActiveScope: scope =>
+        set(state => {
+          const includeScopeInActives = state.activeScopes.includes(scope);
 
-    //#region  //*=========== action ===========
-    addActiveScope: scope =>
-      set(state => {
-        const includeScopeInActives = state.activeScopes.includes(scope);
-
-        if (includeScopeInActives) {
-          state.activeScopes.push(scope);
-        }
-      })
-    //#endregion  //*======== action ===========
-  }))
+          if (!includeScopeInActives) {
+            state.activeScopes.push(scope);
+          }
+        })
+      //#endregion  //*======== action ===========
+    })),
+    {
+      name: 'bb-store-action',
+      partialize: state => _.pick<any, keyof ActionStoreState>(state, []) as any
+    }
+  )
 );
 
 export const useTrackedActionStore = createTrackedSelector(useActionStore);

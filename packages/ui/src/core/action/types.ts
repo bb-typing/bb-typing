@@ -38,3 +38,14 @@ type _ActionNameParamsMap<
 
 export type ActionNameParamsMap = _ActionNameParamsMap;
 //#endregion  //*======== action-name-params-map ===========
+
+//#region  //*=========== store ===========
+export interface ActionStoreState {
+  activeScopes: ActionConfigScope[];
+}
+
+export interface ActionStoreActions {
+  addActiveScope: (scope: ActionConfigScope) => void;
+}
+
+//#endregion  //*======== store ===========
