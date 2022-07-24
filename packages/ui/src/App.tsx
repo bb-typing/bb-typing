@@ -12,7 +12,10 @@ import { queryClient } from './utils/libs/react-query';
 
 function ErrorFallback(): JSX.Element {
   return (
-    <div className={tw`text-red-500 w-screen h-screen flex(& col) justify-center items-center`} role="alert">
+    <div
+      className={tw`text-red-500 w-screen h-screen flex(& col) justify-center items-center`}
+      role="alert"
+    >
       <h2 className={tw`text-lg font-semibold`}>Ooops, something went wrong :( </h2>
       <Button className={tw`mt-4`} onClick={() => location.assign(location.origin)}>
         Refresh

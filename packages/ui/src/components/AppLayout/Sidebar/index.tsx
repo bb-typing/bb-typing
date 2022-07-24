@@ -5,7 +5,11 @@ import React from 'react';
 import { tw } from 'twind';
 
 import { menuData } from './core/menu-data';
-import { IcRoundFormatIndentDecrease, IcSharpFormatIndentIncrease, MaterialSymbolsSwipeLeftSharp } from './core/svg';
+import {
+  IcRoundFormatIndentDecrease,
+  IcSharpFormatIndentIncrease,
+  MaterialSymbolsSwipeLeftSharp
+} from './core/svg';
 
 function AppLayoutSidebar(): JSX.Element {
   const { sidebarFoldStatus, setSidebarFoldStatus } = useTrackedAppLayoutStore();
@@ -20,7 +24,10 @@ function AppLayoutSidebar(): JSX.Element {
     <div
       className={tw`w-[${foldWidthMap[sidebarFoldStatus]}px] h-full flex(& col) items-center box-border py-[10px] relative`}
     >
-      <img src={logo} className={tw`w-[50px] my-[15px] cursor-pointer hover:(scale-125)`} />
+      <img
+        src={logo}
+        className={tw`w-[50px] my-[15px] cursor-pointer hover:(scale-125)`}
+      />
       {renderMenu()}
       {renderSwitchFold()}
     </div>

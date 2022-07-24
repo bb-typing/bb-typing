@@ -12,16 +12,24 @@ export class ActionController {
     return this.actions;
   }
 
-  public emit<Name extends ActionConfigName, Params extends ActionNameParamsMap[Name] = ActionNameParamsMap[Name]>(
+  public emit<
+    Name extends ActionConfigName,
+    Params extends ActionNameParamsMap[Name] = ActionNameParamsMap[Name]
+  >(
     name: Name,
     ...args: Equal<Params, unknown> extends true ? [] : [params: Params]
   ): void {
     this.eventBus.emit(name as any, (args as any)?.[0]);
   }
 
-  public subscribe<Name extends ActionConfigName, Params extends ActionNameParamsMap[Name] = ActionNameParamsMap[Name]>(
+  public subscribe<
+    Name extends ActionConfigName,
+    Params extends ActionNameParamsMap[Name] = ActionNameParamsMap[Name]
+  >(
     name: Name,
-    handler: (...args: Equal<Params, unknown> extends true ? [] : [params: Params]) => void
+    handler: (
+      ...args: Equal<Params, unknown> extends true ? [] : [params: Params]
+    ) => void
   ) {
     this.eventBus.on(name, handler as any);
   }

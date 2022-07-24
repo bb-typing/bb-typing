@@ -7,6 +7,8 @@ export interface SystemStoreState {}
 
 interface SystemStoreActions {}
 
-export const useSystemStore = create(immer<SystemStoreState & SystemStoreActions>(set => ({})));
+export const useSystemStore = create(
+  immer<SystemStoreState & SystemStoreActions>(set => ({}))
+);
 
 export const useTrackedSystemStore = createTrackedSelector(useSystemStore);

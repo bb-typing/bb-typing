@@ -8,7 +8,10 @@ import type { ActionStoreActions, ActionStoreState } from './types';
 
 type Store = ActionStoreState & ActionStoreActions;
 
-export const useActionStore = create<Store, [['zustand/persist', Store], ['zustand/immer', Store]]>(
+export const useActionStore = create<
+  Store,
+  [['zustand/persist', Store], ['zustand/immer', Store]]
+>(
   persist(
     immer(set => ({
       //#region  //*=========== state ===========

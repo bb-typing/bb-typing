@@ -7,7 +7,9 @@ void (function main() {
   return typeCheckByTSConfigPaths(getTSConfigPathsForCheck());
 
   function typeCheckByTSConfigPaths(tsConfigPaths: string[]) {
-    tsConfigPaths.forEach(path => execaSync('tsc', ['-p', path, '--noEmit', '--composite', 'false']));
+    tsConfigPaths.forEach(path =>
+      execaSync('tsc', ['-p', path, '--noEmit', '--composite', 'false'])
+    );
   }
 
   function getTSConfigPathsForCheck(): string[] {

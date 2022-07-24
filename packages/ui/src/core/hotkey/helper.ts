@@ -31,3 +31,5 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
 
   return defaultHotkeys;
 }
+
+// export function filterHotkeyProps

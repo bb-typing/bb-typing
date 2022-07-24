@@ -9,7 +9,10 @@ import type { HotkeyStoreActions, HotkeyStoreState } from './types';
 
 type Store = HotkeyStoreState & HotkeyStoreActions;
 
-export const useHotkeyStore = create<Store, [['zustand/persist', Store], ['zustand/immer', Store]]>(
+export const useHotkeyStore = create<
+  Store,
+  [['zustand/persist', Store], ['zustand/immer', Store]]
+>(
   persist(
     immer(set => ({
       //#region  //*=========== state ===========
@@ -23,7 +26,11 @@ export const useHotkeyStore = create<Store, [['zustand/persist', Store], ['zusta
     })),
     {
       name: 'bb-store-hotkey',
-      partialize: state => _.pick<any, keyof HotkeyStoreState>(state, ['localHotkeyMap']) as any
+      partialize: state =>
+        _.pick<any, keyof HotkeyStoreState>(state, [
+          'localHotkeyMap',
+          'userHotkeyMap'
+        ]) as any
     }
   )
 );

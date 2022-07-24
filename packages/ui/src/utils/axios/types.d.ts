@@ -4,9 +4,13 @@ import type { paths } from './schema';
 
 type GetMethod<T> = keyof T;
 
-type GetPutOrPostMethodParams<O> = O extends { body: { req: infer Result } } ? Result : void;
+type GetPutOrPostMethodParams<O> = O extends { body: { req: infer Result } }
+  ? Result
+  : void;
 
-type GetDefaultMethodParams<O> = O extends { body: { query: infer Result } } ? Result : void;
+type GetDefaultMethodParams<O> = O extends { body: { query: infer Result } }
+  ? Result
+  : void;
 
 type HasParameters<O> = O extends { parameters: infer Result } ? Result : O;
 
@@ -26,10 +30,17 @@ type APISchema = {
     : {
         urlPlaceholder: Record<GetContentBetweenTwoChar<Path, '{', '}'>, string>;
       }) &
-    (GetParamsByMethod<GetMethod<paths[Path]>, paths[Path][GetMethod<paths[Path]>]> extends void
+    (GetParamsByMethod<
+      GetMethod<paths[Path]>,
+      paths[Path][GetMethod<paths[Path]>]
+    > extends void
       ? {}
       : {
-          params: GetParamsByMethod<GetMethod<paths[Path]>, paths[Path][GetMethod<paths[Path]>]> & Record<string, any>;
+          params: GetParamsByMethod<
+            GetMethod<paths[Path]>,
+            paths[Path][GetMethod<paths[Path]>]
+          > &
+            Record<string, any>;
         });
 };
 
@@ -42,7 +53,10 @@ interface APIResponse<T = any> {
 
 declare module 'axios' {
   interface AxiosInstance extends Axios {
-    <U extends 'xxxx' | 'bbbbb' | (string & {})>(url: U, config?: AxiosRequestConfig<APISchema[U]>): AxiosPromise;
+    <U extends 'xxxx' | 'bbbbb' | (string & {})>(
+      url: U,
+      config?: AxiosRequestConfig<APISchema[U]>
+    ): AxiosPromise;
   }
 }
 

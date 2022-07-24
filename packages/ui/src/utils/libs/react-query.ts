@@ -16,7 +16,9 @@ const queryConfig: DefaultOptions = {
 
 const queryClient = new QueryClient({ defaultOptions: queryConfig });
 
-type ExtractFnReturnType<FnType extends (...args: any) => any> = Awaited<ReturnType<FnType>>;
+type ExtractFnReturnType<FnType extends (...args: any) => any> = Awaited<
+  ReturnType<FnType>
+>;
 
 type QueryConfig<QueryFnType extends (...args: any) => any> = Omit<
   UseQueryOptions<ExtractFnReturnType<QueryFnType>>,
