@@ -1,5 +1,10 @@
 {
-  "extends": ["plugin:@typescript-eslint/recommended", "plugin:prettier/recommended", "prettier"],
+  "ignorePatterns": [".history"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
   "plugins": ["@typescript-eslint", "prettier", "simple-import-sort"],
   "rules": {
     "prettier/prettier": 2,
@@ -28,10 +33,18 @@
     */
     "@typescript-eslint/padding-line-between-statements": [
       "error",
-      { "blankLine": "always", "prev": ["const", "let", "var", "block-like", "import", "interface"], "next": "*" },
+      {
+        "blankLine": "always",
+        "prev": ["const", "let", "var", "block-like", "import", "interface"],
+        "next": "*"
+      },
       { "blankLine": "always", "prev": "*", "next": ["return", "export"] },
       { "blankLine": "always", "prev": "import", "next": ["return", "export"] },
-      { "blankLine": "any", "prev": ["const", "let", "var"], "next": ["const", "let", "var"] },
+      {
+        "blankLine": "any",
+        "prev": ["const", "let", "var"],
+        "next": ["const", "let", "var"]
+      },
       { "blankLine": "any", "prev": ["import"], "next": ["import"] }
     ],
     "prefer-spread": 0,
