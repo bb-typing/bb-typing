@@ -1,6 +1,5 @@
 import { Button } from '@nextui-org/react';
 import { useActionStore, useTrackedActionStore } from '@ui/core/action';
-import { useHotkeyStore } from '@ui/core/hotkey';
 import React from 'react';
 import { HotKeys } from 'react-hotkeys';
 import { tw } from 'twind';
@@ -9,9 +8,6 @@ interface WelcomeProps {}
 
 const Welcome: React.FC<WelcomeProps> = () => {
   const { activeScopes, addActiveScope } = useTrackedActionStore();
-  const { defaultHotkeyMap } = useHotkeyStore();
-
-  console.log('defaultHotkeyMap', defaultHotkeyMap);
 
   return (
     <div>
@@ -34,11 +30,17 @@ const Welcome: React.FC<WelcomeProps> = () => {
       </Button>
       <div className={tw`my-[10px] h-[1px] bg-black`}></div>
       <HotKeys
-        keyMap={{
-          MOVE_UP: 'f3'
-        }}
+        keyMap={
+          {
+            SHOW_DIALOG: {
+              name: 'Display keyboard shortcuts',
+              sequences: ['shift+?', { sequence: '`', action: 'keyup' }],
+              action: 'keyup'
+            }
+          } as any
+        }
         handlers={{
-          MOVE_UP: event => {
+          SHOW_DIALOG: event => {
             event!.preventDefault();
 
             console.log('可是，错的是这个世界啊？');

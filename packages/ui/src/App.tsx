@@ -7,6 +7,8 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { tw } from 'twind';
 
+import GlobalModal from './components/GlobalModal';
+import { withScopeHotkey } from './core/hotkey';
 import Routes from './Routes';
 import { queryClient } from './utils/libs/react-query';
 
@@ -28,7 +30,7 @@ function InspectorWrapper({ children }: { children: JSX.Element }): JSX.Element 
   return import.meta.env.DEV ? <Inspector>{children}</Inspector> : children;
 }
 
-export function App(): JSX.Element {
+export const App = withScopeHotkey('global', function (): JSX.Element {
   return (
     <React.Suspense
       fallback={
@@ -45,10 +47,11 @@ export function App(): JSX.Element {
               <Router>
                 <Routes />
               </Router>
+              <GlobalModal />
             </QueryClientProvider>
           </ErrorBoundary>
         </NextUIProvider>
       </InspectorWrapper>
     </React.Suspense>
   );
-}
+});

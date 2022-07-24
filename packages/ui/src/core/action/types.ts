@@ -6,6 +6,7 @@ import type { DefaultHotkeys } from '../hotkey';
 
 export interface ActionConfigOption {
   name: `${PlatformName}:${string}` | (string & {});
+  supportedPlatforms: readonly PlatformName[];
   commands: readonly [enCommand: string, zhCommand: string];
   defaultHotkeys?: DefaultHotkeys;
   description: string;
@@ -31,6 +32,7 @@ type _ActionNameParamsMap<
 > = U.Merge<
   B extends C
     ? {
+        /** __params_type__ 的类型为 unknown 时，actionController.emit 调用时，无需传第二个 params */
         [K in B['name']]: B['__params_type__'];
       }
     : never

@@ -1,4 +1,10 @@
-import type { HotkeyInfo, HotkeyStoreState } from './types';
+import type {
+  BaseHotkeyMap,
+  HotkeyInfo,
+  HotkeyPlatform,
+  HotkeyStoreState
+} from './types';
+import type { ActionConfigName, ActionConfigScope } from '../action';
 import { actionController } from '../action';
 
 export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'] {
@@ -20,7 +26,8 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
               {
                 hotkeyContent,
                 scope,
-                status: 'enable'
+                status: 'enable',
+                supportedPlatforms: config.supportedPlatforms
               } as HotkeyInfo
             ]
           };
@@ -32,4 +39,51 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
   return defaultHotkeys;
 }
 
-// export function filterHotkeyProps
+//#region  //*=========== filter ===========
+// type ActionNameHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>;
+
+type PlatformHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>;
+
+type ScopePlatformHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>;
+
+/** 根据「平台」过滤出「热键对象」 */
+export function filterHotkeyMapByPlatform(
+  hotkeyMap: BaseHotkeyMap,
+  targetPlatform: Exclude<HotkeyPlatform, 'default'> | undefined,
+  incldueDefaultPlatform = true
+): PlatformHotkeyMap {
+  const filteredResult: PlatformHotkeyMap = {} as any;
+
+  Object.entries(hotkeyMap).forEach(([actionName, platformHotInfoMap]) => {
+    if (platformHotInfoMap) {
+      Object.entries(platformHotInfoMap).forEach(([_platform, hotkeyInfns]) => {
+        const platform = _platform as HotkeyPlatform;
+
+        if (
+          platform === targetPlatform ||
+          (incldueDefaultPlatform && platform === 'default')
+        ) {
+          filteredResult[actionName] = hotkeyInfns;
+        }
+      });
+    }
+  });
+
+  return filteredResult;
+}
+
+/** 根据过滤好的「平台热键对象」再次过滤出「范围平台热键对象」 */
+export function filterPlatformHotkeyMapByScope(
+  platformHotkeyMap: PlatformHotkeyMap,
+  scope: ActionConfigScope
+): ScopePlatformHotkeyMap {
+  const filteredResult: ScopePlatformHotkeyMap = {} as any;
+
+  Object.entries(platformHotkeyMap).forEach(([actionName, hotkeyInfos]) => {
+    filteredResult[actionName] = hotkeyInfos.filter(hotkey => hotkey.scope === scope);
+  });
+
+  return filteredResult;
+}
+
+//#endregion  //*======== filter ===========

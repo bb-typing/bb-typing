@@ -8,6 +8,7 @@ export interface AppLayoutStoreState {
 
 interface AppLayoutStoreActions {
   setSidebarFoldStatus(selectedStatus: AppLayoutStoreState['sidebarFoldStatus']): void;
+  switchSidebarVisible(): void;
 }
 
 export const useAppLayoutStore = create(
@@ -17,6 +18,10 @@ export const useAppLayoutStore = create(
     setSidebarFoldStatus: selectedStatus =>
       set(state => {
         state.sidebarFoldStatus = selectedStatus;
+      }),
+    switchSidebarVisible: () =>
+      set(state => {
+        state.sidebarFoldStatus = state.sidebarFoldStatus === 'hide' ? 'icon' : 'hide';
       })
   }))
 );

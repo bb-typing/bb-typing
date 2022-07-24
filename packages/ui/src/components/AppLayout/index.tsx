@@ -1,3 +1,4 @@
+import { withScopeHotkey } from '@ui/core/hotkey';
 import { tw } from 'twind';
 
 import AppLayoutContent from './Content';
@@ -18,4 +19,4 @@ function AppLayout(): JSX.Element {
   );
 }
 
-export default AppLayout;
+export default withScopeHotkey('layout', AppLayout);

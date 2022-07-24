@@ -1,26 +1,44 @@
+import type { PlatformName } from '@shared/types/base';
+
 const utils = {
-  isMac() {
-    return __APP_ENV__ === 'mac';
+  isMacos() {
+    return /mac os x/i.test(navigator.userAgent);
   },
-  isWin() {
-    return __APP_ENV__ === 'win';
-  },
-  isDesktop() {
-    return (['win', 'mac'] as Array<typeof __APP_ENV__>).includes(__APP_ENV__);
-  },
-  isWeb() {
-    return __APP_ENV__ === 'web';
+  isWindows() {
+    return /windows|win32/i.test(navigator.userAgent);
   },
   isAndroid() {
-    return __APP_ENV__ === 'android';
+    return window.__APP_IS_ANDROID__ === true;
+  },
+
+  isDesktop() {
+    return window.__APP_IS_DESKTOP__ === true;
+  },
+  getPlatformName(): PlatformName {
+    if (utils.isDesktop()) {
+      return utils.isMacos() ? 'desktop:mac' : 'desktop:win';
+    }
+
+    if (utils.isAndroid()) {
+      return 'android:web';
+    }
+
+    // 不是桌面应用，也不是安卓包壳？那就是纯浏览器了
+
+    if (utils.isMacos()) {
+      return 'web:mac';
+    } else if (utils.isWindows()) {
+      return 'web:win';
+    }
+
+    // 都不是？那就是 android/ios 了
+
+    return 'web:android-ios';
   }
 };
 
 export const Platform = {
-  OS: __APP_ENV__,
+  OS: utils.getPlatformName(),
   isDesktop: utils.isDesktop(),
-  isMac: utils.isMac(),
-  isWin: utils.isWin(),
-  isWeb: utils.isWeb(),
   isAndroid: utils.isAndroid()
 } as const;

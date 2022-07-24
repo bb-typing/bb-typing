@@ -1,4 +1,5 @@
 import type { ActionConfigName, ActionConfigScope } from '../action';
+import type { ActionConfigOption } from '../action/types';
 
 export type HotkeyPlatform = 'win' | 'mac' | 'default';
 
@@ -11,13 +12,14 @@ export type DefaultHotkeys = ReadonlyArray<
 //#region  //*=========== store ===========
 
 export interface HotkeyInfo {
+  supportedPlatforms: ActionConfigOption['supportedPlatforms'];
   hotkeyContent: HotkeyContent;
   scope: ActionConfigScope;
   status: 'enable' | 'disable';
 }
 
-type BaseHotkeyMap = Partial<
-  Record<ActionConfigName, Partial<Record<HotkeyPlatform, HotkeyInfo[]>>>
+export type BaseHotkeyMap = Partial<
+  Record<ActionConfigName | AnyString, Partial<Record<HotkeyPlatform, HotkeyInfo[]>>>
 >;
 
 export interface HotkeyStoreState {
