@@ -7,6 +7,8 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { tw } from 'twind';
 
+import './styles/global.css';
+
 import GlobalModal from './components/GlobalModal';
 import { withScopeHotkey } from './core/hotkey';
 import Routes from './Routes';
