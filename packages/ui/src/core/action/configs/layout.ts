@@ -3,7 +3,7 @@ import { defineActionConfig, defineType } from '../helper';
 export const layoutActionConfig = defineActionConfig('layout', [
   {
     name: 'sidebar-switch',
-    supportedPlatforms: ['web:mac', 'web:win', 'desktop:mac', 'desktop:mac'],
+    supportedPlatforms: ['web:mac', 'web:win', 'desktop:mac', 'desktop:win'],
     commands: ['Switch sidebar mode', '切换侧边栏模式'],
     description: '切换侧边栏模式',
     defaultHotkeys: [
