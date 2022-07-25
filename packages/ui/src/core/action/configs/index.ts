@@ -1,4 +1,4 @@
-import { globalActionConfig } from './global';
-import { layoutActionConfig } from './layout';
+import { globalActionConfigs } from './global';
+import { layoutActionConfigs } from './layout';
 
-export const actionConfigModules = [globalActionConfig, layoutActionConfig] as const;
+export const actionConfigModules = [globalActionConfigs, layoutActionConfigs] as const;

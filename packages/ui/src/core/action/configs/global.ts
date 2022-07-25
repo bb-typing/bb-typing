@@ -1,6 +1,6 @@
 import { defineActionConfig, defineType } from '../helper';
 
-export const globalActionConfig = defineActionConfig('global', [
+export const globalActionConfigs = defineActionConfig('global', [
   {
     name: 'desktop:close-app',
     supportedPlatforms: ['desktop:mac', 'desktop:win'],

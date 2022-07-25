@@ -1,6 +1,6 @@
 import { defineActionConfig, defineType } from '../helper';
 
-export const layoutActionConfig = defineActionConfig('layout', [
+export const layoutActionConfigs = defineActionConfig('layout', [
   {
     name: 'sidebar-switch',
     supportedPlatforms: ['web:mac', 'web:win', 'desktop:mac', 'desktop:win'],
