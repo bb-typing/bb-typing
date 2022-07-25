@@ -1,12 +1,13 @@
 import { Platform } from '@ui/utils/platform';
-import type { JSXElementConstructor } from 'react';
+import { useMount, useUnmount } from 'ahooks';
+import Mousetrap from 'mousetrap';
+import type { JSXElementConstructor, ReactNode } from 'react';
 import { useMemo } from 'react';
-import type { HotKeysProps } from 'react-hotkeys';
-import { HotKeys } from 'react-hotkeys';
+import type { F } from 'ts-toolbelt';
 
 import { filterHotkeyMapByPlatform, filterPlatformHotkeyMapByScope } from './helper';
 import { useHotkeyStore } from './store';
-import type { BaseHotkeyMap, HotkeyPlatform } from './types';
+import type { BaseHotkeyMap, HotkeyInfo, HotkeyPlatform } from './types';
 import type { ActionConfigName, ActionConfigScope } from '../action';
 import { actionController } from '../action';
 
@@ -17,14 +18,11 @@ export function withScopeHotkey<P>(
   return function (props) {
     const { defaultHotkeyMap, localHotkeyMap, userHotkeyMap } = useHotkeyStore();
 
-    const { handlers, keyMap } = useMemo(() => {
-      return converToHotkeyPropsByHotkeyMaps(
-        [defaultHotkeyMap, localHotkeyMap, userHotkeyMap],
-        {
-          hotkeyPlatform: filterHotkeyPlatform(),
-          scope
-        }
-      );
+    const hotkeyConfigs = useMemo(() => {
+      return converToHotkeyConfigs([defaultHotkeyMap, localHotkeyMap, userHotkeyMap], {
+        hotkeyPlatform: filterHotkeyPlatform(),
+        scope
+      });
 
       function filterHotkeyPlatform(): Exclude<HotkeyPlatform, 'default'> | undefined {
         switch (Platform.OS) {
@@ -39,25 +37,47 @@ export function withScopeHotkey<P>(
       }
     }, [defaultHotkeyMap, localHotkeyMap, userHotkeyMap]);
 
-    console.log('handlers, keyMap', handlers, keyMap);
-
     return (
-      <HotKeys handlers={handlers} keyMap={keyMap}>
+      <HotKeyWrapper configs={hotkeyConfigs}>
         <Component {...props} />
-      </HotKeys>
+      </HotKeyWrapper>
     );
   };
 }
 
-function converToHotkeyPropsByHotkeyMaps(
+type HotkeyWrapperConfigs = Array<{ hotkeys: string[]; handler: F.Function }>;
+
+function HotKeyWrapper(props: {
+  children: ReactNode;
+  configs: HotkeyWrapperConfigs;
+}): JSX.Element {
+  useMount(bindHotkey);
+
+  useUnmount(unbindHotkey);
+
+  return <>{props.children}</>;
+
+  function bindHotkey() {
+    props.configs.forEach(config => {
+      Mousetrap.bind(config.hotkeys, config.handler);
+    });
+  }
+
+  function unbindHotkey() {
+    props.configs.forEach(config => {
+      Mousetrap.unbind(config.hotkeys);
+    });
+  }
+}
+
+function converToHotkeyConfigs(
   hotkeyMaps: BaseHotkeyMap[],
   options: {
     hotkeyPlatform: Exclude<HotkeyPlatform, 'default'> | undefined;
     scope: ActionConfigScope;
   }
-): Pick<HotKeysProps, 'handlers' | 'keyMap'> {
-  const handlers: HotKeysProps['handlers'] = {};
-  const keyMap: HotKeysProps['keyMap'] = {};
+): HotkeyWrapperConfigs {
+  const configsResult: HotkeyWrapperConfigs = [];
 
   hotkeyMaps.forEach(hotkeyMap => {
     const scopePlatformHotkeyMap = filterPlatformHotkeyMapByScope(
@@ -67,32 +87,32 @@ function converToHotkeyPropsByHotkeyMaps(
 
     Object.entries(scopePlatformHotkeyMap).forEach(([actionName, hotkeyInfos]) => {
       hotkeyInfos.forEach(keyInfo => {
-        const isSupportCurrentPlatform = keyInfo.supportedPlatforms.includes(Platform.OS);
-
-        if (isSupportCurrentPlatform && keyInfo.status === 'enable') {
-          if (!Reflect.has(keyMap, actionName)) {
-            keyMap[actionName] = [];
-          }
-
-          handlers[actionName] = getHotkeyHandler(actionName as ActionConfigName);
-
-          (keyMap[actionName] as string[]).push(keyInfo.hotkeyContent);
+        if (isUsableHotkey(keyInfo)) {
+          configsResult.push({
+            handler: getHotkeyHandler(actionName as ActionConfigName),
+            hotkeys: hotkeyInfos.map(item => item.hotkeyContent)
+          });
         }
       });
     });
   });
 
-  return {
-    handlers,
-    keyMap
-  };
+  return configsResult;
 
-  function getHotkeyHandler(actionName: ActionConfigName) {
-    return (event?: KeyboardEvent) => {
-      event?.preventDefault();
-      console.log(`通过快捷键触发动作了，动作名称为「${actionName}」`);
-
+  type MousetrapBindCallback = Parameters<Mousetrap.MousetrapStatic['bind']>[1];
+  function getHotkeyHandler(actionName: ActionConfigName): MousetrapBindCallback {
+    // TODO: 此处的 hotkey-callback 暂先这样，如有需要再设计
+    return event => {
       actionController.emit(actionName);
+
+      return false;
     };
+  }
+
+  function isUsableHotkey(hotkeyInfo: HotkeyInfo): boolean {
+    const isSupportCurrentPlatform = hotkeyInfo.supportedPlatforms.includes(Platform.OS);
+    const isEnableStatus = hotkeyInfo.status === 'enable';
+
+    return isSupportCurrentPlatform && isEnableStatus;
   }
 }
