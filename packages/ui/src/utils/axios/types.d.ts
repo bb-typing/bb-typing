@@ -51,9 +51,11 @@ interface APIResponse<T = any> {
   success: boolean;
 }
 
+type APIPath = keyof APISchema;
+
 declare module 'axios' {
   interface AxiosInstance extends Axios {
-    <U extends 'xxxx' | 'bbbbb' | (string & {})>(
+    <U extends APIPath | (string & {})>(
       url: U,
       config?: AxiosRequestConfig<APISchema[U]>
     ): AxiosPromise;

@@ -12,6 +12,7 @@
     "lint": "npm run type-check && lint-staged",
     "lint-fix": "eslint ./ --fix",
     "clean": "rimraf **/node_modules",
+    "api-schema:update": "tsx ./scripts/api-schema-update.ts",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -34,6 +35,8 @@
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "lodash": "^4.17.21",
+    "openapi-typescript": "^5.4.1",
+    "picocolors": "^1.0.0",
     "prettier": "^2.6.2",
     "react": "17.0.2",
     "react-dev-inspector": "^1.8.1",
