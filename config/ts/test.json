@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "rootDir": "../../",
+    "baseUrl": "../../",
+    "composite": true,
+    "jsx": "react-jsx",
+    "types": [
+      "vite/client"
+    ],
+    "paths": {
+      "@ui/*": ["packages/ui/src/*"],
+      "@shared/*": ["packages/shared/*"]
+    }
+  },
+  "include": [
+    "../../packages/shared",
+    "../../packages/ui/src/**/*.tsx",
+    "../../packages/ui/*.ts",
+    "../../config/*"
+  ]
+}

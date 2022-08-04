@@ -4,6 +4,9 @@
       "path": "./config/ts/node.json"
     },
     {
+      "path": "./config/ts/test.json"
+    },
+    {
       "path": "./config/ts/web.json"
     }
   ]

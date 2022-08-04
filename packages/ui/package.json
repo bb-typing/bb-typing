@@ -2,7 +2,9 @@
   "name": "@bb/ui",
   "version": "0.0.0",
   "private": false,
-  "scripts": {},
+  "scripts": {
+    "test": "vitest"
+  },
   "dependencies": {
     "@mimi-utils/super-status-box": "^0.0.1",
     "@nextui-org/react": "1.0.0-beta.9",
