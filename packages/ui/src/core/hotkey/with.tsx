@@ -11,7 +11,7 @@ import type { BaseHotkeyMap, HotkeyInfo, HotkeyPlatform } from './types';
 import type { ActionConfigName, ActionConfigScope } from '../action';
 import { actionController } from '../action';
 
-export function withScopeHotkey<P>(
+export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
   scope: ActionConfigScope,
   Component: JSXElementConstructor<P>
 ): JSXElementConstructor<P> {

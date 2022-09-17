@@ -1,4 +1,4 @@
-import { Dropdown } from '@nextui-org/react';
+import { Menu } from '@mantine/core';
 import logo from '@ui/assets/images/logo.png';
 import { useTrackedAppLayoutStore } from '@ui/stores/app-layout';
 import React from 'react';
@@ -53,22 +53,17 @@ function AppLayoutSidebar(): JSX.Element {
     const style = tw`absolute right-[10px] bottom-[20px] cursor-pointer text([22px] hover:[#3498db])`;
 
     return (
-      <Dropdown>
-        <Dropdown.Trigger>
+      <Menu shadow="md" width={200}>
+        <Menu.Target>
           <span className={style}>{switchIconMap[sidebarFoldStatus]}</span>
-        </Dropdown.Trigger>
-        <Dropdown.Menu
-          onAction={key => {
-            setSidebarFoldStatus(key as typeof sidebarFoldStatus);
-          }}
-        >
-          <Dropdown.Item key="icon">仅图标（默认）</Dropdown.Item>
-          <Dropdown.Item key="icon-text">图标与文字</Dropdown.Item>
-          <Dropdown.Item key="hide" withDivider color="error">
-            隐藏
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+        </Menu.Target>
+
+        <Menu.Dropdown>
+          <Menu.Item>仅图标（默认）</Menu.Item>
+          <Menu.Item>图标与文字</Menu.Item>
+          <Menu.Item>隐藏</Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
     );
   }
 

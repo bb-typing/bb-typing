@@ -1,23 +1,25 @@
-import { Modal } from '@nextui-org/react';
+import { Modal, useMantineTheme } from '@mantine/core';
 import './action-handler';
 
-import { useGloablSearchModalStore } from './store';
+import { useGlobalSearchModalStore } from './store';
 
 interface GlobalSearchModalProps {}
 
 function GlobalSearchModal(props: GlobalSearchModalProps): JSX.Element {
-  const { toggleVisible, visible } = useGloablSearchModalStore();
+  const { toggleVisible, visible } = useGlobalSearchModalStore();
+  const theme = useMantineTheme();
 
   return (
     <Modal
-      closeButton
-      aria-labelledby="modal-title"
-      open={visible}
+      overlayColor={
+        theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2]
+      }
+      overlayOpacity={0.55}
+      overlayBlur={3}
+      opened={visible}
       onClose={toggleVisible}
     >
-      <Modal.Header>你好，我是头部</Modal.Header>
-      <Modal.Body>我是搜索框…谢谢你…</Modal.Body>
-      <Modal.Footer>我是底部呀亲</Modal.Footer>
+      搜索框噢
     </Modal>
   );
 }

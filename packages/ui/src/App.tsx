@@ -1,4 +1,4 @@
-import { Button, Loading, NextUIProvider } from '@nextui-org/react';
+import { Button, LoadingOverlay, MantineProvider } from '@mantine/core';
 import * as React from 'react';
 import { Inspector } from 'react-dev-inspector';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -37,12 +37,12 @@ export const App = withScopeHotkey('global', function (): JSX.Element {
     <React.Suspense
       fallback={
         <div className={tw`flex items-center justify-center w-screen h-screen`}>
-          <Loading type="points" />
+          <LoadingOverlay visible overlayBlur={2} />
         </div>
       }
     >
       <InspectorWrapper>
-        <NextUIProvider>
+        <MantineProvider withGlobalStyles withNormalizeCSS>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             <QueryClientProvider client={queryClient}>
               {import.meta.env.DEV && <ReactQueryDevtools />}
@@ -52,7 +52,7 @@ export const App = withScopeHotkey('global', function (): JSX.Element {
               <GlobalModal />
             </QueryClientProvider>
           </ErrorBoundary>
-        </NextUIProvider>
+        </MantineProvider>
       </InspectorWrapper>
     </React.Suspense>
   );

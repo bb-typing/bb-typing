@@ -1,9 +1,9 @@
 import { actionController } from '@ui/core/action/';
 
-import { useGloablSearchModalStore } from './store';
+import { useGlobalSearchModalStore } from './store';
 
 actionController.subscribe('open-search-modal', () => {
-  const { toggleVisible } = useGloablSearchModalStore.getState();
+  const { toggleVisible } = useGlobalSearchModalStore.getState();
 
   toggleVisible();
 

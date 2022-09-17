@@ -12,7 +12,7 @@ export namespace GlobalSearchModalStore {
   }
 }
 
-export const useGloablSearchModalStore = create(
+export const useGlobalSearchModalStore = create(
   immer<GlobalSearchModalStore.State & GlobalSearchModalStore.Actions>(set => ({
     //#region  //*=========== state ===========
     visible: false,
@@ -26,5 +26,5 @@ export const useGloablSearchModalStore = create(
 );
 
 export const useTrackedGlobalSearchModalStore = createTrackedSelector(
-  useGloablSearchModalStore
+  useGlobalSearchModalStore
 );
