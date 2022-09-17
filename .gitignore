@@ -5,11 +5,12 @@ yarn.lock
 yarn-error.log
 .pnpm-debug.log
 
+.yalc
+yalc.lock
+
 .DS_Store
 
 .idea/
 .history/
 
 dist/
-
-
