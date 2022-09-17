@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": false,
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "e2e": "vite --port=3090 | cypress open"
   },
   "dependencies": {},
   "devDependencies": {}

@@ -19,7 +19,7 @@
   "include": [
     "../../packages/ui/src/",
     "../../packages/web/src/",
-    "../../packages/shared/types/",
+    "../../packages/shared/",
     "../../packages/desktop/main.tsx",
     "../../packages/desktop/main/preload/"
   ]
