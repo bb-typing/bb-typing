@@ -28,9 +28,9 @@ function ErrorFallback(): JSX.Element {
   );
 }
 
-function InspectorWrapper({ children }: { children: JSX.Element }): JSX.Element {
-  return import.meta.env.DEV ? <Inspector>{children}</Inspector> : children;
-}
+/* function InspectorWrapper({ children }: { children: JSX.Element }): JSX.Element { */
+/*   return import.meta.env.DEV ? <Inspector>{children}</Inspector> : children; */
+/* } */
 
 export const App = withScopeHotkey('global', function (): JSX.Element {
   return (
@@ -41,19 +41,18 @@ export const App = withScopeHotkey('global', function (): JSX.Element {
         </div>
       }
     >
-      <InspectorWrapper>
-        <MantineProvider withGlobalStyles withNormalizeCSS>
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <QueryClientProvider client={queryClient}>
-              {import.meta.env.DEV && <ReactQueryDevtools />}
-              <Router>
-                <Routes />
-              </Router>
-              <GlobalModal />
-            </QueryClientProvider>
-          </ErrorBoundary>
-        </MantineProvider>
-      </InspectorWrapper>
+      <MantineProvider withGlobalStyles withNormalizeCSS>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <QueryClientProvider client={queryClient}>
+            {import.meta.env.DEV && <ReactQueryDevtools />}
+            {import.meta.env.DEV && <Inspector />}
+            <Router>
+              <Routes />
+            </Router>
+            <GlobalModal />
+          </QueryClientProvider>
+        </ErrorBoundary>
+      </MantineProvider>
     </React.Suspense>
   );
 });
