@@ -28,10 +28,6 @@ function ErrorFallback(): JSX.Element {
   );
 }
 
-/* function InspectorWrapper({ children }: { children: JSX.Element }): JSX.Element { */
-/*   return import.meta.env.DEV ? <Inspector>{children}</Inspector> : children; */
-/* } */
-
 export const App = withScopeHotkey('global', function (): JSX.Element {
   return (
     <React.Suspense

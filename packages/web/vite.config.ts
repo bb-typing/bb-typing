@@ -18,7 +18,7 @@ export default defineConfig({
   plugins: [
     react({
       babel: {
-        // plugins: ['react-activation/babel', ['@babel/plugin-proposal-decorators', { legacy: true }]]
+        plugins: []
       }
     }),
     // https://github.com/pd4d10/vite-plugin-svgr
