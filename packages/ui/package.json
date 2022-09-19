@@ -14,7 +14,6 @@
     "axios": "^0.27.2",
     "clsx": "^1.2.1",
     "immer": "^9.0.12",
-    "mousetrap": "^1.6.5",
     "react-error-boundary": "^3.1.4",
     "react-intl": "^5.24.8",
     "react-query": "^3.39.2",
@@ -23,7 +22,5 @@
     "twind": "^0.16.17",
     "zustand": "^4.1.1"
   },
-  "devDependencies": {
-    "@types/mousetrap": "^1.6.9"
-  }
+  "devDependencies": {}
 }

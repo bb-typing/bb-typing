@@ -1,30 +1,37 @@
-import { defineActionConfig, defineType } from '../helper';
+import { defineType, defineVariables } from '@shared/types/base';
+
+import { defineActionConfig } from '../helper';
+import type { ActionConfigOption } from '../types';
 
 export const globalActionConfigs = defineActionConfig('global', [
-  {
-    name: 'desktop:close-app',
+  defineVariables<ActionConfigOption>()({
+    name: 'desktop:close-app' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win'],
     commands: ['Restart app', '重启应用'],
     description: '重启应用',
     defaultHotkeys: [
       {
-        mac: 'command+r',
-        win: 'ctrl+r'
+        default: {
+          modifierKey: ['Mod'],
+          normalKey: 'r'
+        }
       }
     ],
     __params_type__: defineType<unknown>()
-  },
-  {
-    name: 'open-search-modal',
+  }),
+  defineVariables<ActionConfigOption>()({
+    name: 'open-search-modal' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
     commands: ['Open search modal', '打开搜索框'],
     description: '打开搜索框，输入命令、描述等进行功能调用',
     defaultHotkeys: [
       {
-        win: 'ctrl+shift+p',
-        mac: 'command+shift+p'
+        default: {
+          modifierKey: ['Mod'],
+          normalKey: 'k'
+        }
       }
     ],
     __params_type__: defineType<unknown>()
-  }
-] as const);
+  })
+]);

@@ -1,17 +1,22 @@
-import { defineActionConfig, defineType } from '../helper';
+import { defineType, defineVariables } from '@shared/types/base';
+
+import { defineActionConfig } from '../helper';
+import type { ActionConfigOption } from '../types';
 
 export const layoutActionConfigs = defineActionConfig('layout', [
-  {
-    name: 'sidebar-switch',
+  defineVariables<ActionConfigOption>()({
+    name: 'sidebar-switch' as const,
     supportedPlatforms: ['web:mac', 'web:win', 'desktop:mac', 'desktop:win'],
     commands: ['Switch sidebar mode', '切换侧边栏模式'],
     description: '切换侧边栏模式',
     defaultHotkeys: [
       {
-        mac: 'command+b',
-        win: 'ctrl+b'
+        default: {
+          modifierKey: ['Mod'],
+          normalKey: 'b'
+        }
       }
     ],
     __params_type__: defineType<{ name: string }>()
-  }
-] as const);
+  })
+]);

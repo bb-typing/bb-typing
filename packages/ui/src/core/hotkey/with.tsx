@@ -1,13 +1,15 @@
 import { Platform } from '@ui/utils/platform';
 import { useMount, useUnmount } from 'ahooks';
-import Mousetrap from 'mousetrap';
 import type { JSXElementConstructor, ReactNode } from 'react';
+import { useRef } from 'react';
 import { useMemo } from 'react';
+import type { CallbackOptions } from 'super-hotkey';
+import superHotkey from 'super-hotkey';
 import type { F } from 'ts-toolbelt';
 
 import { filterHotkeyMapByPlatform, filterPlatformHotkeyMapByScope } from './helper';
 import { useHotkeyStore } from './store';
-import type { BaseHotkeyMap, HotkeyInfo, HotkeyPlatform } from './types';
+import type { BaseHotkeyMap, HotkeyContent, HotkeyInfo, HotkeyPlatform } from './types';
 import type { ActionConfigName, ActionConfigScope } from '../action';
 import { actionController } from '../action';
 
@@ -45,27 +47,48 @@ export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
   };
 }
 
-type HotkeyWrapperConfigs = Array<{ hotkeys: string[]; handler: F.Function }>;
+export function destroyHotkey(actionName: string, hotkeyContent: HotkeyContent) {
+  superHotkey.unbindCallback(hotkeyContent, {
+    id: actionName
+  });
+}
+
+type HotkeyWrapperConfigs = Array<{ hotkeys: HotkeyContent[]; handler: F.Function }>;
 
 function HotKeyWrapper(props: {
   children: ReactNode;
   configs: HotkeyWrapperConfigs;
 }): JSX.Element {
+  const wrapperElementRef = useRef<HTMLDivElement>(null);
+
   useMount(bindHotkey);
 
   useUnmount(unbindHotkey);
 
-  return <>{props.children}</>;
+  return (
+    <div tabIndex={1} ref={wrapperElementRef}>
+      {props.children}
+    </div>
+  );
 
   function bindHotkey() {
     props.configs.forEach(config => {
-      Mousetrap.bind(config.hotkeys, config.handler);
+      superHotkey.bindCallback(config.hotkeys, {
+        callback: config.handler,
+        trigger: {
+          allowRepeatWhenLongPress: false
+        },
+        targetElement: wrapperElementRef.current!
+      });
     });
   }
 
   function unbindHotkey() {
     props.configs.forEach(config => {
-      Mousetrap.unbind(config.hotkeys);
+      superHotkey.unbindCallback(config.hotkeys, {
+        callback: config.handler,
+        targetElement: wrapperElementRef.current!
+      });
     });
   }
 }
@@ -86,8 +109,8 @@ function converToHotkeyConfigs(
     );
 
     Object.entries(scopePlatformHotkeyMap).forEach(([actionName, hotkeyInfos]) => {
-      hotkeyInfos.forEach(keyInfo => {
-        if (isUsableHotkey(keyInfo)) {
+      hotkeyInfos.forEach(hotkeyInfo => {
+        if (isUsableHotkey(hotkeyInfo)) {
           configsResult.push({
             handler: getHotkeyHandler(actionName as ActionConfigName),
             hotkeys: hotkeyInfos.map(item => item.hotkeyContent)
@@ -99,13 +122,10 @@ function converToHotkeyConfigs(
 
   return configsResult;
 
-  type MousetrapBindCallback = Parameters<Mousetrap.MousetrapStatic['bind']>[1];
-  function getHotkeyHandler(actionName: ActionConfigName): MousetrapBindCallback {
+  function getHotkeyHandler(actionName: ActionConfigName): CallbackOptions['callback'] {
     // TODO: 此处的 hotkey-callback 暂先这样，如有需要再设计
     return event => {
-      actionController.emit(actionName);
-
-      return false;
+      (actionController as any).emit(actionName);
     };
   }
 

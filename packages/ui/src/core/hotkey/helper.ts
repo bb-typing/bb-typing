@@ -50,20 +50,20 @@ type ScopePlatformHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>
 export function filterHotkeyMapByPlatform(
   hotkeyMap: BaseHotkeyMap,
   targetPlatform: Exclude<HotkeyPlatform, 'default'> | undefined,
-  incldueDefaultPlatform = true
+  includeDefaultPlatform = true
 ): PlatformHotkeyMap {
   const filteredResult: PlatformHotkeyMap = {} as any;
 
   Object.entries(hotkeyMap).forEach(([actionName, platformHotInfoMap]) => {
     if (platformHotInfoMap) {
-      Object.entries(platformHotInfoMap).forEach(([_platform, hotkeyInfns]) => {
+      Object.entries(platformHotInfoMap).forEach(([_platform, hotkeyInfos]) => {
         const platform = _platform as HotkeyPlatform;
 
         if (
           platform === targetPlatform ||
-          (incldueDefaultPlatform && platform === 'default')
+          (includeDefaultPlatform && platform === 'default')
         ) {
-          filteredResult[actionName] = hotkeyInfns;
+          filteredResult[actionName] = hotkeyInfos;
         }
       });
     }

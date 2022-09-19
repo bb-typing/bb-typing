@@ -1,9 +1,11 @@
+import type { CommonHotkeyObject } from 'super-hotkey';
+
 import type { ActionConfigName, ActionConfigScope } from '../action';
 import type { ActionConfigOption } from '../action/types';
 
 export type HotkeyPlatform = 'win' | 'mac' | 'default';
 
-type HotkeyContent = string;
+export type HotkeyContent = CommonHotkeyObject;
 
 export type DefaultHotkeys = ReadonlyArray<
   Partial<Record<HotkeyPlatform, HotkeyContent>>
