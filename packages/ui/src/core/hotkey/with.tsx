@@ -13,9 +13,17 @@ import type { BaseHotkeyMap, HotkeyContent, HotkeyInfo, HotkeyPlatform } from '.
 import type { ActionConfigName, ActionConfigScope } from '../action';
 import { actionController } from '../action';
 
+interface WithHotkeyOptions {
+  /**
+   * @default 'wrapper'
+   */
+  scopeElementType?: 'root' | 'wrapper';
+}
+
 export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
   scope: ActionConfigScope,
-  Component: JSXElementConstructor<P>
+  Component: JSXElementConstructor<P>,
+  options?: WithHotkeyOptions
 ): JSXElementConstructor<P> {
   return function (props) {
     const { defaultHotkeyMap, localHotkeyMap, userHotkeyMap } = useHotkeyStore();
@@ -40,7 +48,7 @@ export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
     }, [defaultHotkeyMap, localHotkeyMap, userHotkeyMap]);
 
     return (
-      <HotKeyWrapper configs={hotkeyConfigs}>
+      <HotKeyWrapper configs={hotkeyConfigs} {...options}>
         <Component {...props} />
       </HotKeyWrapper>
     );
@@ -55,41 +63,51 @@ export function destroyHotkey(actionName: string, hotkeyContent: HotkeyContent) 
 
 type HotkeyWrapperConfigs = Array<{ hotkeys: HotkeyContent[]; handler: F.Function }>;
 
-function HotKeyWrapper(props: {
-  children: ReactNode;
-  configs: HotkeyWrapperConfigs;
-}): JSX.Element {
+function HotKeyWrapper(
+  props: {
+    children: ReactNode;
+    configs: HotkeyWrapperConfigs;
+  } & WithHotkeyOptions
+): JSX.Element {
+  const { scopeElementType = 'wrapper', children, configs } = props;
   const wrapperElementRef = useRef<HTMLDivElement>(null);
 
   useMount(bindHotkey);
 
   useUnmount(unbindHotkey);
 
-  return (
+  return scopeElementType === 'wrapper' ? (
     <div tabIndex={1} ref={wrapperElementRef}>
-      {props.children}
+      {children}
     </div>
+  ) : (
+    <> {children}</>
   );
 
   function bindHotkey() {
-    props.configs.forEach(config => {
+    configs.forEach(config => {
       superHotkey.bindCallback(config.hotkeys, {
         callback: config.handler,
         trigger: {
-          allowRepeatWhenLongPress: false
+          allowRepeatWhenLongPress: false,
+          capture: false
         },
-        targetElement: wrapperElementRef.current!
+        targetElement: getTargetElement()
       });
     });
   }
 
   function unbindHotkey() {
-    props.configs.forEach(config => {
+    configs.forEach(config => {
       superHotkey.unbindCallback(config.hotkeys, {
         callback: config.handler,
-        targetElement: wrapperElementRef.current!
+        targetElement: getTargetElement()
       });
     });
+  }
+
+  function getTargetElement() {
+    return scopeElementType === 'root' ? document : wrapperElementRef.current!;
   }
 }
 

@@ -11,8 +11,6 @@ export type DefaultHotkeys = ReadonlyArray<
   Partial<Record<HotkeyPlatform, HotkeyContent>>
 >;
 
-//#region  //*=========== store ===========
-
 export interface HotkeyInfo {
   supportedPlatforms: ActionConfigOption['supportedPlatforms'];
   hotkeyContent: HotkeyContent;
@@ -23,6 +21,8 @@ export interface HotkeyInfo {
 export type BaseHotkeyMap = Partial<
   Record<ActionConfigName | AnyString, Partial<Record<HotkeyPlatform, HotkeyInfo[]>>>
 >;
+
+//#region  //*=========== store ===========
 
 export interface HotkeyStoreState {
   defaultHotkeyMap: BaseHotkeyMap;

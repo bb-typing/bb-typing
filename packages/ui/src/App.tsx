@@ -28,27 +28,31 @@ function ErrorFallback(): JSX.Element {
   );
 }
 
-export const App = withScopeHotkey('global', function (): JSX.Element {
-  return (
-    <React.Suspense
-      fallback={
-        <div className={tw`flex items-center justify-center w-screen h-screen`}>
-          <LoadingOverlay visible overlayBlur={2} />
-        </div>
-      }
-    >
-      <MantineProvider withGlobalStyles withNormalizeCSS>
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
-          <QueryClientProvider client={queryClient}>
-            {import.meta.env.DEV && <ReactQueryDevtools />}
-            {import.meta.env.DEV && <Inspector />}
-            <Router>
-              <Routes />
-            </Router>
-            <GlobalModal />
-          </QueryClientProvider>
-        </ErrorBoundary>
-      </MantineProvider>
-    </React.Suspense>
-  );
-});
+export const App = withScopeHotkey(
+  'global',
+  function (): JSX.Element {
+    return (
+      <React.Suspense
+        fallback={
+          <div className={tw`flex items-center justify-center w-screen h-screen`}>
+            <LoadingOverlay visible overlayBlur={2} />
+          </div>
+        }
+      >
+        <MantineProvider withGlobalStyles withNormalizeCSS>
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <QueryClientProvider client={queryClient}>
+              {import.meta.env.DEV && <ReactQueryDevtools />}
+              {import.meta.env.DEV && <Inspector />}
+              <Router>
+                <Routes />
+              </Router>
+              <GlobalModal />
+            </QueryClientProvider>
+          </ErrorBoundary>
+        </MantineProvider>
+      </React.Suspense>
+    );
+  },
+  { scopeElementType: 'root' }
+);
