@@ -6,11 +6,13 @@ import { useMemo } from 'react';
 import type { CallbackOptions } from 'super-hotkey';
 import superHotkey from 'super-hotkey';
 import type { F } from 'ts-toolbelt';
+import { I } from 'ts-toolbelt';
 
-import { filterHotkeyMapByPlatform, filterPlatformHotkeyMapByScope } from './helper';
 import { useHotkeyStore } from './store';
 import type { BaseHotkeyMap, HotkeyContent, HotkeyInfo, HotkeyPlatform } from './types';
+import { filterHotkeyMapByPlatform, filterPlatformHotkeyMapByScope } from './utils';
 import type { ActionConfigName, ActionConfigScope } from '../action';
+import { useActionStore } from '../action';
 import { actionController } from '../action';
 
 interface WithHotkeyOptions {
@@ -48,7 +50,7 @@ export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
     }, [defaultHotkeyMap, localHotkeyMap, userHotkeyMap]);
 
     return (
-      <HotKeyWrapper configs={hotkeyConfigs} {...options}>
+      <HotKeyWrapper configs={hotkeyConfigs} {...options} scope={scope}>
         <Component {...props} />
       </HotKeyWrapper>
     );
@@ -67,24 +69,16 @@ function HotKeyWrapper(
   props: {
     children: ReactNode;
     configs: HotkeyWrapperConfigs;
+    scope: ActionConfigScope;
   } & WithHotkeyOptions
 ): JSX.Element {
-  const { scopeElementType = 'wrapper', children, configs } = props;
+  const { scopeElementType = 'wrapper', children, configs, scope } = props;
   const wrapperElementRef = useRef<HTMLDivElement>(null);
+  const getTargetElement = () => {
+    return scopeElementType === 'root' ? document : wrapperElementRef.current!;
+  };
 
-  useMount(bindHotkey);
-
-  useUnmount(unbindHotkey);
-
-  return scopeElementType === 'wrapper' ? (
-    <div tabIndex={1} ref={wrapperElementRef}>
-      {children}
-    </div>
-  ) : (
-    <> {children}</>
-  );
-
-  function bindHotkey() {
+  useMount(function bindHotkey() {
     configs.forEach(config => {
       superHotkey.bindCallback(config.hotkeys, {
         callback: config.handler,
@@ -95,20 +89,32 @@ function HotKeyWrapper(
         targetElement: getTargetElement()
       });
     });
-  }
+  });
 
-  function unbindHotkey() {
+  useMount(function addActiveScope() {
+    useActionStore.getState().addActiveScope(scope);
+  });
+
+  useUnmount(function unbindHotkey() {
     configs.forEach(config => {
       superHotkey.unbindCallback(config.hotkeys, {
         callback: config.handler,
         targetElement: getTargetElement()
       });
     });
-  }
+  });
 
-  function getTargetElement() {
-    return scopeElementType === 'root' ? document : wrapperElementRef.current!;
-  }
+  useUnmount(function delActiveScope() {
+    useActionStore.getState().delActiveScope(scope);
+  });
+
+  return scopeElementType === 'wrapper' ? (
+    <div tabIndex={1} ref={wrapperElementRef}>
+      {children}
+    </div>
+  ) : (
+    <> {children}</>
+  );
 }
 
 function converToHotkeyConfigs(

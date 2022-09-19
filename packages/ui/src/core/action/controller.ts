@@ -19,8 +19,6 @@ export class ActionController {
     name: Name,
     ...args: Equal<Params, unknown> extends true ? [] : [params: Params]
   ): void {
-    // console.log('呵呵哒，开始发射了', name);
-
     this.eventBus.emit(name as any, (args as any)?.[0]);
   }
 
@@ -33,18 +31,8 @@ export class ActionController {
       ...args: Equal<Params, unknown> extends true ? [] : [params: Params]
     ) => void
   ) {
-    // console.log('呵呵哒，开始订阅了', name);
-
     this.eventBus.on(name, handler as any);
   }
 }
 
 export const actionController = new ActionController();
-
-// actionController.emit('sidebar-switch', { name: '有一种悲伤，是你的名字停留在我的过往' });
-
-// actionController.emit('desktop:close-app');
-
-// actionController.subscribe('sidebar-switch', params => {});
-
-// actionController.subscribe('desktop:close-app', () => {});

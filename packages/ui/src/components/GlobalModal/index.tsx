@@ -1,11 +1,11 @@
-import GlobalSearch from './GlobalSearch';
+import CommandMenu from './CommandMenu';
 
 interface GlobalModalProps {}
 
 function GlobalModal(props: GlobalModalProps): JSX.Element {
   return (
     <>
-      <GlobalSearch />
+      <CommandMenu />
     </>
   );
 }

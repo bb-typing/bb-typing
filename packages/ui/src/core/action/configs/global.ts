@@ -1,7 +1,7 @@
 import { defineType, defineVariables } from '@shared/types/base';
 
-import { defineActionConfig } from '../helper';
 import type { ActionConfigOption } from '../types';
+import { defineActionConfig } from '../utils';
 
 export const globalActionConfigs = defineActionConfig('global', [
   defineVariables<ActionConfigOption>()({

@@ -9,6 +9,7 @@
     "@emotion/react": "^11.10.4",
     "@mantine/core": "^5.3.2",
     "@mantine/hooks": "^5.3.2",
+    "@mantine/spotlight": "^5.4.0",
     "@mimi-utils/super-status-box": "^0.0.1",
     "ahooks": "^3.7.1",
     "axios": "^0.27.2",

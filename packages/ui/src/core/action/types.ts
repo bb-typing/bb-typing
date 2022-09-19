@@ -6,8 +6,8 @@ import type { DefaultHotkeys } from '../hotkey';
 
 export interface ActionConfigOption {
   name: `${PlatformName}:${string}` | (string & {});
-  supportedPlatforms: readonly PlatformName[];
-  commands: readonly [enCommand: string, zhCommand: string];
+  supportedPlatforms: PlatformName[];
+  commands: [enCommand: string, zhCommand: string];
   defaultHotkeys?: DefaultHotkeys;
   description: string;
   __params_type__?: any;
@@ -48,6 +48,7 @@ export interface ActionStoreState {
 
 export interface ActionStoreActions {
   addActiveScope: (scope: ActionConfigScope) => void;
+  delActiveScope: (scope: ActionConfigScope) => void;
 }
 
 //#endregion  //*======== store ===========

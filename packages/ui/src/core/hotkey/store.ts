@@ -4,8 +4,8 @@ import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { defaultHotkeysInitializer } from './helper';
 import type { HotkeyStoreActions, HotkeyStoreState } from './types';
+import { defaultHotkeysInitializer } from './utils';
 
 type Store = HotkeyStoreState & HotkeyStoreActions;
 
