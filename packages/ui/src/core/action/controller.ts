@@ -17,7 +17,7 @@ export class ActionController {
     Params extends ActionNameParamsMap[Name] = ActionNameParamsMap[Name]
   >(
     name: Name,
-    ...args: Equal<Params, unknown> extends true ? [] : [params: Params]
+    ...args: Equal<Params, unknown> extends true ? [] : [params?: Params]
   ): void {
     this.eventBus.emit(name as any, (args as any)?.[0]);
   }
