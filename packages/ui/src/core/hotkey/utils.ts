@@ -1,6 +1,6 @@
 import type {
+  BaseHotkeyInfo,
   BaseHotkeyMap,
-  HotkeyInfo,
   HotkeyPlatform,
   HotkeyStoreState
 } from './types';
@@ -18,6 +18,8 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
     configs.forEach(config => {
       const actionName = config.name;
 
+      if (!('defaultHotkeys' in config)) return;
+
       config.defaultHotkeys.forEach(hotkeyMap => {
         Object.entries(hotkeyMap).forEach(([platform, hotkeyContent]) => {
           defaultHotkeys[actionName] = {
@@ -28,7 +30,7 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
                 scope,
                 status: 'enable',
                 supportedPlatforms: config.supportedPlatforms
-              } as HotkeyInfo
+              } as BaseHotkeyInfo
             ]
           };
         });
@@ -42,9 +44,9 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
 //#region  //*=========== filter ===========
 // type ActionNameHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>;
 
-type PlatformHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>;
+type PlatformHotkeyMap = Record<ActionConfigName | AnyString, BaseHotkeyInfo[]>;
 
-type ScopePlatformHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>;
+type ScopePlatformHotkeyMap = Record<ActionConfigName | AnyString, BaseHotkeyInfo[]>;
 
 /** 根据「平台」过滤出「热键对象」 */
 export function filterHotkeyMapByPlatform(

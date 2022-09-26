@@ -1,4 +1,11 @@
-import { clsx, Group, Text, UnstyledButton, useMantineTheme } from '@mantine/core';
+import {
+  clsx,
+  Group,
+  Highlight,
+  Text,
+  UnstyledButton,
+  useMantineTheme
+} from '@mantine/core';
 import type { SpotlightAction } from '@mantine/spotlight';
 import { SpotlightProvider } from '@mantine/spotlight';
 import type { InnerSpotlightProps } from '@mantine/spotlight/lib/Spotlight/Spotlight';
@@ -55,11 +62,15 @@ function CommandMenu(props: CommandMenuProps): JSX.Element {
       >
         <Group noWrap>
           <div className={tw`flex-1`}>
-            <Text>{action.title}</Text>
+            <Highlight highlight={query} weight={500}>
+              {action.title}
+            </Highlight>
 
             {action.description && (
               <Text color="dimmed" size="xs">
-                {action.description}
+                <Highlight highlight={query} weight={500}>
+                  {action.description}
+                </Highlight>
               </Text>
             )}
           </div>

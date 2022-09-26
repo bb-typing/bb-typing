@@ -33,5 +33,12 @@ export const globalActionConfigs = defineActionConfig('global', [
       }
     ],
     __params_type__: defineType<unknown>()
+  }),
+  defineVariables<ActionConfigOption>()({
+    name: 'open-keyboard-shortcuts' as const,
+    supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
+    commands: ['Open Keyboard Shortcuts', '打开快捷键配置'],
+    /* description: '打开快捷键配置页', */
+    __params_type__: defineType<unknown>()
   })
 ]);

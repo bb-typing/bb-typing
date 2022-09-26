@@ -11,7 +11,7 @@ export type DefaultHotkeys = ReadonlyArray<
   Partial<Record<HotkeyPlatform, HotkeyContent>>
 >;
 
-export interface HotkeyInfo {
+export interface BaseHotkeyInfo {
   supportedPlatforms: ActionConfigOption['supportedPlatforms'];
   hotkeyContent: HotkeyContent;
   scope: ActionConfigScope;
@@ -19,17 +19,26 @@ export interface HotkeyInfo {
 }
 
 export type BaseHotkeyMap = Partial<
-  Record<ActionConfigName | AnyString, Partial<Record<HotkeyPlatform, HotkeyInfo[]>>>
+  Record<ActionConfigName | AnyString, Partial<Record<HotkeyPlatform, BaseHotkeyInfo[]>>>
+>;
+
+export interface UserHotkeyInfo extends BaseHotkeyInfo {
+  updateTime: number;
+}
+
+type UserHotkeyMap = Partial<
+  Record<ActionConfigName | AnyString, Partial<Record<HotkeyPlatform, UserHotkeyInfo[]>>>
 >;
 
 //#region  //*=========== store ===========
 
 export interface HotkeyStoreState {
   defaultHotkeyMap: BaseHotkeyMap;
-  localHotkeyMap: BaseHotkeyMap;
-  userHotkeyMap: BaseHotkeyMap;
+  userHotkeyMap: UserHotkeyMap;
 }
 
-export interface HotkeyStoreActions {}
+export interface HotkeyStoreActions {
+  setUserHotkeyMap: (value: HotkeyStoreState['userHotkeyMap']) => void;
+}
 
 //#endregion  //*======== store ===========

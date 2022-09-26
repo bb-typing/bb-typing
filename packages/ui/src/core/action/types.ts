@@ -9,7 +9,7 @@ export interface ActionConfigOption {
   supportedPlatforms: PlatformName[];
   commands: [enCommand: string, zhCommand: string];
   defaultHotkeys?: DefaultHotkeys;
-  description: string;
+  description?: string;
   __params_type__?: any;
 }
 

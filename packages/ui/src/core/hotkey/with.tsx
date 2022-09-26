@@ -1,6 +1,7 @@
 import { Platform } from '@ui/utils/platform';
-import { useMount, useUnmount } from 'ahooks';
+import { useMount, useUnmount, useUpdate } from 'ahooks';
 import type { JSXElementConstructor, ReactNode } from 'react';
+import { useEffect } from 'react';
 import { useRef } from 'react';
 import { useMemo } from 'react';
 import type { CallbackOptions } from 'super-hotkey';
@@ -9,7 +10,12 @@ import type { F } from 'ts-toolbelt';
 import { I } from 'ts-toolbelt';
 
 import { useHotkeyStore } from './store';
-import type { BaseHotkeyMap, HotkeyContent, HotkeyInfo, HotkeyPlatform } from './types';
+import type {
+  BaseHotkeyInfo,
+  BaseHotkeyMap,
+  HotkeyContent,
+  HotkeyPlatform
+} from './types';
 import { filterHotkeyMapByPlatform, filterPlatformHotkeyMapByScope } from './utils';
 import type { ActionConfigName, ActionConfigScope } from '../action';
 import { useActionStore } from '../action';
@@ -28,10 +34,10 @@ export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
   options?: WithHotkeyOptions
 ): JSXElementConstructor<P> {
   return function (props) {
-    const { defaultHotkeyMap, localHotkeyMap, userHotkeyMap } = useHotkeyStore();
+    const { defaultHotkeyMap, userHotkeyMap } = useHotkeyStore();
 
     const hotkeyConfigs = useMemo(() => {
-      return converToHotkeyConfigs([defaultHotkeyMap, localHotkeyMap, userHotkeyMap], {
+      return converToHotkeyConfigs([defaultHotkeyMap, userHotkeyMap], {
         hotkeyPlatform: filterHotkeyPlatform(),
         scope
       });
@@ -47,7 +53,7 @@ export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
             return 'mac';
         }
       }
-    }, [defaultHotkeyMap, localHotkeyMap, userHotkeyMap]);
+    }, [defaultHotkeyMap, userHotkeyMap]);
 
     return (
       <HotKeyWrapper configs={hotkeyConfigs} {...options} scope={scope}>
@@ -74,34 +80,16 @@ function HotKeyWrapper(
 ): JSX.Element {
   const { scopeElementType = 'wrapper', children, configs, scope } = props;
   const wrapperElementRef = useRef<HTMLDivElement>(null);
-  const getTargetElement = () => {
-    return scopeElementType === 'root' ? document : wrapperElementRef.current!;
-  };
 
-  useMount(function bindHotkey() {
-    configs.forEach(config => {
-      superHotkey.bindCallback(config.hotkeys, {
-        callback: config.handler,
-        trigger: {
-          allowRepeatWhenLongPress: false,
-          capture: false
-        },
-        targetElement: getTargetElement()
-      });
-    });
-  });
+  useEffect(() => {
+    unbindHotkey();
+    bindHotkey();
+
+    return unbindHotkey;
+  }, [configs]);
 
   useMount(function addActiveScope() {
     useActionStore.getState().addActiveScope(scope);
-  });
-
-  useUnmount(function unbindHotkey() {
-    configs.forEach(config => {
-      superHotkey.unbindCallback(config.hotkeys, {
-        callback: config.handler,
-        targetElement: getTargetElement()
-      });
-    });
   });
 
   useUnmount(function delActiveScope() {
@@ -115,6 +103,32 @@ function HotKeyWrapper(
   ) : (
     <> {children}</>
   );
+
+  function bindHotkey() {
+    configs.forEach(config => {
+      superHotkey.bindCallback(config.hotkeys, {
+        callback: config.handler,
+        trigger: {
+          allowRepeatWhenLongPress: false,
+          capture: false
+        },
+        targetElement: getTargetElement()
+      });
+    });
+  }
+
+  function unbindHotkey() {
+    configs.forEach(config => {
+      superHotkey.unbindCallback(config.hotkeys, {
+        callback: config.handler,
+        targetElement: getTargetElement()
+      });
+    });
+  }
+
+  function getTargetElement() {
+    return scopeElementType === 'root' ? document : wrapperElementRef.current!;
+  }
 }
 
 function converToHotkeyConfigs(
@@ -153,7 +167,7 @@ function converToHotkeyConfigs(
     };
   }
 
-  function isUsableHotkey(hotkeyInfo: HotkeyInfo): boolean {
+  function isUsableHotkey(hotkeyInfo: BaseHotkeyInfo): boolean {
     const isSupportCurrentPlatform = hotkeyInfo.supportedPlatforms.includes(Platform.OS);
     const isEnableStatus = hotkeyInfo.status === 'enable';
 

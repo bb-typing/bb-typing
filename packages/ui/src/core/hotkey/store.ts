@@ -17,20 +17,21 @@ export const useHotkeyStore = create<
     immer(set => ({
       //#region  //*=========== state ===========
       defaultHotkeyMap: defaultHotkeysInitializer(),
-      localHotkeyMap: {},
-      userHotkeyMap: {}
+      userHotkeyMap: {},
       //#endregion  //*======== state ===========
       //#region  //*=========== action ===========
+
+      setUserHotkeyMap: userHotkeyMap =>
+        set(state => {
+          state.userHotkeyMap = userHotkeyMap;
+        })
 
       //#endregion  //*======== action ===========
     })),
     {
       name: 'bb-store-hotkey',
       partialize: state =>
-        _.pick<any, keyof HotkeyStoreState>(state, [
-          'localHotkeyMap',
-          'userHotkeyMap'
-        ]) as any
+        _.pick<any, keyof HotkeyStoreState>(state, ['userHotkeyMap']) as any
     }
   )
 );
