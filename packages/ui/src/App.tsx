@@ -4,14 +4,13 @@ import { Inspector } from 'react-dev-inspector';
 import { ErrorBoundary } from 'react-error-boundary';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { BrowserRouter as Router } from 'react-router-dom';
 import { tw } from 'twind';
 
 import './styles/global.css';
 
 import GlobalModal from './components/GlobalModal';
 import { withScopeHotkey } from './core/hotkey';
-import Routes from './Routes';
+import { appHistory, CustomRouter, Routes } from './router';
 import { queryClient } from './utils/libs/react-query';
 
 function ErrorFallback(): JSX.Element {
@@ -44,9 +43,9 @@ export const App = withScopeHotkey(
             <QueryClientProvider client={queryClient}>
               {import.meta.env.DEV && <ReactQueryDevtools />}
               {import.meta.env.DEV && <Inspector />}
-              <Router>
+              <CustomRouter history={appHistory}>
                 <Routes />
-              </Router>
+              </CustomRouter>
               <GlobalModal />
             </QueryClientProvider>
           </ErrorBoundary>

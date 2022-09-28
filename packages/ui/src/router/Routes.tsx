@@ -1,8 +1,8 @@
 import Welcome from '@ui/components/Welcome';
 import { useRoutes } from 'react-router-dom';
 
-import AppLayout from './components/AppLayout/';
-import SettingRoutes from './features/setting/Routes';
+import AppLayout from '../components/AppLayout';
+import SettingRoutes from '../features/setting/Routes';
 
 function Routes(): JSX.Element {
   const element = useRoutes([
