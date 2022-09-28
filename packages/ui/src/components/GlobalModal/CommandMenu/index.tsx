@@ -20,13 +20,49 @@ import { TablerSearch } from './svg';
 
 interface CommandMenuProps {}
 
+const ActionComponent: InnerSpotlightProps['actionComponent'] = props => {
+  const { action, onTrigger, hovered, query, ...others } = props;
+  const theme = useMantineTheme();
+
+  return (
+    <UnstyledButton
+      className={clsx(
+        tw`relative block w-full px-[12px] py-[10px] rounded-[${theme.radius.sm}]`,
+        hovered &&
+          tw`bg-[${
+            theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[1]
+          }]`
+      )}
+      tabIndex={-1}
+      onMouseDown={(event: any) => event.preventDefault()}
+      onClick={onTrigger}
+      {...others}
+    >
+      <Group noWrap>
+        <div className={tw`flex-1`}>
+          <Highlight highlight={query} weight={500}>
+            {action.title}
+          </Highlight>
+
+          {action.description && (
+            <Text color="dimmed" size="xs">
+              <Highlight highlight={query} weight={500}>
+                {action.description}
+              </Highlight>
+            </Text>
+          )}
+        </div>
+      </Group>
+    </UnstyledButton>
+  );
+};
+
 function CommandMenu(props: CommandMenuProps): JSX.Element {
   const { activeScopes } = useTrackedActionStore();
-  const theme = useMantineTheme();
 
   const spotlightActions: SpotlightAction[] = useMemo(() => {
     const usableActions = filterUsableActionsByActiveScope(activeScopes, {
-      ignoreActionNames: ['open-search-modal']
+      ignoreActionNames: ['system:open-search-modal']
     });
 
     return usableActions.map(
@@ -43,51 +79,16 @@ function CommandMenu(props: CommandMenuProps): JSX.Element {
     );
   }, [activeScopes]);
 
-  const ActionComponent: InnerSpotlightProps['actionComponent'] = props => {
-    const { action, onTrigger, hovered, query, ...others } = props;
-
-    return (
-      <UnstyledButton
-        className={clsx(
-          tw`relative block w-full px-[12px] py-[10px] rounded-[${theme.radius.sm}]`,
-          hovered &&
-            tw`bg-[${
-              theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[1]
-            }]`
-        )}
-        tabIndex={-1}
-        onMouseDown={(event: any) => event.preventDefault()}
-        onClick={onTrigger}
-        {...others}
-      >
-        <Group noWrap>
-          <div className={tw`flex-1`}>
-            <Highlight highlight={query} weight={500}>
-              {action.title}
-            </Highlight>
-
-            {action.description && (
-              <Text color="dimmed" size="xs">
-                <Highlight highlight={query} weight={500}>
-                  {action.description}
-                </Highlight>
-              </Text>
-            )}
-          </div>
-        </Group>
-      </UnstyledButton>
-    );
-  };
-
   return (
     <SpotlightProvider
       actions={spotlightActions}
       searchIcon={<TablerSearch fontSize={18} />}
       searchPlaceholder="搜索页面或功能命令..."
-      actionComponent={ActionComponent}
-      actionsWrapperComponent={({ children }) => {
-        return <div className={tw``}>{children}</div>;
-      }}
+      highlightQuery
+      // actionComponent={ActionComponent}
+      // actionsWrapperComponent={({ children }) => {
+      //   return <div className={tw``}>{children}</div>;
+      // }}
       limit={999}
       shortcut={null}
       nothingFoundMessage="没有找到相关的命令"

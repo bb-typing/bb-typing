@@ -5,7 +5,7 @@ import { defineActionConfig } from '../utils';
 
 export const globalActionConfigs = defineActionConfig('global', [
   defineVariables<ActionConfigOption>()({
-    name: 'desktop:close-app' as const,
+    name: 'system:desktop:close-app' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win'],
     commands: ['Restart app', '重启应用'],
     description: '重启应用',
@@ -20,9 +20,9 @@ export const globalActionConfigs = defineActionConfig('global', [
     __params_type__: defineType<unknown>()
   }),
   defineVariables<ActionConfigOption>()({
-    name: 'open-search-modal' as const,
+    name: 'system:open-search-modal' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
-    commands: ['Open search modal', '打开搜索框'],
+    commands: ['System: Open search modal', '系统：打开搜索框'],
     description: '打开搜索框，输入命令、描述等进行功能调用',
     defaultHotkeys: [
       {
@@ -35,10 +35,23 @@ export const globalActionConfigs = defineActionConfig('global', [
     __params_type__: defineType<unknown>()
   }),
   defineVariables<ActionConfigOption>()({
-    name: 'open-keyboard-shortcuts' as const,
+    name: 'system:switch-theme-color' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
-    commands: ['Open Keyboard Shortcuts', '打开快捷键配置'],
-    /* description: '打开快捷键配置页', */
+    commands: ['System: Switch Theme Color', '系统：切换主题色'],
+    defaultHotkeys: [
+      {
+        default: {
+          modifierKey: ['Mod'],
+          normalKey: 'j'
+        }
+      }
+    ],
+    __params_type__: defineType<unknown>()
+  }),
+  defineVariables<ActionConfigOption>()({
+    name: 'navigation:open-keyboard-shortcuts' as const,
+    supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
+    commands: ['Navigation: Open Keyboard Shortcuts', '导航：打开快捷键配置'],
     __params_type__: defineType<unknown>()
   })
 ]);

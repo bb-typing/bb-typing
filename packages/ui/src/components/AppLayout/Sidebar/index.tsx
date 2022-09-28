@@ -4,12 +4,12 @@ import { useTrackedAppLayoutStore } from '@ui/stores/app-layout';
 import React from 'react';
 import { tw } from 'twind';
 
-import { menuData } from './core/menu-data';
+import { menuData } from './menu-data';
 import {
   IcRoundFormatIndentDecrease,
   IcSharpFormatIndentIncrease,
   MaterialSymbolsSwipeLeftSharp
-} from './core/svg';
+} from './svg';
 
 function AppLayoutSidebar(): JSX.Element {
   const { sidebarFoldStatus, setSidebarFoldStatus } = useTrackedAppLayoutStore();

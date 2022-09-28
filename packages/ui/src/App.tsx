@@ -1,4 +1,10 @@
-import { Button, LoadingOverlay, MantineProvider } from '@mantine/core';
+import type { ColorScheme } from '@mantine/core';
+import {
+  Button,
+  ColorSchemeProvider,
+  LoadingOverlay,
+  MantineProvider
+} from '@mantine/core';
 import * as React from 'react';
 import { Inspector } from 'react-dev-inspector';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -30,6 +36,10 @@ function ErrorFallback(): JSX.Element {
 export const App = withScopeHotkey(
   'global',
   function (): JSX.Element {
+    const [colorScheme, setColorScheme] = React.useState<ColorScheme>('light');
+    const toggleColorScheme = (value?: ColorScheme) =>
+      setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+
     return (
       <React.Suspense
         fallback={
@@ -38,18 +48,23 @@ export const App = withScopeHotkey(
           </div>
         }
       >
-        <MantineProvider withGlobalStyles withNormalizeCSS>
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <QueryClientProvider client={queryClient}>
-              {import.meta.env.DEV && <ReactQueryDevtools />}
-              {import.meta.env.DEV && <Inspector />}
-              <CustomRouter history={appHistory}>
-                <Routes />
-              </CustomRouter>
-              <GlobalModal />
-            </QueryClientProvider>
-          </ErrorBoundary>
-        </MantineProvider>
+        <ColorSchemeProvider
+          colorScheme={colorScheme}
+          toggleColorScheme={toggleColorScheme}
+        >
+          <MantineProvider withGlobalStyles withNormalizeCSS>
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <QueryClientProvider client={queryClient}>
+                {import.meta.env.DEV && <ReactQueryDevtools />}
+                {import.meta.env.DEV && <Inspector />}
+                <CustomRouter history={appHistory}>
+                  <Routes />
+                </CustomRouter>
+                <GlobalModal />
+              </QueryClientProvider>
+            </ErrorBoundary>
+          </MantineProvider>
+        </ColorSchemeProvider>
       </React.Suspense>
     );
   },
