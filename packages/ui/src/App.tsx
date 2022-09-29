@@ -51,7 +51,7 @@ export const App = withScopeHotkey(
           colorScheme={colorScheme}
           toggleColorScheme={useThemeStore.getState().toggleColorScheme}
         >
-          <MantineProvider withGlobalStyles withNormalizeCSS>
+          <MantineProvider withGlobalStyles withNormalizeCSS theme={{ colorScheme }}>
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <QueryClientProvider client={queryClient}>
                 {import.meta.env.DEV && <ReactQueryDevtools />}

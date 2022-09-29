@@ -92,7 +92,7 @@ function CommandMenu(props: CommandMenuProps): JSX.Element {
       limit={999}
       shortcut={null}
       nothingFoundMessage="没有找到相关的命令"
-    ></SpotlightProvider>
+    />
   );
 }
 
