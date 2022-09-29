@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { createTrackedSelector } from 'react-tracked';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -14,7 +13,7 @@ type Store = SystemStoreState & SystemStoreActions;
 
 export const useSystemStore = create<
   Store,
-  [['zustand/persist', Store], ['zustand/immer', Store]]
+  [['zustand/persist', Partial<SystemStoreState>], ['zustand/immer', Store]]
 >(
   persist(
     immer(set => ({
@@ -24,7 +23,7 @@ export const useSystemStore = create<
     })),
     {
       name: 'bb-store-system',
-      partialize: state => _.pick<any, keyof SystemStoreState>(state, ['version'])
+      partialize: state => ({ version: state.version })
     }
   )
 );

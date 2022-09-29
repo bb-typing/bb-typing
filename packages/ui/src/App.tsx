@@ -17,6 +17,7 @@ import './styles/global.css';
 import GlobalModal from './components/GlobalModal';
 import { withScopeHotkey } from './core/hotkey';
 import { appHistory, CustomRouter, Routes } from './router';
+import { useThemeStore, useTrackedThemeState } from './stores/theme';
 import { queryClient } from './utils/libs/react-query';
 
 function ErrorFallback(): JSX.Element {
@@ -36,9 +37,7 @@ function ErrorFallback(): JSX.Element {
 export const App = withScopeHotkey(
   'global',
   function (): JSX.Element {
-    const [colorScheme, setColorScheme] = React.useState<ColorScheme>('light');
-    const toggleColorScheme = (value?: ColorScheme) =>
-      setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+    const { colorScheme } = useTrackedThemeState();
 
     return (
       <React.Suspense
@@ -50,7 +49,7 @@ export const App = withScopeHotkey(
       >
         <ColorSchemeProvider
           colorScheme={colorScheme}
-          toggleColorScheme={toggleColorScheme}
+          toggleColorScheme={useThemeStore.getState().toggleColorScheme}
         >
           <MantineProvider withGlobalStyles withNormalizeCSS>
             <ErrorBoundary FallbackComponent={ErrorFallback}>

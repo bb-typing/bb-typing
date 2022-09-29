@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { createTrackedSelector } from 'react-tracked';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -11,7 +10,7 @@ type Store = HotkeyStoreState & HotkeyStoreActions;
 
 export const useHotkeyStore = create<
   Store,
-  [['zustand/persist', Store], ['zustand/immer', Store]]
+  [['zustand/persist', Partial<HotkeyStoreState>], ['zustand/immer', HotkeyStoreState]]
 >(
   persist(
     immer(set => ({
@@ -30,10 +29,9 @@ export const useHotkeyStore = create<
     })),
     {
       name: 'bb-store-hotkey',
-      partialize: state =>
-        _.pick<any, keyof HotkeyStoreState>(state, ['userHotkeyMap']) as any
+      partialize: state => ({ userHotkeyMap: state.userHotkeyMap })
     }
   )
 );
 
-export const useTrackedHotkeyStore = createTrackedSelector(useHotkeyStore);
+export const useTrackedHotkeyState = createTrackedSelector(useHotkeyStore);
