@@ -23,7 +23,9 @@ export type BaseHotkeyMap = Partial<
 >;
 
 export interface UserHotkeyInfo extends BaseHotkeyInfo {
+  id: string;
   updateTime: number;
+  isDefaultOrigin: boolean;
 }
 
 type UserHotkeyMap = Partial<
@@ -39,6 +41,12 @@ export interface HotkeyStoreState {
 
 export interface HotkeyStoreActions {
   setUserHotkeyMap: (value: HotkeyStoreState['userHotkeyMap']) => void;
+}
+
+export interface HotkeyStoreComputed {
+  currentPlatformLatestHotkeyInfoMap: Partial<
+    Record<ActionConfigName | AnyString, UserHotkeyInfo | BaseHotkeyInfo>
+  >;
 }
 
 //#endregion  //*======== store ===========

@@ -1,3 +1,5 @@
+import { Platform } from '@ui/utils/platform';
+
 import type {
   BaseHotkeyInfo,
   BaseHotkeyMap,
@@ -86,6 +88,18 @@ export function filterPlatformHotkeyMapByScope(
   });
 
   return filteredResult;
+}
+
+export function filterHotkeyPlatform(): Exclude<HotkeyPlatform, 'default'> | undefined {
+  switch (Platform.OS) {
+    case 'web:win':
+    case 'desktop:win':
+      return 'win';
+
+    case 'web:mac':
+    case 'desktop:mac':
+      return 'mac';
+  }
 }
 
 //#endregion  //*======== filter ===========

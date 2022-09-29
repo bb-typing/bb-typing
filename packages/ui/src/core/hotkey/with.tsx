@@ -1,13 +1,10 @@
 import { Platform } from '@ui/utils/platform';
-import { useMount, useUnmount, useUpdate } from 'ahooks';
+import { useMount, useUnmount } from 'ahooks';
 import type { JSXElementConstructor, ReactNode } from 'react';
-import { useEffect } from 'react';
-import { useRef } from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { CallbackOptions } from 'super-hotkey';
 import superHotkey from 'super-hotkey';
 import type { F } from 'ts-toolbelt';
-import { I } from 'ts-toolbelt';
 
 import { useHotkeyStore } from './store';
 import type {
@@ -16,10 +13,13 @@ import type {
   HotkeyContent,
   HotkeyPlatform
 } from './types';
-import { filterHotkeyMapByPlatform, filterPlatformHotkeyMapByScope } from './utils';
+import {
+  filterHotkeyMapByPlatform,
+  filterHotkeyPlatform,
+  filterPlatformHotkeyMapByScope
+} from './utils';
 import type { ActionConfigName, ActionConfigScope } from '../action';
-import { useActionStore } from '../action';
-import { actionController } from '../action';
+import { actionController, useActionStore } from '../action';
 
 interface WithHotkeyOptions {
   /**
@@ -41,18 +41,6 @@ export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
         hotkeyPlatform: filterHotkeyPlatform(),
         scope
       });
-
-      function filterHotkeyPlatform(): Exclude<HotkeyPlatform, 'default'> | undefined {
-        switch (Platform.OS) {
-          case 'web:win':
-          case 'desktop:win':
-            return 'win';
-
-          case 'web:mac':
-          case 'desktop:mac':
-            return 'mac';
-        }
-      }
     }, [defaultHotkeyMap, userHotkeyMap]);
 
     return (
