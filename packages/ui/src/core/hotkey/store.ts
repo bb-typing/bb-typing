@@ -45,9 +45,8 @@ export const useComputedHotkeyState = (): HotkeyStoreComputed => {
   const getState = useTrackedHotkeyState;
 
   return {
-    get currentPlatformLatestHotkeyInfoMap() {
-      const currentPlatformLatestHotkeyInfoMap: HotkeyStoreComputed['currentPlatformLatestHotkeyInfoMap'] =
-        {};
+    get currentPlatformLatestUsableHotkeyInfoMap() {
+      const result: HotkeyStoreComputed['currentPlatformLatestUsableHotkeyInfoMap'] = {};
 
       const { defaultHotkeyMap, userHotkeyMap } = getState();
       const currentHotkeyPlatform = filterHotkeyPlatform();
@@ -68,19 +67,19 @@ export const useComputedHotkeyState = (): HotkeyStoreComputed => {
               .sort((a, b) => a.updateTime - b.updateTime)
               .find(hotkeyInfo => hotkeyInfo.status === 'enable');
 
-            currentPlatformLatestHotkeyInfoMap[actionName] =
-              userHighestPriorityHotkeyInfo || defaultHotkeyInfo;
+            result[actionName] = (userHighestPriorityHotkeyInfo ||
+              defaultHotkeyInfo) as any;
           } else {
-            currentPlatformLatestHotkeyInfoMap[actionName] = defaultHotkeyInfo;
+            result[actionName] = defaultHotkeyInfo as any;
           }
 
-          if (currentPlatformLatestHotkeyInfoMap[actionName] === undefined) {
-            delete currentPlatformLatestHotkeyInfoMap[actionName];
+          if (result[actionName] === undefined) {
+            delete result[actionName];
           }
         }
       );
 
-      return currentPlatformLatestHotkeyInfoMap;
+      return result;
     }
   };
 };

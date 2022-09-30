@@ -12,6 +12,16 @@ export class ActionController {
     return this.actions;
   }
 
+  public getActionByName(name: string) {
+    for (const actionModule of this.actions) {
+      for (const actionConfig of actionModule.configs) {
+        if (actionConfig.name === name) {
+          return actionConfig;
+        }
+      }
+    }
+  }
+
   public emit<
     Name extends ActionConfigName,
     Params extends ActionNameParamsMap[Name] = ActionNameParamsMap[Name]

@@ -12,6 +12,7 @@ export const globalActionConfigs = defineActionConfig('global', [
     defaultHotkeys: [
       {
         default: {
+          id: '87440c6c-997f-5ccf-bae1-595fcc238e0a',
           modifierKey: ['Mod'],
           normalKey: 'r'
         }
@@ -27,6 +28,7 @@ export const globalActionConfigs = defineActionConfig('global', [
     defaultHotkeys: [
       {
         default: {
+          id: 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6',
           modifierKey: ['Mod'],
           normalKey: 'k'
         }
@@ -41,6 +43,7 @@ export const globalActionConfigs = defineActionConfig('global', [
     defaultHotkeys: [
       {
         default: {
+          id: 'c908527f-2fe5-57b8-bbf0-c9e6db3fafa2',
           modifierKey: ['Mod'],
           normalKey: 'j'
         }

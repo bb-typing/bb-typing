@@ -1,11 +1,4 @@
-import {
-  Group,
-  Highlight,
-  Kbd,
-  Text,
-  UnstyledButton,
-  useMantineTheme
-} from '@mantine/core';
+import { Group, Highlight, Kbd, Text, UnstyledButton } from '@mantine/core';
 import type { InnerSpotlightProps } from '@mantine/spotlight/lib/Spotlight/Spotlight';
 import { useComputedHotkeyState } from '@ui/core/hotkey';
 import useThemeStyle from '@ui/styles/useThemeStyle';
@@ -15,7 +8,8 @@ import { tw } from 'twind';
 const MenuItem: InnerSpotlightProps['actionComponent'] = props => {
   const { action, onTrigger, hovered, query } = props;
   const { mt, ...appTheme } = useThemeStyle();
-  const { currentPlatformLatestHotkeyInfoMap } = useComputedHotkeyState();
+  const { currentPlatformLatestUsableHotkeyInfoMap: currentPlatformLatestHotkeyInfoMap } =
+    useComputedHotkeyState();
   const hotkeyContent = currentPlatformLatestHotkeyInfoMap[action.id!]?.hotkeyContent;
 
   return (

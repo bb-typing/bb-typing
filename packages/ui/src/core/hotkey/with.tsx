@@ -11,12 +11,14 @@ import type {
   BaseHotkeyInfo,
   BaseHotkeyMap,
   HotkeyContent,
-  HotkeyPlatform
+  HotkeyPlatform,
+  UserHotkeyMap
 } from './types';
 import {
   filterHotkeyMapByPlatform,
   filterHotkeyPlatform,
-  filterPlatformHotkeyMapByScope
+  filterPlatformHotkeyMapByScope,
+  isUserHotkeyInfo
 } from './utils';
 import type { ActionConfigName, ActionConfigScope } from '../action';
 import { actionController, useActionStore } from '../action';
@@ -120,7 +122,7 @@ function HotKeyWrapper(
 }
 
 function converToHotkeyConfigs(
-  hotkeyMaps: BaseHotkeyMap[],
+  hotkeyMaps: Array<BaseHotkeyMap | UserHotkeyMap>,
   options: {
     hotkeyPlatform: Exclude<HotkeyPlatform, 'default'> | undefined;
     scope: ActionConfigScope;
@@ -157,7 +159,11 @@ function converToHotkeyConfigs(
 
   function isUsableHotkey(hotkeyInfo: BaseHotkeyInfo): boolean {
     const isSupportCurrentPlatform = hotkeyInfo.supportedPlatforms.includes(Platform.OS);
-    const isEnableStatus = hotkeyInfo.status === 'enable';
+    let isEnableStatus = true;
+
+    if (isUserHotkeyInfo(hotkeyInfo)) {
+      isEnableStatus = hotkeyInfo.status === 'enable';
+    }
 
     return isSupportCurrentPlatform && isEnableStatus;
   }

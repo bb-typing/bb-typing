@@ -8,27 +8,28 @@ export type HotkeyPlatform = 'win' | 'mac' | 'default';
 export type HotkeyContent = CommonHotkeyObject;
 
 export type DefaultHotkeys = ReadonlyArray<
-  Partial<Record<HotkeyPlatform, HotkeyContent>>
+  Partial<Record<HotkeyPlatform, HotkeyContent & { id: string }>>
 >;
 
 export interface BaseHotkeyInfo {
+  id: string;
   supportedPlatforms: ActionConfigOption['supportedPlatforms'];
   hotkeyContent: HotkeyContent;
   scope: ActionConfigScope;
-  status: 'enable' | 'disable';
 }
 
 export type BaseHotkeyMap = Partial<
   Record<ActionConfigName | AnyString, Partial<Record<HotkeyPlatform, BaseHotkeyInfo[]>>>
 >;
 
-export interface UserHotkeyInfo extends BaseHotkeyInfo {
+export interface UserHotkeyInfo extends Omit<BaseHotkeyInfo, 'id'> {
   id: string;
+  defaultOriginId?: string;
   updateTime: number;
-  isDefaultOrigin: boolean;
+  status: 'enable' | 'disable' | 'delete';
 }
 
-type UserHotkeyMap = Partial<
+export type UserHotkeyMap = Partial<
   Record<ActionConfigName | AnyString, Partial<Record<HotkeyPlatform, UserHotkeyInfo[]>>>
 >;
 
@@ -44,7 +45,7 @@ export interface HotkeyStoreActions {
 }
 
 export interface HotkeyStoreComputed {
-  currentPlatformLatestHotkeyInfoMap: Partial<
+  currentPlatformLatestUsableHotkeyInfoMap: Partial<
     Record<ActionConfigName | AnyString, UserHotkeyInfo | BaseHotkeyInfo>
   >;
 }

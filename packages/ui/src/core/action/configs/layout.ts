@@ -12,6 +12,7 @@ export const layoutActionConfigs = defineActionConfig('layout', [
     defaultHotkeys: [
       {
         default: {
+          id: 'f83fc875-f307-5770-9e40-7e60d28ac2a8',
           modifierKey: ['Mod'],
           normalKey: 'b'
         }

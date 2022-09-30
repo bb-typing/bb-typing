@@ -4,7 +4,9 @@ import type {
   BaseHotkeyInfo,
   BaseHotkeyMap,
   HotkeyPlatform,
-  HotkeyStoreState
+  HotkeyStoreState,
+  UserHotkeyInfo,
+  UserHotkeyMap
 } from './types';
 import type { ActionConfigName, ActionConfigScope } from '../action';
 import { actionController } from '../action';
@@ -28,9 +30,9 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
             ...defaultHotkeys[actionName],
             [platform]: [
               {
+                id: hotkeyContent.id,
                 hotkeyContent,
                 scope,
-                status: 'enable',
                 supportedPlatforms: config.supportedPlatforms
               } as BaseHotkeyInfo
             ]
@@ -44,19 +46,29 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
 }
 
 //#region  //*=========== filter ===========
-// type ActionNameHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>;
 
-type PlatformHotkeyMap = Record<ActionConfigName | AnyString, BaseHotkeyInfo[]>;
+type PlatformHotkeyMap<H extends BaseHotkeyInfo | UserHotkeyInfo> = Record<
+  ActionConfigName | AnyString,
+  Array<H>
+>;
 
-type ScopePlatformHotkeyMap = Record<ActionConfigName | AnyString, BaseHotkeyInfo[]>;
+type ScopePlatformHotkeyMap = Record<
+  ActionConfigName | AnyString,
+  Array<BaseHotkeyInfo | UserHotkeyInfo>
+>;
 
 /** 根据「平台」过滤出「热键对象」 */
-export function filterHotkeyMapByPlatform(
-  hotkeyMap: BaseHotkeyMap,
+export function filterHotkeyMapByPlatform<
+  H extends number,
+  C extends BaseHotkeyInfo | UserHotkeyInfo = H extends 1
+    ? UserHotkeyInfo
+    : BaseHotkeyInfo
+>(
+  hotkeyMap: BaseHotkeyMap | UserHotkeyMap,
   targetPlatform: Exclude<HotkeyPlatform, 'default'> | undefined,
   includeDefaultPlatform = true
-): PlatformHotkeyMap {
-  const filteredResult: PlatformHotkeyMap = {} as any;
+): PlatformHotkeyMap<C> {
+  const filteredResult: PlatformHotkeyMap<C> = {} as any;
 
   Object.entries(hotkeyMap).forEach(([actionName, platformHotInfoMap]) => {
     if (platformHotInfoMap) {
@@ -67,18 +79,18 @@ export function filterHotkeyMapByPlatform(
           platform === targetPlatform ||
           (includeDefaultPlatform && platform === 'default')
         ) {
-          filteredResult[actionName] = hotkeyInfos;
+          filteredResult[actionName] = hotkeyInfos as any;
         }
       });
     }
   });
 
-  return filteredResult;
+  return filteredResult as any;
 }
 
 /** 根据过滤好的「平台热键对象」再次过滤出「范围平台热键对象」 */
-export function filterPlatformHotkeyMapByScope(
-  platformHotkeyMap: PlatformHotkeyMap,
+export function filterPlatformHotkeyMapByScope<T extends BaseHotkeyInfo | UserHotkeyInfo>(
+  platformHotkeyMap: PlatformHotkeyMap<T>,
   scope: ActionConfigScope
 ): ScopePlatformHotkeyMap {
   const filteredResult: ScopePlatformHotkeyMap = {} as any;
@@ -103,3 +115,9 @@ export function filterHotkeyPlatform(): Exclude<HotkeyPlatform, 'default'> | und
 }
 
 //#endregion  //*======== filter ===========
+
+export function isUserHotkeyInfo(
+  hotkeyInfo: BaseHotkeyInfo | UserHotkeyInfo
+): hotkeyInfo is UserHotkeyInfo {
+  return 'updateTime' in hotkeyInfo;
+}
