@@ -1,77 +1,128 @@
 import { Platform } from '@ui/utils/platform';
 import { useMount, useUnmount } from 'ahooks';
-import Mousetrap from 'mousetrap';
 import type { JSXElementConstructor, ReactNode } from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import type { CallbackOptions } from 'super-hotkey';
+import superHotkey from 'super-hotkey';
 import type { F } from 'ts-toolbelt';
 
-import { filterHotkeyMapByPlatform, filterPlatformHotkeyMapByScope } from './helper';
 import { useHotkeyStore } from './store';
-import type { BaseHotkeyMap, HotkeyInfo, HotkeyPlatform } from './types';
+import type {
+  BaseHotkeyInfo,
+  BaseHotkeyMap,
+  HotkeyContent,
+  HotkeyPlatform,
+  UserHotkeyMap
+} from './types';
+import {
+  filterHotkeyMapByPlatform,
+  filterHotkeyPlatform,
+  filterPlatformHotkeyMapByScope,
+  isUserHotkeyInfo
+} from './utils';
 import type { ActionConfigName, ActionConfigScope } from '../action';
-import { actionController } from '../action';
+import { actionController, useActionStore } from '../action';
 
-export function withScopeHotkey<P>(
+interface WithHotkeyOptions {
+  /**
+   * @default 'wrapper'
+   */
+  scopeElementType?: 'root' | 'wrapper';
+}
+
+export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
   scope: ActionConfigScope,
-  Component: JSXElementConstructor<P>
+  Component: JSXElementConstructor<P>,
+  options?: WithHotkeyOptions
 ): JSXElementConstructor<P> {
   return function (props) {
-    const { defaultHotkeyMap, localHotkeyMap, userHotkeyMap } = useHotkeyStore();
+    const { defaultHotkeyMap, userHotkeyMap } = useHotkeyStore();
 
     const hotkeyConfigs = useMemo(() => {
-      return converToHotkeyConfigs([defaultHotkeyMap, localHotkeyMap, userHotkeyMap], {
+      return converToHotkeyConfigs([defaultHotkeyMap, userHotkeyMap], {
         hotkeyPlatform: filterHotkeyPlatform(),
         scope
       });
-
-      function filterHotkeyPlatform(): Exclude<HotkeyPlatform, 'default'> | undefined {
-        switch (Platform.OS) {
-          case 'web:win':
-          case 'desktop:win':
-            return 'win';
-
-          case 'web:mac':
-          case 'desktop:mac':
-            return 'mac';
-        }
-      }
-    }, [defaultHotkeyMap, localHotkeyMap, userHotkeyMap]);
+    }, [defaultHotkeyMap, userHotkeyMap]);
 
     return (
-      <HotKeyWrapper configs={hotkeyConfigs}>
+      <HotKeyWrapper configs={hotkeyConfigs} {...options} scope={scope}>
         <Component {...props} />
       </HotKeyWrapper>
     );
   };
 }
 
-type HotkeyWrapperConfigs = Array<{ hotkeys: string[]; handler: F.Function }>;
+export function destroyHotkey(actionName: string, hotkeyContent: HotkeyContent) {
+  superHotkey.unbindCallback(hotkeyContent, {
+    id: actionName
+  });
+}
 
-function HotKeyWrapper(props: {
-  children: ReactNode;
-  configs: HotkeyWrapperConfigs;
-}): JSX.Element {
-  useMount(bindHotkey);
+type HotkeyWrapperConfigs = Array<{ hotkeys: HotkeyContent[]; handler: F.Function }>;
 
-  useUnmount(unbindHotkey);
+function HotKeyWrapper(
+  props: {
+    children: ReactNode;
+    configs: HotkeyWrapperConfigs;
+    scope: ActionConfigScope;
+  } & WithHotkeyOptions
+): JSX.Element {
+  const { scopeElementType = 'wrapper', children, configs, scope } = props;
+  const wrapperElementRef = useRef<HTMLDivElement>(null);
 
-  return <>{props.children}</>;
+  useEffect(() => {
+    unbindHotkey();
+    bindHotkey();
+
+    return unbindHotkey;
+  }, [configs]);
+
+  useMount(function addActiveScope() {
+    useActionStore.getState().addActiveScope(scope);
+  });
+
+  useUnmount(function delActiveScope() {
+    useActionStore.getState().delActiveScope(scope);
+  });
+
+  return scopeElementType === 'wrapper' ? (
+    <div tabIndex={1} ref={wrapperElementRef}>
+      {children}
+    </div>
+  ) : (
+    <> {children}</>
+  );
 
   function bindHotkey() {
-    props.configs.forEach(config => {
-      Mousetrap.bind(config.hotkeys, config.handler);
+    configs.forEach(config => {
+      superHotkey.bindCallback(config.hotkeys, {
+        callback: config.handler,
+        trigger: {
+          allowRepeatWhenLongPress: false,
+          capture: false
+        },
+        targetElement: getTargetElement()
+      });
     });
   }
 
   function unbindHotkey() {
-    props.configs.forEach(config => {
-      Mousetrap.unbind(config.hotkeys);
+    configs.forEach(config => {
+      superHotkey.unbindCallback(config.hotkeys, {
+        callback: config.handler,
+        targetElement: getTargetElement()
+      });
     });
+  }
+
+  function getTargetElement() {
+    return scopeElementType === 'root' ? document : wrapperElementRef.current!;
   }
 }
 
 function converToHotkeyConfigs(
-  hotkeyMaps: BaseHotkeyMap[],
+  hotkeyMaps: Array<BaseHotkeyMap | UserHotkeyMap>,
   options: {
     hotkeyPlatform: Exclude<HotkeyPlatform, 'default'> | undefined;
     scope: ActionConfigScope;
@@ -86,8 +137,8 @@ function converToHotkeyConfigs(
     );
 
     Object.entries(scopePlatformHotkeyMap).forEach(([actionName, hotkeyInfos]) => {
-      hotkeyInfos.forEach(keyInfo => {
-        if (isUsableHotkey(keyInfo)) {
+      hotkeyInfos.forEach(hotkeyInfo => {
+        if (isUsableHotkey(hotkeyInfo)) {
           configsResult.push({
             handler: getHotkeyHandler(actionName as ActionConfigName),
             hotkeys: hotkeyInfos.map(item => item.hotkeyContent)
@@ -99,19 +150,20 @@ function converToHotkeyConfigs(
 
   return configsResult;
 
-  type MousetrapBindCallback = Parameters<Mousetrap.MousetrapStatic['bind']>[1];
-  function getHotkeyHandler(actionName: ActionConfigName): MousetrapBindCallback {
+  function getHotkeyHandler(actionName: ActionConfigName): CallbackOptions['callback'] {
     // TODO: 此处的 hotkey-callback 暂先这样，如有需要再设计
     return event => {
-      actionController.emit(actionName);
-
-      return false;
+      (actionController as any).emit(actionName);
     };
   }
 
-  function isUsableHotkey(hotkeyInfo: HotkeyInfo): boolean {
+  function isUsableHotkey(hotkeyInfo: BaseHotkeyInfo): boolean {
     const isSupportCurrentPlatform = hotkeyInfo.supportedPlatforms.includes(Platform.OS);
-    const isEnableStatus = hotkeyInfo.status === 'enable';
+    let isEnableStatus = true;
+
+    if (isUserHotkeyInfo(hotkeyInfo)) {
+      isEnableStatus = hotkeyInfo.status === 'enable';
+    }
 
     return isSupportCurrentPlatform && isEnableStatus;
   }

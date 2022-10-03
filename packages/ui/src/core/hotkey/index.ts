@@ -1,4 +1,4 @@
-export { useHotkeyStore, useTrackedHotkeyStore } from './store';
+export { useHotkeyStore, useTrackedHotkeyState, useComputedHotkeyState } from './store';
 
 export type { DefaultHotkeys } from './types';
 

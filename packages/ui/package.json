@@ -6,22 +6,25 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.4",
+    "@mantine/core": "^5.4.1",
+    "@mantine/hooks": "^5.4.1",
+    "@mantine/spotlight": "^5.4.1",
     "@mimi-utils/super-status-box": "^0.0.1",
-    "@nextui-org/react": "1.0.0-beta.9",
-    "ahooks": "^3.3.8",
+    "ahooks": "^3.7.1",
     "axios": "^0.27.2",
     "clsx": "^1.2.1",
+    "cmdk": "^0.1.20",
+    "history": "^5.3.0",
     "immer": "^9.0.12",
-    "mousetrap": "^1.6.5",
+    "kbar": "^0.1.0-beta.36",
     "react-error-boundary": "^3.1.4",
     "react-intl": "^5.24.8",
-    "react-query": "^3.34.19",
-    "react-router-dom": "^6.3.0",
-    "react-tracked": "^1.7.8",
+    "react-query": "^3.39.2",
+    "react-router-dom": "^6.4.1",
+    "react-tracked": "^1.7.10",
     "twind": "^0.16.17",
-    "zustand": "^4.0.0-rc.1"
+    "zustand": "^4.1.1"
   },
-  "devDependencies": {
-    "@types/mousetrap": "^1.6.9"
-  }
+  "devDependencies": {}
 }

@@ -26,6 +26,14 @@ export const useActionStore = create<
           if (!includeScopeInActives) {
             state.activeScopes.push(scope);
           }
+        }),
+      delActiveScope: scope =>
+        set(state => {
+          const indexToDel = state.activeScopes.indexOf(scope);
+
+          if (indexToDel !== -1) {
+            state.activeScopes.splice(indexToDel, 1);
+          }
         })
       //#endregion  //*======== action ===========
     })),

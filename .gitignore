@@ -1,9 +1,11 @@
 node_modules/
 
 package-lock.json
-yarn.lock
 yarn-error.log
 .pnpm-debug.log
+
+.yalc
+yalc.lock
 
 .DS_Store
 
@@ -11,5 +13,3 @@ yarn-error.log
 .history/
 
 dist/
-
-

@@ -5,7 +5,7 @@ interface AppLayoutContentProps {}
 
 function AppLayoutContent(props: AppLayoutContentProps): JSX.Element {
   return (
-    <div className={tw`flex-1 w-full bg-[pink]`}>
+    <div className={tw`flex-1 w-full`}>
       <Outlet />
     </div>
   );

@@ -1,11 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
 
-import ViewShortcutKey from './view/ShortcutKey';
+import ViewKeyboardShortcut from './view/KeyboardShortcut';
 
 function SettingRoutes(): JSX.Element {
   return (
     <Routes>
-      <Route path="shortcut-key" element={<ViewShortcutKey />} />
+      <Route path="keyboard-shortcut" element={<ViewKeyboardShortcut />} />
     </Routes>
   );
 }

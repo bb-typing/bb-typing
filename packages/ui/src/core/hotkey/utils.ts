@@ -1,8 +1,12 @@
+import { Platform } from '@ui/utils/platform';
+
 import type {
+  BaseHotkeyInfo,
   BaseHotkeyMap,
-  HotkeyInfo,
   HotkeyPlatform,
-  HotkeyStoreState
+  HotkeyStoreState,
+  UserHotkeyInfo,
+  UserHotkeyMap
 } from './types';
 import type { ActionConfigName, ActionConfigScope } from '../action';
 import { actionController } from '../action';
@@ -18,17 +22,19 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
     configs.forEach(config => {
       const actionName = config.name;
 
+      if (!('defaultHotkeys' in config)) return;
+
       config.defaultHotkeys.forEach(hotkeyMap => {
         Object.entries(hotkeyMap).forEach(([platform, hotkeyContent]) => {
           defaultHotkeys[actionName] = {
             ...defaultHotkeys[actionName],
             [platform]: [
               {
+                id: hotkeyContent.id,
                 hotkeyContent,
                 scope,
-                status: 'enable',
                 supportedPlatforms: config.supportedPlatforms
-              } as HotkeyInfo
+              } as BaseHotkeyInfo
             ]
           };
         });
@@ -40,41 +46,51 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
 }
 
 //#region  //*=========== filter ===========
-// type ActionNameHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>;
 
-type PlatformHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>;
+type PlatformHotkeyMap<H extends BaseHotkeyInfo | UserHotkeyInfo> = Record<
+  ActionConfigName | AnyString,
+  Array<H>
+>;
 
-type ScopePlatformHotkeyMap = Record<ActionConfigName | AnyString, HotkeyInfo[]>;
+type ScopePlatformHotkeyMap = Record<
+  ActionConfigName | AnyString,
+  Array<BaseHotkeyInfo | UserHotkeyInfo>
+>;
 
 /** 根据「平台」过滤出「热键对象」 */
-export function filterHotkeyMapByPlatform(
-  hotkeyMap: BaseHotkeyMap,
+export function filterHotkeyMapByPlatform<
+  H extends number,
+  C extends BaseHotkeyInfo | UserHotkeyInfo = H extends 1
+    ? UserHotkeyInfo
+    : BaseHotkeyInfo
+>(
+  hotkeyMap: BaseHotkeyMap | UserHotkeyMap,
   targetPlatform: Exclude<HotkeyPlatform, 'default'> | undefined,
-  incldueDefaultPlatform = true
-): PlatformHotkeyMap {
-  const filteredResult: PlatformHotkeyMap = {} as any;
+  includeDefaultPlatform = true
+): PlatformHotkeyMap<C> {
+  const filteredResult: PlatformHotkeyMap<C> = {} as any;
 
   Object.entries(hotkeyMap).forEach(([actionName, platformHotInfoMap]) => {
     if (platformHotInfoMap) {
-      Object.entries(platformHotInfoMap).forEach(([_platform, hotkeyInfns]) => {
+      Object.entries(platformHotInfoMap).forEach(([_platform, hotkeyInfos]) => {
         const platform = _platform as HotkeyPlatform;
 
         if (
           platform === targetPlatform ||
-          (incldueDefaultPlatform && platform === 'default')
+          (includeDefaultPlatform && platform === 'default')
         ) {
-          filteredResult[actionName] = hotkeyInfns;
+          filteredResult[actionName] = hotkeyInfos as any;
         }
       });
     }
   });
 
-  return filteredResult;
+  return filteredResult as any;
 }
 
 /** 根据过滤好的「平台热键对象」再次过滤出「范围平台热键对象」 */
-export function filterPlatformHotkeyMapByScope(
-  platformHotkeyMap: PlatformHotkeyMap,
+export function filterPlatformHotkeyMapByScope<T extends BaseHotkeyInfo | UserHotkeyInfo>(
+  platformHotkeyMap: PlatformHotkeyMap<T>,
   scope: ActionConfigScope
 ): ScopePlatformHotkeyMap {
   const filteredResult: ScopePlatformHotkeyMap = {} as any;
@@ -86,4 +102,22 @@ export function filterPlatformHotkeyMapByScope(
   return filteredResult;
 }
 
+export function filterHotkeyPlatform(): Exclude<HotkeyPlatform, 'default'> | undefined {
+  switch (Platform.OS) {
+    case 'web:win':
+    case 'desktop:win':
+      return 'win';
+
+    case 'web:mac':
+    case 'desktop:mac':
+      return 'mac';
+  }
+}
+
 //#endregion  //*======== filter ===========
+
+export function isUserHotkeyInfo(
+  hotkeyInfo: BaseHotkeyInfo | UserHotkeyInfo
+): hotkeyInfo is UserHotkeyInfo {
+  return 'updateTime' in hotkeyInfo;
+}

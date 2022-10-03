@@ -19,6 +19,21 @@ export interface paths {
   '/typing-service/account/history/uploadHistoryAndArticle': {
     post: operations['uploadHistoryAndArticleUsingPOST'];
   };
+  '/typing-service/version/test/codeLength': {
+    post: operations['codeLengthUsingPOST'];
+  };
+  '/typing-service/version/test/compare': {
+    post: operations['compareUsingPOST'];
+  };
+  '/typing-service/version/test/redis': {
+    post: operations['uploadWordLibUsingPOST'];
+  };
+  '/typing-service/version/test/synData': {
+    post: operations['synDataUsingPOST'];
+  };
+  '/typing-service/version/test/typingTips': {
+    post: operations['typingTipsUsingPOST'];
+  };
   '/typing-service/account/match/getPCTljMatchAchByDate': {
     get: operations['getPCTljMatchAchByDateUsingGET'];
   };
@@ -40,22 +55,46 @@ export interface paths {
   '/typing-service/account/type/info': {
     get: operations['getMyInfoUsingGET'];
   };
+  '/typing-service/wordLib/community/list': {
+    get: operations['uploadWordLibUsingGET'];
+  };
+  '/typing-service/wordLib/community/share': {
+    post: operations['shareUsingPOST'];
+  };
+  '/typing-service/wordLib': {
+    get: operations['wordLibPageUsingGET'];
+    put: operations['uploadWordLibUsingPUT'];
+    delete: operations['deleteWordLibUsingDELETE'];
+  };
+  '/typing-service/wordLib/load': {
+    post: operations['loadWordLibUsingPOST'];
+  };
+  '/typing-service/wordLib/setting': {
+    get: operations['getSettingUsingGET'];
+    put: operations['settingUsingPUT'];
+    delete: operations['deleteSettingUsingDELETE'];
+  };
+  '/typing-service/wordLib/typingTips': {
+    post: operations['typingTipsUsingPOST_1'];
+  };
 }
 
 export interface components {
   schemas: {
     /** AccountDto */
     AccountDto: {
-      /** Format: int32 */
+      /** Format: int64 */
       id?: number;
       password?: string;
       username?: string;
     };
     /** Article */
     Article: {
+      /** @description 内容 */
       content?: string;
-      /** Format: int32 */
+      /** Format: int64 */
       id?: number;
+      /** @description 标题 */
       title?: string;
     };
     /** ArticleDto */
@@ -64,6 +103,19 @@ export interface components {
       /** Format: int32 */
       id?: number;
       title?: string;
+    };
+    /** CodeParam */
+    CodeParam: {
+      code?: string;
+      ignoreSymbols?: boolean;
+      origin?: string;
+      typed?: string;
+    };
+    /** ComparisonItem */
+    ComparisonItem: {
+      /** Format: int32 */
+      type?: number;
+      word?: string;
     };
     /** Header */
     Header: {
@@ -119,12 +171,62 @@ export interface components {
       /** Format: int64 */
       total?: number;
     };
+    /** PageTable«UserWordSettingListPageVO» */
+    'PageTable«UserWordSettingListPageVO»': {
+      /** Format: int64 */
+      current?: number;
+      hasNextPage?: boolean;
+      hasPreviousPage?: boolean;
+      /** Format: int64 */
+      pages?: number;
+      /** Format: int64 */
+      size?: number;
+      table?: components['schemas']['Table«UserWordSettingListPageVO»'];
+      /** Format: int64 */
+      total?: number;
+    };
+    /** PageTable«WordLibListPageVO» */
+    'PageTable«WordLibListPageVO»': {
+      /** Format: int64 */
+      current?: number;
+      hasNextPage?: boolean;
+      hasPreviousPage?: boolean;
+      /** Format: int64 */
+      pages?: number;
+      /** Format: int64 */
+      size?: number;
+      table?: components['schemas']['Table«WordLibListPageVO»'];
+      /** Format: int64 */
+      total?: number;
+    };
+    /** PreInfo */
+    PreInfo: {
+      /** Format: int32 */
+      pre?: number;
+      type?: string;
+      words?: string;
+      wordsCode?: string;
+    };
+    /** Result«Array«SubscriptInstance»» */
+    'Result«Array«SubscriptInstance»»': {
+      /** Format: int64 */
+      code?: number;
+      message?: string;
+      result?: components['schemas']['SubscriptInstance'][];
+    };
     /** Result«Article» */
     'Result«Article»': {
       /** Format: int64 */
       code?: number;
       message?: string;
       result?: components['schemas']['Article'];
+    };
+    /** Result«List«ComparisonItem»» */
+    'Result«List«ComparisonItem»»': {
+      /** Format: int64 */
+      code?: number;
+      message?: string;
+      result?: components['schemas']['ComparisonItem'][];
     };
     /** Result«NumDto» */
     'Result«NumDto»': {
@@ -147,12 +249,33 @@ export interface components {
       message?: string;
       result?: components['schemas']['PageTable«TypingHistoryVO»'];
     };
+    /** Result«PageTable«UserWordSettingListPageVO»» */
+    'Result«PageTable«UserWordSettingListPageVO»»': {
+      /** Format: int64 */
+      code?: number;
+      message?: string;
+      result?: components['schemas']['PageTable«UserWordSettingListPageVO»'];
+    };
+    /** Result«PageTable«WordLibListPageVO»» */
+    'Result«PageTable«WordLibListPageVO»»': {
+      /** Format: int64 */
+      code?: number;
+      message?: string;
+      result?: components['schemas']['PageTable«WordLibListPageVO»'];
+    };
     /** Result«TypingMatchVO» */
     'Result«TypingMatchVO»': {
       /** Format: int64 */
       code?: number;
       message?: string;
       result?: components['schemas']['TypingMatchVO'];
+    };
+    /** Result«TypingTips» */
+    'Result«TypingTips»': {
+      /** Format: int64 */
+      code?: number;
+      message?: string;
+      result?: components['schemas']['TypingTips'];
     };
     /** Result«TypingUser» */
     'Result«TypingUser»': {
@@ -175,6 +298,17 @@ export interface components {
       message?: string;
       result?: string;
     };
+    /** SubscriptInstance */
+    SubscriptInstance: {
+      minPre?: components['schemas']['PreInfo'];
+      /** Format: int32 */
+      next?: number;
+      type?: string;
+      word?: string;
+      wordCode?: string;
+      words?: string;
+      wordsCode?: string;
+    };
     /** Table«TypeHistoryDto» */
     'Table«TypeHistoryDto»': {
       bodies?: components['schemas']['TypeHistoryDto'][];
@@ -185,15 +319,25 @@ export interface components {
       bodies?: components['schemas']['TypingHistoryVO'][];
       headers?: components['schemas']['Header'][];
     };
+    /** Table«UserWordSettingListPageVO» */
+    'Table«UserWordSettingListPageVO»': {
+      bodies?: components['schemas']['UserWordSettingListPageVO'][];
+      headers?: components['schemas']['Header'][];
+    };
+    /** Table«WordLibListPageVO» */
+    'Table«WordLibListPageVO»': {
+      bodies?: components['schemas']['WordLibListPageVO'][];
+      headers?: components['schemas']['Header'][];
+    };
     /** TypeHistoryDto */
     TypeHistoryDto: {
-      /** Format: int32 */
+      /** Format: int64 */
       articleId?: number;
       /** Format: int32 */
       deleteNum?: number;
       /** Format: int32 */
       deleteText?: number;
-      /** Format: int32 */
+      /** Format: int64 */
       id?: number;
       /** Format: double */
       keyAccuracy?: number;
@@ -218,20 +362,20 @@ export interface components {
       time?: number;
       /** Format: date */
       typeDate?: string;
-      /** Format: int32 */
+      /** Format: int64 */
       userId?: number;
       /** Format: double */
       wordRate?: number;
     };
     /** TypingHistory */
     TypingHistory: {
-      /** Format: int32 */
+      /** Format: int64 */
       articleId?: number;
       /** Format: int32 */
       deleteNum?: number;
       /** Format: int32 */
       deleteText?: number;
-      /** Format: int32 */
+      /** Format: int64 */
       id?: number;
       /** Format: double */
       keyAccuracy?: number;
@@ -258,20 +402,20 @@ export interface components {
       time?: number;
       /** Format: date-time */
       typeDate?: string;
-      /** Format: int32 */
+      /** Format: int64 */
       userId?: number;
       /** Format: double */
       wordRate?: number;
     };
     /** TypingHistoryVO */
     TypingHistoryVO: {
-      /** Format: int32 */
+      /** Format: int64 */
       articleId?: number;
       /** Format: int32 */
       deleteNum?: number;
       /** Format: int32 */
       deleteText?: number;
-      /** Format: int32 */
+      /** Format: int64 */
       id?: number;
       /** Format: double */
       keyAccuracy?: number;
@@ -295,7 +439,7 @@ export interface components {
       time?: number;
       /** Format: date */
       typeDate?: string;
-      /** Format: int32 */
+      /** Format: int64 */
       userId?: number;
       userName?: string;
       /** Format: double */
@@ -304,21 +448,28 @@ export interface components {
     /** TypingMatchVO */
     TypingMatchVO: {
       article?: components['schemas']['Article'];
-      /** Format: int32 */
+      /** Format: int64 */
       articleId?: number;
       author?: string;
       /** Format: date-time */
       holdDate?: string;
-      /** Format: int32 */
+      /** Format: int64 */
       id?: number;
       /** Format: int32 */
       matchType?: number;
+    };
+    /** TypingTips */
+    TypingTips: {
+      /** @description 理论编码 */
+      codes?: string;
+      /** @description 词语提示 */
+      subscriptInstances?: components['schemas']['SubscriptInstance'][];
     };
     /** TypingUser */
     TypingUser: {
       /** Format: int32 */
       dateNum?: number;
-      /** Format: int32 */
+      /** Format: int64 */
       id?: number;
       /** Format: date */
       lastLoginDate?: string;
@@ -334,10 +485,44 @@ export interface components {
     /** TypingVersion */
     TypingVersion: {
       appVersion?: string;
-      /** Format: int32 */
+      /** Format: int64 */
       id?: number;
       /** Format: date-time */
       updateDate?: string;
+    };
+    /** UserWordSettingListPageVO */
+    UserWordSettingListPageVO: {
+      /** Format: double */
+      duplicateSymbolWeight?: number;
+      /** Format: int64 */
+      id?: number;
+      keyBoardPartition?: string;
+      /** Format: int64 */
+      userId?: number;
+      username?: string;
+      /** Format: double */
+      wordLengthWeight?: number;
+      /** Format: int64 */
+      wordLibId?: number;
+      wordLibName?: string;
+    };
+    /** WordLibListPageVO */
+    WordLibListPageVO: {
+      /** Format: int32 */
+      codeMaxLength?: number;
+      /** Format: date-time */
+      createTime?: string;
+      duplicateSymbols?: string;
+      /** Format: int64 */
+      id?: number;
+      /** Format: int64 */
+      userId?: number;
+      username?: string;
+      /** Format: int32 */
+      wordCount?: number;
+      wordLibName?: string;
+      /** Format: int32 */
+      wordMaxLength?: number;
     };
   };
 }
@@ -348,6 +533,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
     };
     responses: {
@@ -377,6 +564,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
     };
     responses: {
@@ -401,6 +590,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
     };
     responses: {
@@ -430,6 +621,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
       query: {
         /** articleId */
@@ -456,6 +649,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
     };
     responses: {
@@ -480,11 +675,164 @@ export interface operations {
       };
     };
   };
+  codeLengthUsingPOST: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CodeParam'];
+      };
+    };
+  };
+  compareUsingPOST: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«List«ComparisonItem»»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CodeParam'];
+      };
+    };
+  };
+  uploadWordLibUsingPOST: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+      query: {
+        /** key */
+        key: string;
+        /** value */
+        value: number;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  synDataUsingPOST: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  typingTipsUsingPOST: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«Array«SubscriptInstance»»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CodeParam'];
+      };
+    };
+  };
   getPCTljMatchAchByDateUsingGET: {
     parameters: {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
       query: {
         /** date */
@@ -515,6 +863,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
       query: {
         /** 是否为手机 */
@@ -541,6 +891,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
     };
     responses: {
@@ -570,6 +922,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
     };
     responses: {
@@ -592,6 +946,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
     };
     responses: {
@@ -621,6 +977,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
     };
     responses: {
@@ -643,6 +1001,8 @@ export interface operations {
       header: {
         /** 令牌 */
         Authorization?: string;
+        /** 用户id */
+        userId?: string;
       };
     };
     responses: {
@@ -652,6 +1012,307 @@ export interface operations {
           '*/*': components['schemas']['Result«TypingUser»'];
         };
       };
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  uploadWordLibUsingGET: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+      query: {
+        author?: string;
+        desc?: 'ASC' | 'DESC';
+        maxCodeLength?: number;
+        name?: string;
+        orderBy?: 'CODE_MAX_LENGTH' | 'CREATE_TIME' | 'SHARE_TIME';
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«PageTable«WordLibListPageVO»»'];
+        };
+      };
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  shareUsingPOST: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+      query: {
+        /** wordLibId */
+        wordLibId: number;
+        /** share */
+        share: boolean;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  wordLibPageUsingGET: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«PageTable«WordLibListPageVO»»'];
+        };
+      };
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  uploadWordLibUsingPUT: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+      query: {
+        /** 几码上屏方案（最长码长） */
+        codeMaxLength: number;
+        /** 选重符号 */
+        duplicateSymbols: string;
+        /** 码表文件 */
+        file?: string;
+        /** 引导符号 */
+        leaderSymbols: string;
+        /** 词库名称 */
+        wordLibName: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  deleteWordLibUsingDELETE: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+      query: {
+        /** wordLibId */
+        wordLibId: number;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** No Content */
+      204: never;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+    };
+  };
+  loadWordLibUsingPOST: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  getSettingUsingGET: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«PageTable«UserWordSettingListPageVO»»'];
+        };
+      };
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  settingUsingPUT: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+      };
+      query: {
+        /** 设为默认词提 */
+        defaultLib?: boolean;
+        /** 选重权重 */
+        duplicateSymbolWeight?: number;
+        /** 词库id，更新时需填 */
+        id?: number;
+        /** 键盘分区 */
+        keyBoardPartition?: string;
+        /** 用户id */
+        userId?: number;
+        /** 码长权重 */
+        wordLengthWeight?: number;
+        /** 词库id */
+        wordLibId?: number;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  deleteSettingUsingDELETE: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+      query: {
+        /** settingId */
+        settingId: number;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** No Content */
+      204: never;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+    };
+  };
+  typingTipsUsingPOST_1: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+      query: {
+        /** article */
+        article: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«TypingTips»'];
+        };
+      };
+      /** Created */
+      201: unknown;
       /** Unauthorized */
       401: unknown;
       /** Forbidden */

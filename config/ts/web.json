@@ -10,7 +10,10 @@
     "allowJs": false,
     "esModuleInterop": false,
     "jsx": "react-jsx",
-    "types": ["../../node_modules/vite/client", "../../node_modules/vite-plugin-svgr/client"],
+    "types": [
+      "../../node_modules/vite/client",
+      "../../node_modules/vite-plugin-svgr/client"
+    ],
     "paths": {
       "@ui/*": ["packages/ui/src/*"],
       "@shared/*": ["packages/shared/*"]
