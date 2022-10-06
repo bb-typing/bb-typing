@@ -27,7 +27,8 @@ export default defineConfig({
     inspectorServer()
   ],
   define: {
-    __APP_ENV__: '"web"'
+    __APP_ENV__: '"web"',
+    'process.env': {}
   },
   build: {
     target: 'es2015',

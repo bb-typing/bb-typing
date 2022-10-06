@@ -40,5 +40,7 @@ const utils = {
 export const Platform = {
   OS: utils.getPlatformName(),
   isDesktop: utils.isDesktop(),
-  isAndroid: utils.isAndroid()
+  isAndroid: utils.isAndroid(),
+  isMacos: utils.isMacos(),
+  isWindows: utils.isWindows()
 } as const;

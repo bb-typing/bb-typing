@@ -8,7 +8,6 @@ export const globalActionConfigs = defineActionConfig('global', [
     name: 'system:desktop:close-app' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win'],
     commands: ['Restart app', '重启应用'],
-    description: '重启应用',
     defaultHotkeys: [
       {
         default: {

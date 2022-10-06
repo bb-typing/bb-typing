@@ -1,15 +1,23 @@
 import { Kbd, Table } from '@mantine/core';
 import { useTrackedHotkeyState } from '@ui/core/hotkey/';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
-import React, { memo, useMemo } from 'react';
+import { useComputedThemeState } from '@ui/stores/theme';
+import useThemeStyle from '@ui/styles/useThemeStyle';
+import { filterModifierKey } from '@ui/utils/keyboard-shortcut';
+import React, { memo, useMemo, useRef } from 'react';
 import { tw } from 'twind';
 
+import 'react-contexify/dist/ReactContexify.css';
+
+import type { ContextMenuProps } from './ContextMenu';
+import ContextMenu from './ContextMenu';
 import { convertToRenderSource } from './utils';
 
 interface ViewShortcutKeyProps {}
 
 const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
   const { defaultHotkeyMap, userHotkeyMap } = useTrackedHotkeyState();
+  const contextMenuRef = useRef() as ContextMenuProps['contextRef'];
 
   const renderSource = useMemo(() => {
     return convertToRenderSource(defaultHotkeyMap, userHotkeyMap);
@@ -20,23 +28,20 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
 
     Object.entries(renderSource).map(([actionName, shortcuts]) => {
       shortcuts.forEach(shortcut => {
-        if (shortcut.type === 'default') {
-          result.push(
-            <tr key={actionName}>
-              <td>{shortcut.actionConfig.commands[1]}</td>
-              <td>{renderShortcuts(shortcut.hotkeyContent)}</td>
-              <td>默认</td>
-            </tr>
-          );
-        } else {
-          result.push(
-            <tr key={actionName}>
-              <td>{shortcut.actionConfig.commands[1]}</td>
-              <td>{renderShortcuts(shortcut.hotkeyContent)}</td>
-              <td>用户</td>
-            </tr>
-          );
-        }
+        const isUserDefined = shortcut.type === 'default';
+
+        result.push(
+          <tr
+            key={actionName}
+            onContextMenu={event => {
+              contextMenuRef.current?.open(event, shortcut);
+            }}
+          >
+            <td>{shortcut.actionConfig.commands[1]}</td>
+            <td>{renderShortcuts(shortcut.hotkeyContent)}</td>
+            <td>{isUserDefined ? '用户' : '默认'}</td>
+          </tr>
+        );
       });
     });
 
@@ -51,16 +56,18 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
         if (Array.isArray(modifierKey)) {
           return modifierKey.map(key => (
             <Kbd key={key} className={tw`mr-[4px]`}>
-              {key}
+              {filterModifierKey(key)}
             </Kbd>
           ));
         }
 
-        return <Kbd className={tw`mr-[4px]`}>{modifierKey}</Kbd>;
+        return (
+          <Kbd className={tw`mr-[4px]`}>{filterModifierKey(modifierKey as any)}</Kbd>
+        );
       })();
 
       return (
-        <div className={tw``}>
+        <div>
           {modifierKeyJSX}
           <span className={tw`mx-[3px]`}>+</span>
           <Kbd>{normalKey}</Kbd>
@@ -70,16 +77,19 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
   })();
 
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>命令</th>
-          <th>快捷快捷键</th>
-          <th>源</th>
-        </tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </Table>
+    <>
+      <Table>
+        <thead>
+          <tr>
+            <th>命令</th>
+            <th>快捷快捷键</th>
+            <th>源</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </Table>
+      <ContextMenu contextRef={contextMenuRef} />
+    </>
   );
 };
 

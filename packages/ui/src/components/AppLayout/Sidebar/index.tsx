@@ -13,7 +13,7 @@ import {
 
 function AppLayoutSidebar(): JSX.Element {
   const { sidebarFoldStatus, setSidebarFoldStatus } = useTrackedAppLayoutStore();
-  const appThemeStyle = useThemeStyle();
+  const t = useThemeStyle();
 
   const foldWidthMap: Record<typeof sidebarFoldStatus, number> = {
     'icon-text': 250,
@@ -23,7 +23,12 @@ function AppLayoutSidebar(): JSX.Element {
 
   return (
     <div
-      className={tw`w-[${foldWidthMap[sidebarFoldStatus]}px] h-full flex(& col) items-center box-border py-[10px] relative bg-[${appThemeStyle.background[0]}] text-[${appThemeStyle.text[0]}]`}
+      className={tw`w-[${
+        foldWidthMap[sidebarFoldStatus]
+      }px] h-full flex(& col) items-center box-border py-[10px] relative bg-[${t.selector(
+        '#1a1b1e',
+        '#fff'
+      )}] text-[${t.selector('#fff', '#000')}]`}
     >
       <img
         src={logo}
