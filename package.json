@@ -60,8 +60,7 @@
     "vitest": "^0.16.0"
   },
   "dependencies": {
-    "mitt": "^3.0.0",
-    "super-hotkey": "^0.0.1-dev.0"
+    "mitt": "^3.0.0"
   },
   "resolutions": {},
   "lint-staged": {
