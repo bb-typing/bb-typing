@@ -1,10 +1,13 @@
+import type { HotkeyContent } from '@ui/core/hotkey/types';
 import useThemeStyle from '@ui/styles/useThemeStyle';
 import { useImperativeHandle, useRef } from 'react';
 import { Item, Menu, Separator, useContextMenu } from 'react-contexify';
 import { tw } from 'twind';
 import { css } from 'twind/css';
 
-import type { ShortcutRenderSourceItem } from './utils';
+import type { ShortcutConfigModalProps } from './ShortcutConfigModal';
+import ShortcutConfigModal from './ShortcutConfigModal';
+import type { ShortcutRenderSourceItem } from '../utils';
 
 const MENU_ID = 'keyboard-shortcut-menu';
 
@@ -20,6 +23,7 @@ export interface ContextMenuProps {
 function ContextMenu(props: ContextMenuProps): JSX.Element {
   const { contextRef } = props;
   const currentShortcutRef = useRef<ShortcutRenderSourceItem>();
+  const shortcutConfigModalRef = useRef() as ShortcutConfigModalProps['contextRef'];
   const style = useStyle();
   const { show: showMenu } = useContextMenu({
     id: MENU_ID
@@ -35,28 +39,37 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
   return (
     <div className={style.wrapper}>
       <Menu id={MENU_ID} animation={false}>
-        <Item onClick={updateShortcut}>更改键绑定</Item>
-        <Item onClick={addShortcut}>添加键绑定</Item>
+        <Item onClick={handleUpdateShortcut}>更改键绑定</Item>
+        <Item onClick={handleAddShortcut}>添加键绑定</Item>
         <Separator />
-        <Item onClick={disableShortcut}>禁用</Item>
-        <Item onClick={deleteShortcut}>删除</Item>
+        <Item onClick={handleDisableShortcut}>禁用</Item>
+        <Item onClick={handleDeleteShortcut}>删除</Item>
       </Menu>
+      <ShortcutConfigModal
+        contextRef={shortcutConfigModalRef}
+        onOk={handleConfiguredShortcut}
+      />
     </div>
   );
 
-  function updateShortcut() {
-    console.log('updateShortcut');
+  function handleConfiguredShortcut(shortcut: HotkeyContent) {
+    console.log('shortcut', shortcut);
   }
 
-  function addShortcut() {
+  function handleUpdateShortcut() {
+    console.log('updateShortcut');
+    shortcutConfigModalRef.current?.open();
+  }
+
+  function handleAddShortcut() {
     console.log('addShortcut');
   }
 
-  function deleteShortcut() {
+  function handleDeleteShortcut() {
     console.log('deleteShortcut');
   }
 
-  function disableShortcut() {
+  function handleDisableShortcut() {
     console.log('disableShortcut');
   }
 }

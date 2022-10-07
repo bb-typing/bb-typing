@@ -13,7 +13,8 @@ function useThemeStyle() {
 
   return {
     mt,
-    selector
+    selector,
+    isDark
   };
 }
 
