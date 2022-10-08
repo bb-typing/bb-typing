@@ -13,8 +13,10 @@ export function modifierKeyBeautify(key: MergedModifierCode | AnyString): string
   }
 }
 
-export function sortModifierKeys(modifiers: MergedModifierCode[]): MergedModifierCode[] {
-  const modifierPriorityMap: Record<MergedModifierCode, number> = {
+export function modifierKeysReorder(
+  modifiers: MergedModifierCode[]
+): MergedModifierCode[] {
+  const modifierKeyPriorityMap: Record<MergedModifierCode, number> = {
     Meta: 0,
     MetaLeft: 0,
     MetaRight: 0,
@@ -34,5 +36,5 @@ export function sortModifierKeys(modifiers: MergedModifierCode[]): MergedModifie
     '⇧': 3
   };
 
-  return modifiers.sort((a, b) => modifierPriorityMap[a] - modifierPriorityMap[b]);
+  return modifiers.sort((a, b) => modifierKeyPriorityMap[a] - modifierKeyPriorityMap[b]);
 }

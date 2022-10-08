@@ -1,6 +1,5 @@
 import type { HotkeyContent } from '@ui/core/hotkey/types';
 import useThemeStyle from '@ui/styles/useThemeStyle';
-import { random } from 'lodash';
 import { useImperativeHandle, useRef } from 'react';
 import { Item, Menu, Separator, useContextMenu } from 'react-contexify';
 import { tw } from 'twind';
@@ -49,7 +48,6 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
       <ShortcutConfigModal
         contextRef={shortcutConfigModalRef}
         onConfirm={handleConfiguredShortcut}
-        key={random()}
       />
     </div>
   );
