@@ -3,7 +3,7 @@ import { useTrackedHotkeyState } from '@ui/core/hotkey/';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
 import { useComputedThemeState } from '@ui/stores/theme';
 import useThemeStyle from '@ui/styles/useThemeStyle';
-import { filterModifierKey } from '@ui/utils/keyboard-shortcut';
+import { modifierKeyBeautify } from '@ui/utils/keyboard-shortcut';
 import React, { memo, useMemo, useRef } from 'react';
 import { tw } from 'twind';
 
@@ -50,20 +50,19 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
     function renderShortcuts(hotkeyContent: HotkeyContent) {
       if (!hotkeyContent) return;
       const { modifierKey, normalKey } = hotkeyContent;
+
       const modifierKeyJSX: React.ReactNode = (() => {
         if (!modifierKey) return null;
 
         if (Array.isArray(modifierKey)) {
           return modifierKey.map(key => (
             <Kbd key={key} className={tw`mr-[4px]`}>
-              {filterModifierKey(key)}
+              {modifierKeyBeautify(key)}
             </Kbd>
           ));
         }
 
-        return (
-          <Kbd className={tw`mr-[4px]`}>{filterModifierKey(modifierKey as any)}</Kbd>
-        );
+        return <Kbd className={tw`mr-[4px]`}>{modifierKeyBeautify(modifierKey)}</Kbd>;
       })();
 
       return (

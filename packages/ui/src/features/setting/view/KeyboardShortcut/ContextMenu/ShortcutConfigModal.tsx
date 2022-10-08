@@ -1,6 +1,7 @@
 import { Button, Kbd, Modal } from '@mantine/core';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
 import useThemeStyle from '@ui/styles/useThemeStyle';
+import { modifierKeyBeautify, sortModifierKeys } from '@ui/utils/keyboard-shortcut';
 import { useSetState } from 'ahooks';
 import { motion } from 'framer-motion';
 import { omit } from 'lodash';
@@ -18,11 +19,11 @@ export interface ShortcutConfigModalProps {
   contextRef: React.RefObject<{
     open(): void;
   }>;
-  onOk(shortcut: HotkeyContent): void;
+  onConfirm(shortcut: HotkeyContent): void;
 }
 
 function ShortcutConfigModal(props: ShortcutConfigModalProps): JSX.Element {
-  const { contextRef, onOk } = props;
+  const { contextRef, onConfirm } = props;
   const t = useThemeStyle();
   const [{ visible, currentShortcut }, setStates] = useSetState({
     visible: false,
@@ -67,7 +68,7 @@ function ShortcutConfigModal(props: ShortcutConfigModalProps): JSX.Element {
           return [
             modifiers.map(modifier => (
               <Kbd className={tw`mr-[2px]`} key={modifier}>
-                {modifier.toLocaleLowerCase()}
+                {modifierKeyBeautify(modifier)}
               </Kbd>
             )),
             hasModifiers && hasNormals && <span className={tw`mx-[3px]`}>+</span>,
@@ -94,10 +95,11 @@ function ShortcutConfigModal(props: ShortcutConfigModalProps): JSX.Element {
   );
 
   function handleConfirm() {
-    onOk({
+    onConfirm({
       modifierKey: currentShortcut.modifiers,
       normalKey: currentShortcut.normals
     });
+    setStates({ visible: false });
   }
 
   function handleMonitorInputKeyDown(event: KeyboardEvent) {
@@ -149,6 +151,7 @@ function ShortcutConfigModal(props: ShortcutConfigModalProps): JSX.Element {
       }
     }
 
+    _currentShortcut.modifiers = sortModifierKeys(_currentShortcut.modifiers);
     setStates({ currentShortcut: _currentShortcut });
   }
 

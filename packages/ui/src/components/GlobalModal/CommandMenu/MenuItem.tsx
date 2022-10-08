@@ -2,7 +2,7 @@ import { Group, Highlight, Kbd, Text, UnstyledButton } from '@mantine/core';
 import type { InnerSpotlightProps } from '@mantine/spotlight/lib/Spotlight/Spotlight';
 import { useComputedHotkeyState } from '@ui/core/hotkey';
 import useThemeStyle from '@ui/styles/useThemeStyle';
-import { filterModifierKey } from '@ui/utils/keyboard-shortcut';
+import { modifierKeyBeautify } from '@ui/utils/keyboard-shortcut';
 import clsx from 'clsx';
 import { tw } from 'twind';
 
@@ -47,15 +47,13 @@ const MenuItem: InnerSpotlightProps['actionComponent'] = props => {
               if (Array.isArray(modifierKey)) {
                 return modifierKey.map(key => (
                   <Kbd key={key} className={tw`mr-[4px]`}>
-                    {filterModifierKey(key)}
+                    {modifierKeyBeautify(key)}
                   </Kbd>
                 ));
               }
 
               return (
-                <Kbd className={tw`mr-[4px]`}>
-                  {filterModifierKey(modifierKey as any)}
-                </Kbd>
+                <Kbd className={tw`mr-[4px]`}>{modifierKeyBeautify(modifierKey)}</Kbd>
               );
             })();
 
