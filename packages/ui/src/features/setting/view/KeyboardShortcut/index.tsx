@@ -1,8 +1,6 @@
 import { Kbd, Table } from '@mantine/core';
 import { useTrackedHotkeyState } from '@ui/core/hotkey/';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
-import { useComputedThemeState } from '@ui/stores/theme';
-import useThemeStyle from '@ui/styles/useThemeStyle';
 import { modifierKeyBeautify } from '@ui/utils/keyboard-shortcut';
 import React, { memo, useMemo, useRef } from 'react';
 import { tw } from 'twind';
@@ -28,7 +26,7 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
 
     Object.entries(renderSource).map(([actionName, shortcuts]) => {
       shortcuts.forEach(shortcut => {
-        const isUserDefined = shortcut.type === 'default';
+        const isUserDefined = shortcut.type === 'user';
 
         result.push(
           <tr
