@@ -7,9 +7,9 @@ export interface SystemStoreState {
   version: string;
 }
 
-interface SystemStoreActions {}
+interface SystemStoreAction {}
 
-type Store = SystemStoreState & SystemStoreActions;
+type Store = SystemStoreState & SystemStoreAction;
 
 export const useSystemStore = create<
   Store,

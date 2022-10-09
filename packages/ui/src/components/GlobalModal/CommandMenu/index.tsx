@@ -1,24 +1,36 @@
 import type { SpotlightAction } from '@mantine/spotlight';
 import { SpotlightProvider } from '@mantine/spotlight';
 import type { ActionConfigName } from '@ui/core/action';
-import { actionController, useTrackedActionStore } from '@ui/core/action';
-import { filterUsableActionsByActiveScope } from '@ui/core/action/utils';
+import { actionController } from '@ui/core/action';
+import { useComputedActionState } from '@ui/core/action/store';
+import type { SVGProps } from 'react';
 import { useMemo } from 'react';
-import './action-handler';
 
 import MenuItem from './MenuItem';
-import { TablerSearch } from './svg';
+
+export function TablerSearch(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      <g
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      >
+        <circle cx="10" cy="10" r="7"></circle>
+        <path d="m21 21l-6-6"></path>
+      </g>
+    </svg>
+  );
+}
 
 interface CommandMenuProps {}
 
 function CommandMenu(props: CommandMenuProps): JSX.Element {
-  const { activeScopes } = useTrackedActionStore();
+  const { usableActions } = useComputedActionState();
 
   const spotlightActions: SpotlightAction[] = useMemo(() => {
-    const usableActions = filterUsableActionsByActiveScope(activeScopes, {
-      ignoreActionNames: ['system:open-search-modal']
-    });
-
     return usableActions.map(
       action =>
         ({
@@ -31,7 +43,7 @@ function CommandMenu(props: CommandMenuProps): JSX.Element {
           }
         } as SpotlightAction)
     );
-  }, [activeScopes]);
+  }, [usableActions]);
 
   return (
     <SpotlightProvider
@@ -42,7 +54,7 @@ function CommandMenu(props: CommandMenuProps): JSX.Element {
       actionComponent={MenuItem}
       // actionsWrapperComponent={({ children }) => {
       //   return <div className={tw``}>{children}</div>;
-      // }}
+      // 　}
       limit={999}
       shortcut={null}
       nothingFoundMessage="没有找到相关的命令"

@@ -1,4 +1,3 @@
-import type { ColorScheme } from '@mantine/core';
 import {
   Button,
   ColorSchemeProvider,

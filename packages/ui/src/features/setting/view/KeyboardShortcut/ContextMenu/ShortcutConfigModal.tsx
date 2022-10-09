@@ -171,7 +171,7 @@ function useStyle() {
 
   return {
     monitorInput: tw(
-      'w-full h-[40px] mb-[15px] flex items-center justify-center cursor-text box-border select-none',
+      'w-full h-[40px] mb-[15px] flex items-center justify-center cursor-text box-border select-none rounded-[4px]',
       `border([1px] [${t.selector(t.mt.colors.dark[5], '#d8d8d8')}])`,
       `bg-[${t.selector(t.mt.colors.dark[8], '#f4f4f4')}]`,
       css`

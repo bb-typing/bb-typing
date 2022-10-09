@@ -4,10 +4,10 @@ import { immer } from 'zustand/middleware/immer';
 
 export interface AppLayoutTabsStoreState {}
 
-interface AppLayoutTabsStoreActions {}
+interface AppLayoutTabsStoreAction {}
 
 export const useAppLayoutTabsStore = create(
-  immer<AppLayoutTabsStoreState & AppLayoutTabsStoreActions>(set => ({}))
+  immer<AppLayoutTabsStoreState & AppLayoutTabsStoreAction>(set => ({}))
 );
 
 export const useTrackedAppLayoutTabsStore = createTrackedSelector(useAppLayoutTabsStore);

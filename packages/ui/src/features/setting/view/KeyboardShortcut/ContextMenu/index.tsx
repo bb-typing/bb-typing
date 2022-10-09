@@ -2,7 +2,7 @@ import type { HotkeyContent } from '@ui/core/hotkey/types';
 import useThemeStyle from '@ui/styles/useThemeStyle';
 import { useImperativeHandle, useRef } from 'react';
 import { Item, Menu, Separator, useContextMenu } from 'react-contexify';
-import { tw } from 'twind';
+import { apply, tw } from 'twind';
 import { css } from 'twind/css';
 
 import type { ShortcutConfigModalProps } from './ShortcutConfigModal';
@@ -43,7 +43,9 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
         <Item onClick={handleAddShortcut}>添加键绑定</Item>
         <Separator />
         <Item onClick={handleDisableShortcut}>禁用</Item>
-        <Item onClick={handleDeleteShortcut}>删除</Item>
+        <Item onClick={handleDeleteShortcut} className="delete">
+          删除
+        </Item>
       </Menu>
       <ShortcutConfigModal
         contextRef={shortcutConfigModalRef}
@@ -103,8 +105,12 @@ function useStyle() {
         }
 
         &__item {
+          &.delete > div {
+            color: #d83c3e;
+          }
           &__content {
-            color: ${t.selector('#fff', '#000')};
+            color: ${t.selector('#fff', '#4f5660')};
+            font-weight: 500;
             padding: 1px 9px;
             box-sizing: border-box;
             font-size: 14px;
