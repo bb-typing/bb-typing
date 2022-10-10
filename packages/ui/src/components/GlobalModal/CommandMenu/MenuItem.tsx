@@ -2,12 +2,13 @@ import { Group, Highlight, Kbd, Text, UnstyledButton } from '@mantine/core';
 import type { InnerSpotlightProps } from '@mantine/spotlight/lib/Spotlight/Spotlight';
 import { useComputedHotkeyState } from '@ui/core/hotkey';
 import useThemeStyle from '@ui/styles/useThemeStyle';
+import { modifierKeyBeautify } from '@ui/utils/keyboard-shortcut';
 import clsx from 'clsx';
 import { tw } from 'twind';
 
 const MenuItem: InnerSpotlightProps['actionComponent'] = props => {
   const { action, onTrigger, hovered, query } = props;
-  const { mt, ...appTheme } = useThemeStyle();
+  const t = useThemeStyle();
   const { currentPlatformLatestUsableHotkeyInfoMap: currentPlatformLatestHotkeyInfoMap } =
     useComputedHotkeyState();
   const hotkeyContent = currentPlatformLatestHotkeyInfoMap[action.id!]?.hotkeyContent;
@@ -16,9 +17,9 @@ const MenuItem: InnerSpotlightProps['actionComponent'] = props => {
     <UnstyledButton
       className={clsx(
         tw`relative block w-full px-[12px] py-[10px] rounded-[${
-          mt.radius.sm
-        }px] hover:(bg-[${appTheme.selector(['dark', 5], ['gray', 0])}])`,
-        hovered && tw`bg-[${appTheme.selector(['dark', 4], ['gray', 1])}]`
+          t.mt.radius.sm
+        }px] hover:(bg-[${t.selector(t.mt.colors.dark[5], t.mt.colors.gray[0])}])`,
+        hovered && tw`bg-[${t.selector(t.mt.colors.dark[4], t.mt.colors.gray[1])}]`
       )}
       tabIndex={-1}
       onMouseDown={(event: any) => event.preventDefault()}
@@ -46,12 +47,14 @@ const MenuItem: InnerSpotlightProps['actionComponent'] = props => {
               if (Array.isArray(modifierKey)) {
                 return modifierKey.map(key => (
                   <Kbd key={key} className={tw`mr-[4px]`}>
-                    {key}
+                    {modifierKeyBeautify(key)}
                   </Kbd>
                 ));
               }
 
-              return <Kbd className={tw`mr-[4px]`}>{modifierKey}</Kbd>;
+              return (
+                <Kbd className={tw`mr-[4px]`}>{modifierKeyBeautify(modifierKey)}</Kbd>
+              );
             })();
 
             return (

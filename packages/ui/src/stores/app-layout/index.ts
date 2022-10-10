@@ -6,13 +6,13 @@ export interface AppLayoutStoreState {
   sidebarFoldStatus: 'hide' | 'icon' | 'icon-text';
 }
 
-interface AppLayoutStoreActions {
+interface AppLayoutStoreAction {
   setSidebarFoldStatus(selectedStatus: AppLayoutStoreState['sidebarFoldStatus']): void;
   switchSidebarVisible(): void;
 }
 
 export const useAppLayoutStore = create(
-  immer<AppLayoutStoreState & AppLayoutStoreActions>(set => ({
+  immer<AppLayoutStoreState & AppLayoutStoreAction>(set => ({
     sidebarFoldStatus: 'icon',
 
     setSidebarFoldStatus: selectedStatus =>

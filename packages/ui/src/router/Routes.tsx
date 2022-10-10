@@ -1,4 +1,5 @@
 import Welcome from '@ui/components/Welcome';
+import UserRoutes from '@ui/features/user/Routes';
 import { useRoutes } from 'react-router-dom';
 
 import AppLayout from '../components/AppLayout';
@@ -11,7 +12,8 @@ function Routes(): JSX.Element {
       element: <AppLayout />,
       children: [
         { index: true, element: <Welcome /> },
-        { path: '/setting/*', element: <SettingRoutes /> }
+        { path: '/setting/*', element: <SettingRoutes /> },
+        { path: '/user/*', element: <UserRoutes /> }
       ]
     }
   ]);

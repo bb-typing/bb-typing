@@ -31,9 +31,11 @@ async function createWindow() {
   if (app.isPackaged) {
     win.loadFile(join(__dirname, '../index.html'));
   } else {
-    const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`;
+    // const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`;
 
-    win.loadURL(url);
+    // win.loadURL(url);
+    win.loadURL('http://localhost:7777');
+
     win.webContents.openDevTools();
   }
 

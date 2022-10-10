@@ -13,6 +13,10 @@ export interface paths {
   '/typing-service/account/register': {
     post: operations['registerUsingPOST'];
   };
+  '/typing-service/account/setting/{type}': {
+    get: operations['getSettingUsingGET'];
+    post: operations['updateSettingUsingPOST'];
+  };
   '/typing-service/account/article/getHistoryArticle': {
     get: operations['getArticleByIdUsingGET'];
   };
@@ -70,7 +74,7 @@ export interface paths {
     post: operations['loadWordLibUsingPOST'];
   };
   '/typing-service/wordLib/setting': {
-    get: operations['getSettingUsingGET'];
+    get: operations['getSettingUsingGET_1'];
     put: operations['settingUsingPUT'];
     delete: operations['deleteSettingUsingDELETE'];
   };
@@ -199,14 +203,6 @@ export interface components {
       /** Format: int64 */
       total?: number;
     };
-    /** PreInfo */
-    PreInfo: {
-      /** Format: int32 */
-      pre?: number;
-      type?: string;
-      words?: string;
-      wordsCode?: string;
-    };
     /** Result«Array«SubscriptInstance»» */
     'Result«Array«SubscriptInstance»»': {
       /** Format: int64 */
@@ -220,6 +216,13 @@ export interface components {
       code?: number;
       message?: string;
       result?: components['schemas']['Article'];
+    };
+    /** Result«JSONObject» */
+    'Result«JSONObject»': {
+      /** Format: int64 */
+      code?: number;
+      message?: string;
+      result?: { [key: string]: { [key: string]: unknown } };
     };
     /** Result«List«ComparisonItem»» */
     'Result«List«ComparisonItem»»': {
@@ -300,14 +303,13 @@ export interface components {
     };
     /** SubscriptInstance */
     SubscriptInstance: {
-      minPre?: components['schemas']['PreInfo'];
       /** Format: int32 */
       next?: number;
       type?: string;
       word?: string;
-      wordCode?: string;
+      wordCode?: string[];
       words?: string;
-      wordsCode?: string;
+      wordsCode?: string[];
     };
     /** Table«TypeHistoryDto» */
     'Table«TypeHistoryDto»': {
@@ -614,6 +616,68 @@ export interface operations {
       content: {
         'application/json': components['schemas']['AccountDto'];
       };
+    };
+  };
+  getSettingUsingGET: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+      path: {
+        /** type */
+        type: 'hue' | 'layout' | 'shortcut';
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«JSONObject»'];
+        };
+      };
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
+  updateSettingUsingPOST: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+      path: {
+        /** type */
+        type: 'hue' | 'layout' | 'shortcut';
+      };
+      query: {
+        /** content */
+        content?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«JSONObject»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
     };
   };
   getArticleByIdUsingGET: {
@@ -1199,7 +1263,7 @@ export interface operations {
       404: unknown;
     };
   };
-  getSettingUsingGET: {
+  getSettingUsingGET_1: {
     parameters: {
       header: {
         /** 令牌 */

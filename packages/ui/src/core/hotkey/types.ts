@@ -40,7 +40,7 @@ export interface HotkeyStoreState {
   userHotkeyMap: UserHotkeyMap;
 }
 
-export interface HotkeyStoreActions {
+export interface HotkeyStoreAction {
   setUserHotkeyMap: (value: HotkeyStoreState['userHotkeyMap']) => void;
 }
 

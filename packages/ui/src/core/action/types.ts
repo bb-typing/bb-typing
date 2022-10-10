@@ -46,9 +46,13 @@ export interface ActionStoreState {
   activeScopes: ActionConfigScope[];
 }
 
-export interface ActionStoreActions {
+export interface ActionStoreAction {
   addActiveScope: (scope: ActionConfigScope) => void;
   delActiveScope: (scope: ActionConfigScope) => void;
+}
+
+export interface ActionStoreComputed {
+  usableActions: ActionConfigOption[];
 }
 
 //#endregion  //*======== store ===========

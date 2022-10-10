@@ -8,21 +8,22 @@ import type {
   UserHotkeyMap
 } from '@ui/core/hotkey/types';
 import { filterHotkeyMapByPlatform, filterHotkeyPlatform } from '@ui/core/hotkey/utils';
+import { Platform } from '@ui/utils/platform';
+
+export type ShortcutRenderSourceItem = (
+  | ({
+      type: 'user';
+    } & UserHotkeyInfo)
+  | ({
+      type: 'default';
+    } & BaseHotkeyInfo)
+) & {
+  actionConfig: ActionConfigOption;
+};
 
 type ShortcutRenderSource = Record<
   ActionConfigName | AnyString,
-  Array<
-    (
-      | ({
-          type: 'user';
-        } & UserHotkeyInfo)
-      | ({
-          type: 'default';
-        } & BaseHotkeyInfo)
-    ) & {
-      actionConfig: ActionConfigOption;
-    }
-  >
+  Array<ShortcutRenderSourceItem>
 >;
 
 export function convertToRenderSource(
@@ -51,8 +52,11 @@ export function convertToRenderSource(
         const notExistsInUserHotkey = !currentPlatformUserHotkeyMap[actionName]?.some(
           userHotkey => userHotkey.defaultOriginId === defaultHotkeyInfo.id
         );
+        const isSupportedPlatform = defaultHotkeyInfo.supportedPlatforms.includes(
+          Platform.OS as any
+        );
 
-        if (notExistsInUserHotkey) {
+        if (notExistsInUserHotkey && isSupportedPlatform) {
           source[actionName] = [
             ...(source[actionName] ?? []),
             {
@@ -71,14 +75,20 @@ export function convertToRenderSource(
       const actionConfig = actionController.getActionByName(actionName)!;
 
       userHotkeyInfos.forEach(userHotkeyInfo => {
-        source[actionName] = [
-          ...(source[actionName] ?? []),
-          {
-            type: 'user',
-            actionConfig,
-            ...userHotkeyInfo
-          }
-        ];
+        const isSupportedPlatform = userHotkeyInfo.supportedPlatforms.includes(
+          Platform.OS as any
+        );
+
+        if (isSupportedPlatform) {
+          source[actionName] = [
+            ...(source[actionName] ?? []),
+            {
+              type: 'user',
+              actionConfig,
+              ...userHotkeyInfo
+            }
+          ];
+        }
       });
     }
   );

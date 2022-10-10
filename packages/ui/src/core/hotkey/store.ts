@@ -3,14 +3,14 @@ import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import type { HotkeyStoreActions, HotkeyStoreComputed, HotkeyStoreState } from './types';
+import type { HotkeyStoreAction, HotkeyStoreComputed, HotkeyStoreState } from './types';
 import {
   defaultHotkeysInitializer,
   filterHotkeyMapByPlatform,
   filterHotkeyPlatform
 } from './utils';
 
-type Store = HotkeyStoreState & HotkeyStoreActions;
+type Store = HotkeyStoreState & HotkeyStoreAction;
 
 export const useHotkeyStore = create<
   Store,

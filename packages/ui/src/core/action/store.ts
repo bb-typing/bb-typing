@@ -1,12 +1,21 @@
+import { useComputedUserState } from '@ui/features/user/store';
+import { Platform } from '@ui/utils/platform';
 import _ from 'lodash';
 import { createTrackedSelector } from 'react-tracked';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import type { ActionStoreActions, ActionStoreState } from './types';
+import { actionController } from './controller';
+import type {
+  ActionConfigName,
+  ActionConfigOption,
+  ActionStoreAction,
+  ActionStoreComputed,
+  ActionStoreState
+} from './types';
 
-type Store = ActionStoreState & ActionStoreActions;
+type Store = ActionStoreState & ActionStoreAction;
 
 export const useActionStore = create<
   Store,
@@ -45,3 +54,54 @@ export const useActionStore = create<
 );
 
 export const useTrackedActionStore = createTrackedSelector(useActionStore);
+
+export const useComputedActionState = (): ActionStoreComputed => {
+  const useState = useTrackedActionStore;
+
+  return {
+    get usableActions() {
+      const actionConfigModules = actionController.getActions();
+      const usableActions: ActionConfigOption[] = [];
+      const { activeScopes } = useState();
+
+      type IgnoreActionNames = Array<
+        ActionConfigName | [name: ActionConfigName, show: boolean]
+      >;
+      const ignoreActionNames: IgnoreActionNames = (() => {
+        const names: IgnoreActionNames = [
+          'system:open-search-modal',
+          ['system:open-user-login', useComputedUserState().userLoggedIn]
+        ];
+
+        return names;
+      })();
+
+      actionConfigModules.forEach(module => {
+        const isActiveScope = activeScopes.includes(module.scope);
+
+        if (!isActiveScope) return;
+
+        module.configs.forEach(config => {
+          const isSupportedPlatform = config.supportedPlatforms.includes(
+            Platform.OS as any
+          );
+          const isIgnoredAction = ignoreActionNames.some(item => {
+            if (Array.isArray(item)) {
+              const [name, show] = item;
+
+              return config.name === name && show;
+            }
+
+            return config.name === item;
+          });
+
+          if (isSupportedPlatform && !isIgnoredAction) {
+            usableActions.push(config);
+          }
+        });
+      });
+
+      return usableActions;
+    }
+  };
+};
