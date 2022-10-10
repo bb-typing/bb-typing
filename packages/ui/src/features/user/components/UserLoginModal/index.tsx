@@ -38,6 +38,12 @@ function UserLoginModal(props: UserLoginProps): JSX.Element {
       setVisible(false);
       if (form.values.rememberPassword) {
         setFormValues(form.values);
+      } else {
+        setFormValues({
+          username: '',
+          password: '',
+          rememberPassword: false
+        });
       }
     },
     onError(_error, variables, context) {
