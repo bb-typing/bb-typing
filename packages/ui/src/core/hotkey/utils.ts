@@ -3,6 +3,7 @@ import { Platform } from '@ui/utils/platform';
 import type {
   BaseHotkeyInfo,
   BaseHotkeyMap,
+  HotkeyContent,
   HotkeyPlatform,
   HotkeyStoreState,
   UserHotkeyInfo,
@@ -25,19 +26,24 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
       if (!('defaultHotkeys' in config)) return;
 
       config.defaultHotkeys.forEach(hotkeyMap => {
-        Object.entries(hotkeyMap).forEach(([platform, hotkeyContent]) => {
-          defaultHotkeys[actionName] = {
-            ...defaultHotkeys[actionName],
-            [platform]: [
-              {
-                id: hotkeyContent.id,
-                hotkeyContent,
-                scope,
-                supportedPlatforms: config.supportedPlatforms
-              } as BaseHotkeyInfo
-            ]
-          };
-        });
+        Object.entries(hotkeyMap).forEach(
+          ([_platform, hotkeyContent]: [unknown, HotkeyContent & { id: string }]) => {
+            const platform = _platform as HotkeyPlatform;
+            defaultHotkeys[actionName] = {
+              ...defaultHotkeys[actionName],
+              [platform]: (
+                (defaultHotkeys[actionName]?.[platform] ?? []) as BaseHotkeyInfo[]
+              ).concat([
+                {
+                  id: hotkeyContent.id,
+                  hotkeyContent,
+                  scope,
+                  supportedPlatforms: config.supportedPlatforms
+                }
+              ])
+            };
+          }
+        );
       });
     });
   });
