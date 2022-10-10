@@ -31,6 +31,13 @@ export const globalActionConfigs = defineActionConfig('global', [
           modifierKey: ['Mod'],
           normalKey: 'k'
         }
+      },
+      {
+        default: {
+          id: '03997f67-3ced-5d4b-ba8d-94cea77026c8',
+          modifierKey: ['Mod', 'Shift'],
+          normalKey: 'p'
+        }
       }
     ],
     __params_type__: defineType<unknown>()
