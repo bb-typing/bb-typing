@@ -8,5 +8,3 @@ declare interface Window {
 }
 
 declare type AnyString = string & {};
-
-// declare module '@react-spring/web';

@@ -6,9 +6,7 @@
     "baseUrl": "../../",
     "composite": true,
     "jsx": "react-jsx",
-    "types": [
-      "vite/client"
-    ],
+    "types": ["vite/client"],
     "paths": {
       "@ui/*": ["packages/ui/src/*"],
       "@shared/*": ["packages/shared/*"]
@@ -17,7 +15,7 @@
   "include": [
     "../../packages/shared",
     "../../packages/ui/src/**/*.tsx",
-    "../../packages/ui/*.ts",
+    "../../packages/ui/**/*.ts",
     "../../config/*"
   ]
 }

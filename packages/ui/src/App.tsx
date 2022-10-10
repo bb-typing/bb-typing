@@ -4,6 +4,7 @@ import {
   LoadingOverlay,
   MantineProvider
 } from '@mantine/core';
+import { NotificationsProvider } from '@mantine/notifications';
 import * as React from 'react';
 import { Inspector } from 'react-dev-inspector';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -51,16 +52,18 @@ export const App = withScopeHotkey(
           toggleColorScheme={useThemeStore.getState().toggleColorScheme}
         >
           <MantineProvider withGlobalStyles withNormalizeCSS theme={{ colorScheme }}>
-            <ErrorBoundary FallbackComponent={ErrorFallback}>
-              <QueryClientProvider client={queryClient}>
-                {import.meta.env.DEV && <ReactQueryDevtools />}
-                {import.meta.env.DEV && <Inspector />}
-                <CustomRouter history={appHistory}>
-                  <Routes />
-                </CustomRouter>
-                <GlobalModal />
-              </QueryClientProvider>
-            </ErrorBoundary>
+            <NotificationsProvider position="top-center">
+              <ErrorBoundary FallbackComponent={ErrorFallback}>
+                <QueryClientProvider client={queryClient}>
+                  {import.meta.env.DEV && <ReactQueryDevtools />}
+                  {import.meta.env.DEV && <Inspector />}
+                  <CustomRouter history={appHistory}>
+                    <Routes />
+                  </CustomRouter>
+                  <GlobalModal />
+                </QueryClientProvider>
+              </ErrorBoundary>
+            </NotificationsProvider>
           </MantineProvider>
         </ColorSchemeProvider>
       </React.Suspense>

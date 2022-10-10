@@ -1,5 +1,6 @@
 import type { AxiosRequestConfig } from 'axios';
 import Axios from 'axios';
+import { APIResponse } from './types';
 
 import { getToken } from './utils';
 
@@ -15,14 +16,20 @@ function authRequestInterceptor(config: AxiosRequestConfig) {
   return config;
 }
 
-export const axios = Axios.create({
-  baseURL: 'http://127.0.0.1:5000/'
+export const axiosInstance = Axios.create({
+  baseURL: 'https://bb-typing.tyu.wiki/'
 });
 
-axios.interceptors.request.use(authRequestInterceptor);
-axios.interceptors.response.use(
+axiosInstance.interceptors.request.use(authRequestInterceptor);
+axiosInstance.interceptors.response.use(
   response => {
-    return response.data;
+    const data: APIResponse = response.data;
+
+    if (data.code !== 20000) {
+      throw data;
+    }
+
+    return data;
   },
   error => {
     return Promise.reject(error);

@@ -33,7 +33,6 @@ export default defineConfig({
   build: {
     target: 'es2015',
     cssTarget: 'chrome80',
-    brotliSize: false,
     chunkSizeWarningLimit: 2000,
     polyfillModulePreload: true
   }

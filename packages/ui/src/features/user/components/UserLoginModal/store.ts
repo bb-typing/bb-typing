@@ -1,14 +1,18 @@
+import { pick } from 'lodash';
 import { createTrackedSelector } from 'react-tracked';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { FormSchema } from '.';
 
 interface StoreState {
   visible: boolean;
+  formValues: FormSchema;
 }
 
 interface StoreAction {
   setVisible: (visible: boolean) => void;
+  setFormValues: (formValues: FormSchema) => void;
 }
 
 interface StoreComputed {}
@@ -23,20 +27,41 @@ export const useStore = create<
     immer(set => ({
       //#region  //*=========== state ===========
       visible: false,
+      formValues: {
+        username: '',
+        password: '',
+        rememberPassword: false
+      },
       //#endregion  //*======== state ===========
+      //
       //#region  //*=========== action ===========
       setVisible: visible =>
         set(state => {
           state.visible = visible;
+        }),
+      setFormValues: formValues =>
+        set(state => {
+          state.formValues = formValues;
         })
-
       //#endregion  //*======== action ===========
-      //
     })),
     {
-      name: 'bb-store-theme',
-      partialize: state => {
-        return {};
+      name: 'bb-store-user-login',
+      partialize: _ => {
+        const state: StoreState = _;
+        const formValues: FormSchema = {
+          password: '',
+          username: '',
+          rememberPassword: state.formValues.rememberPassword
+        };
+
+        if (state.formValues.rememberPassword) {
+          Object.assign(formValues, pick(state.formValues, ['username', 'password']));
+        }
+
+        return {
+          formValues
+        };
       }
     }
   )
