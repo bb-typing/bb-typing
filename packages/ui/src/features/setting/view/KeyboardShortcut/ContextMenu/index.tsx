@@ -1,4 +1,4 @@
-import type { HotkeyContent } from '@ui/core/hotkey/types';
+import type { HotkeyContent, UserHotkeyInfo } from '@ui/core/hotkey/types';
 import useThemeStyle from '@ui/styles/useThemeStyle';
 import { useImperativeHandle, useRef } from 'react';
 import { Item, Menu, Separator, useContextMenu } from 'react-contexify';
@@ -8,6 +8,7 @@ import { css } from 'twind/css';
 import type { ShortcutConfigModalProps } from './ShortcutConfigModal';
 import ShortcutConfigModal from './ShortcutConfigModal';
 import type { ShortcutRenderSourceItem } from '../utils';
+import { useSetState } from 'ahooks';
 
 const MENU_ID = 'keyboard-shortcut-menu';
 
@@ -22,30 +23,72 @@ export interface ContextMenuProps {
 
 function ContextMenu(props: ContextMenuProps): JSX.Element {
   const { contextRef } = props;
-  const currentShortcutRef = useRef<ShortcutRenderSourceItem>();
+
   const shortcutConfigModalRef = useRef() as ShortcutConfigModalProps['contextRef'];
   const style = useStyle();
   const { show: showMenu } = useContextMenu({
     id: MENU_ID
   });
 
+  const [{ currentShortcut }, setStates] = useSetState({
+    currentShortcut: null as ShortcutRenderSourceItem | null
+  });
+
   useImperativeHandle(contextRef, () => ({
     open(event, currentShortcut) {
       showMenu(event);
-      currentShortcutRef.current = currentShortcut;
+      setStates({ currentShortcut });
     }
   }));
 
   return (
     <div className={style.wrapper}>
       <Menu id={MENU_ID} animation={false}>
-        <Item onClick={handleUpdateShortcut}>更改键绑定</Item>
-        <Item onClick={handleAddShortcut}>添加键绑定</Item>
-        <Separator />
-        <Item onClick={handleDisableShortcut}>禁用</Item>
-        <Item onClick={handleDeleteShortcut} className="delete">
-          删除
-        </Item>
+        {(() => {
+          if (!currentShortcut) return null;
+
+          const isUserDefined = currentShortcut.type === 'user';
+          const isDefaultDefined = currentShortcut.type === 'default';
+          const hasDefinedHotkeyContent = currentShortcut.hotkeyContent !== undefined;
+
+          const allowUpdate =
+            hasDefinedHotkeyContent &&
+            ((isUserDefined && currentShortcut.status === 'enable') || isDefaultDefined);
+
+          const allowDisabled =
+            !hasDefinedHotkeyContent ||
+            (isDefaultDefined && hasDefinedHotkeyContent) ||
+            (isUserDefined && currentShortcut.status === 'enable');
+
+          // 是用户定义的，且热键状态处于「启用、禁用」时，才显示「删除」项
+          // 是默认定义的，且热键内容存在，才显示「删除」项
+          const allowDelete =
+            (isUserDefined &&
+              (['enable', 'disable'] as UserHotkeyInfo['status'][]).includes(
+                currentShortcut.status
+              )) ||
+            (isDefaultDefined && hasDefinedHotkeyContent);
+
+          return (
+            <>
+              <Item onClick={handleUpdateShortcut} disabled={!allowUpdate}>
+                更改键绑定
+              </Item>
+              <Item onClick={handleAddShortcut}>添加键绑定</Item>
+              <Separator />
+              <Item onClick={handleDisableShortcut} disabled={allowDisabled}>
+                禁用
+              </Item>
+              <Item
+                onClick={handleDeleteShortcut}
+                className="delete"
+                disabled={!allowDelete}
+              >
+                删除
+              </Item>
+            </>
+          );
+        })()}
       </Menu>
       <ShortcutConfigModal
         contextRef={shortcutConfigModalRef}

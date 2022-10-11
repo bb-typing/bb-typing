@@ -60,7 +60,7 @@ export const useComputedHotkeyState = (): HotkeyStoreComputed => {
         ([actionName, defaultHotkeyInfos]) => {
           const userDefinedHotkeyInfos =
             userHotkeyMap?.[actionName]?.[currentHotkeyPlatform!];
-          const defaultHotkeyInfo = defaultHotkeyInfos.at(-1);
+          const defaultHotkeyInfo = defaultHotkeyInfos?.at(-1);
 
           if (userDefinedHotkeyInfos) {
             const userHighestPriorityHotkeyInfo = userDefinedHotkeyInfos

@@ -53,9 +53,8 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
 
 //#region  //*=========== filter ===========
 
-type PlatformHotkeyMap<H extends BaseHotkeyInfo | UserHotkeyInfo> = Record<
-  ActionConfigName | AnyString,
-  Array<H>
+type PlatformHotkeyMap<H extends BaseHotkeyInfo | UserHotkeyInfo> = Partial<
+  Record<ActionConfigName | AnyString, Array<H>>
 >;
 
 type ScopePlatformHotkeyMap = Record<
@@ -73,7 +72,7 @@ export function filterHotkeyMapByPlatform<
   hotkeyMap: BaseHotkeyMap | UserHotkeyMap,
   targetPlatform: Exclude<HotkeyPlatform, 'default'> | undefined,
   includeDefaultPlatform = true
-): PlatformHotkeyMap<C> {
+): Partial<PlatformHotkeyMap<C>> {
   const filteredResult: PlatformHotkeyMap<C> = {} as any;
 
   Object.entries(hotkeyMap).forEach(([actionName, platformHotInfoMap]) => {
@@ -102,7 +101,7 @@ export function filterPlatformHotkeyMapByScope<T extends BaseHotkeyInfo | UserHo
   const filteredResult: ScopePlatformHotkeyMap = {} as any;
 
   Object.entries(platformHotkeyMap).forEach(([actionName, hotkeyInfos]) => {
-    filteredResult[actionName] = hotkeyInfos.filter(hotkey => hotkey.scope === scope);
+    filteredResult[actionName] = hotkeyInfos!.filter(hotkey => hotkey.scope === scope);
   });
 
   return filteredResult;

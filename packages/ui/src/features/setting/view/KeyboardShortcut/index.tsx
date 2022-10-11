@@ -14,12 +14,13 @@ import { convertToRenderSource } from './utils';
 interface ViewShortcutKeyProps {}
 
 const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
-  const { defaultHotkeyMap, userHotkeyMap } = useTrackedHotkeyState();
+  const { userHotkeyMap } = useTrackedHotkeyState();
   const contextMenuRef = useRef() as ContextMenuProps['contextRef'];
 
-  const renderSource = useMemo(() => {
-    return convertToRenderSource(defaultHotkeyMap, userHotkeyMap);
-  }, [defaultHotkeyMap, userHotkeyMap]);
+  const renderSource = useMemo(
+    () => convertToRenderSource(userHotkeyMap),
+    [userHotkeyMap]
+  );
 
   const rows = (() => {
     const result: React.ReactNode[] = [];
@@ -27,16 +28,17 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
     Object.entries(renderSource).map(([actionName, shortcuts]) => {
       shortcuts.forEach(shortcut => {
         const isUserDefined = shortcut.type === 'user';
+        const hasHotkeyContent = shortcut.hotkeyContent !== undefined;
 
         result.push(
           <tr
-            key={actionName}
+            key={shortcut.id || actionName}
             onContextMenu={event => {
               contextMenuRef.current?.open(event, shortcut);
             }}
           >
             <td>{shortcut.actionConfig.commands[1]}</td>
-            <td>{renderShortcuts(shortcut.hotkeyContent)}</td>
+            <td>{hasHotkeyContent ? renderShortcuts(shortcut.hotkeyContent!) : '-'}</td>
             <td>{isUserDefined ? '用户' : '默认'}</td>
           </tr>
         );
