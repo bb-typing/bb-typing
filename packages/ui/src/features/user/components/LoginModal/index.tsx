@@ -13,11 +13,13 @@ import { showNotification } from '@mantine/notifications';
 import { APIResponse } from '@ui/core/axios/types';
 import { useUpdateEffect } from 'ahooks';
 import { pick } from 'lodash';
-import { useUserLoginAPI } from '../../api/hooks/useUserLogin';
+import { useUserLoginAPI } from '../../api/hooks/useLogin';
 import { UserLoginFormSchema, userLoginFormSchema } from '../../model';
 import './action-handler';
 
 import { useStore, useTrackedState } from './store';
+
+import { useStore as useRegisterModalStore } from '../RegisterModal/store';
 
 interface UserLoginProps {}
 
@@ -92,7 +94,7 @@ function UserLoginModal(props: UserLoginProps): JSX.Element {
             component="button"
             type="button"
             color="dimmed"
-            onClick={() => {}}
+            onClick={handleToRegister}
             size="xs"
           >
             没有账户？注册
@@ -107,6 +109,10 @@ function UserLoginModal(props: UserLoginProps): JSX.Element {
 
   async function handleFormSubmit(values: FormSchema) {
     userLoginFetch(pick(values, ['username', 'password']));
+  }
+
+  function handleToRegister() {
+    useRegisterModalStore.getState().setVisible(true);
   }
 }
 

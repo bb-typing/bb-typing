@@ -64,6 +64,12 @@ export const globalActionConfigs = defineActionConfig('global', [
     __params_type__: defineType<unknown>()
   }),
   defineVariables<ActionConfigOption>()({
+    name: 'system:open-user-register' as const,
+    supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
+    commands: ['System: Open User Register Window', '系统：打开用户注册窗'],
+    __params_type__: defineType<unknown>()
+  }),
+  defineVariables<ActionConfigOption>()({
     name: 'navigation:open-keyboard-shortcuts' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
     commands: ['Navigation: Open Keyboard Shortcuts', '导航：打开快捷键配置'],

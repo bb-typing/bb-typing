@@ -6,3 +6,7 @@ export const userLoginFormSchema = z.object({
 });
 
 export type UserLoginFormSchema = z.infer<typeof userLoginFormSchema>;
+
+export const userRegisterFormSchema = userLoginFormSchema;
+
+export type UserRegisterFormSchema = z.infer<typeof userRegisterFormSchema>;

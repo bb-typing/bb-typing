@@ -13,5 +13,12 @@ declare global {
       export type Resp =
         APISchema['/typing-service/account/login']['post']['response']['result'];
     }
+
+    export namespace Register {
+      export type Req = APISchema['/typing-service/account/register']['post']['params'];
+
+      export type Resp =
+        APISchema['/typing-service/account/register']['post']['response']['result'];
+    }
   }
 }
