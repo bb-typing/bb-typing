@@ -1,5 +1,5 @@
 import CommandMenu from './CommandMenu';
-import UserLoginModal from '../../features/user/components/UserLoginModal';
+import UserLoginModal from '../../features/user/components/LoginModal';
 
 interface GlobalModalProps {}
 
