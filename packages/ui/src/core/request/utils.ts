@@ -1,7 +1,11 @@
-import { AxiosRequestConfig } from 'axios';
-import { axiosInstance } from '.';
-import { APIPath, APISchema } from './types';
-import { U } from 'ts-toolbelt';
+import { showNotification } from '@mantine/notifications';
+import type { AxiosRequestConfig } from 'axios';
+import type { U } from 'ts-toolbelt';
+
+import { axiosInstance } from './axios';
+import type { ErrorCode } from './error-code';
+import { errorCodeStatus } from './error-code';
+import type { APIPath, APISchema, InternalConfig } from './types';
 
 export function getToken(): string {
   return JSON.parse(localStorage.getItem(`bb_typewrite_token`) as string);
@@ -20,12 +24,12 @@ export function defineRequest<T extends APIPath, M extends keyof APISchema[T]>(
     : true;
 
   return (
-    options: {
+    options: InternalConfig & {
       params: APISchema[T][M]['params'] & Record<string, unknown>;
     } & (HasURLPlaceholder extends true ? { urlPlaceholder: URLPlaceholder } : {}),
     axiosConfig: Partial<AxiosRequestConfig> = {}
   ) => {
-    const { params } = options;
+    const { params, popupErrorPrompt = true } = options;
 
     const filteredURL = (() => {
       if ('urlPlaceholder' in options) {
@@ -37,13 +41,35 @@ export function defineRequest<T extends APIPath, M extends keyof APISchema[T]>(
 
         return filteredURL;
       }
+
       return url;
     })();
 
     return axiosInstance(filteredURL, {
       method,
       ...(method === 'post' ? { data: params } : { params }),
-      ...axiosConfig
+      ...axiosConfig,
+      _internal: {
+        popupErrorPrompt
+      }
     }) as Promise<Response>;
   };
+}
+
+export function errorMessagePopup(
+  errorCode: ErrorCode,
+  popupConfig?: Exclude<InternalConfig['popupErrorPrompt'], boolean>
+) {
+  const errorMessage = errorCodeStatus.toEnum()[errorCode];
+
+  if (errorMessage) {
+    showNotification({
+      title: '错误提示',
+      color: 'red',
+      message: errorMessage,
+      ...popupConfig
+    });
+  } else {
+    throw new Error(`存在未定义的 error-code：${errorCode}`);
+  }
 }

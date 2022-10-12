@@ -29,6 +29,7 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
         Object.entries(hotkeyMap).forEach(
           ([_platform, hotkeyContent]: [unknown, HotkeyContent & { id: string }]) => {
             const platform = _platform as HotkeyPlatform;
+
             defaultHotkeys[actionName] = {
               ...defaultHotkeys[actionName],
               [platform]: (

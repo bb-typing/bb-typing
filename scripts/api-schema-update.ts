@@ -11,7 +11,7 @@ async function main() {
   const swaggerDocAPIURL = 'https://bb-typing.tyu.wiki/typing-service/v3/api-docs';
   const apiSchemaFilePath = path.resolve(
     process.cwd(),
-    'packages/ui/src/utils/axios/schema.d.ts'
+    'packages/ui/src/core/request/schema.d.ts'
   );
 
   const output = await openapiTS(swaggerDocAPIURL, {

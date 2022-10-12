@@ -65,12 +65,15 @@ export const useComputedActionState = (): ActionStoreComputed => {
       const { activeScopes } = useState();
 
       type IgnoreActionNames = Array<
-        ActionConfigName | [name: ActionConfigName, show: boolean]
+        ActionConfigName | [name: ActionConfigName, ignore: boolean]
       >;
       const ignoreActionNames: IgnoreActionNames = (() => {
+        const { userLoggedIn } = useComputedUserState();
+
         const names: IgnoreActionNames = [
           'system:open-search-modal',
-          ['system:open-user-login', useComputedUserState().userLoggedIn]
+          ['system:open-user-login', userLoggedIn],
+          ['user:exit-current-login', !userLoggedIn]
         ];
 
         return names;
@@ -87,9 +90,9 @@ export const useComputedActionState = (): ActionStoreComputed => {
           );
           const isIgnoredAction = ignoreActionNames.some(item => {
             if (Array.isArray(item)) {
-              const [name, show] = item;
+              const [name, ignore] = item;
 
-              return config.name === name && show;
+              return config.name === name && ignore;
             }
 
             return config.name === item;

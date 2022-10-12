@@ -1,7 +1,9 @@
+import type { NotificationProps } from '@mantine/core';
+import type { GetContentBetweenTwoChar } from '@mimi-utils/types';
+import type { AxiosRequestConfig } from 'axios';
 import type { Simplify } from 'type-fest';
 
 import type { paths } from './schema';
-import type { GetContentBetweenTwoChar } from '@mimi-utils/types';
 
 namespace GetParamsByMethod {
   type ByPost<O> = O extends {
@@ -56,11 +58,22 @@ export type GetAPIResponse<
   Method extends keyof APISchema[Path]
 > = APISchema[Path][Method]['response'];
 
+export interface InternalConfig {
+  /**
+   * @default true
+   */
+  popupErrorPrompt?: boolean | (Partial<NotificationProps> & {});
+}
+
+export type RequestConfig = AxiosRequestConfig & {
+  _internal: Required<InternalConfig>;
+};
+
 declare module 'axios' {
   interface AxiosInstance extends Axios {
     <U extends APIPath, M extends keyof APISchema[U]>(
-      url: U,
-      config?: Omit<AxiosRequestConfig, 'data' | 'params' | 'method'> & {
+      url: U | AnyString,
+      config?: Omit<RequestConfig, 'data' | 'params' | 'method'> & {
         method?: M | AnyString;
         data?: APISchema[U][M]['params'];
         params?: APISchema[U][M]['params'];

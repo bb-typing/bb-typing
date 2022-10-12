@@ -1,3 +1,4 @@
+import { pick } from 'lodash';
 import { createTrackedSelector } from 'react-tracked';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -5,11 +6,14 @@ import { immer } from 'zustand/middleware/immer';
 
 interface UserStoreState {
   userInfo: null | {
-    id: string;
+    token: string;
   };
 }
 
-interface UserStoreAction {}
+interface UserStoreAction {
+  setUserInfo: (userInfo: UserStoreState['userInfo']) => void;
+  clearUserInfo: () => void;
+}
 
 type Store = UserStoreState & UserStoreAction;
 
@@ -20,15 +24,26 @@ export const useUserStore = create<
   persist(
     immer(set => ({
       //#region  //*=========== state ===========
-      userInfo: null
+      userInfo: null,
       //#endregion  //*======== state ===========
+
       //#region  //*=========== action ===========
+      setUserInfo: (userInfo: UserStoreState['userInfo']) => {
+        set(state => {
+          state.userInfo = userInfo;
+        });
+      },
+      clearUserInfo: () => {
+        set(state => {
+          state.userInfo = null;
+        });
+      }
       //#endregion  //*======== action ===========
     })),
     {
       name: 'bb-store-user',
       partialize: state => {
-        return {};
+        return pick(state, ['userInfo']);
       }
     }
   )

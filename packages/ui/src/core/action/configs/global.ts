@@ -70,6 +70,12 @@ export const globalActionConfigs = defineActionConfig('global', [
     __params_type__: defineType<unknown>()
   }),
   defineVariables<ActionConfigOption>()({
+    name: 'user:exit-current-login' as const,
+    supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
+    commands: ['User: Exit Current Login', '用户：退出当前登录'],
+    __params_type__: defineType<unknown>()
+  }),
+  defineVariables<ActionConfigOption>()({
     name: 'navigation:open-keyboard-shortcuts' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
     commands: ['Navigation: Open Keyboard Shortcuts', '导航：打开快捷键配置'],

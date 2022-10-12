@@ -1,8 +1,8 @@
 import type { AxiosRequestConfig } from 'axios';
 import Axios from 'axios';
-import { APIResponse } from './types';
 
-import { getToken } from './utils';
+import type { APIResponse, RequestConfig } from './types';
+import { errorMessagePopup, getToken } from './utils';
 
 function authRequestInterceptor(config: AxiosRequestConfig) {
   const token = getToken();
@@ -24,8 +24,18 @@ axiosInstance.interceptors.request.use(authRequestInterceptor);
 axiosInstance.interceptors.response.use(
   response => {
     const data: APIResponse = response.data;
+    const config = response.config as RequestConfig;
 
     if (data.code !== 20000) {
+      const { popupErrorPrompt } = config._internal;
+
+      if (popupErrorPrompt) {
+        errorMessagePopup(
+          data.code as any,
+          typeof popupErrorPrompt === 'boolean' ? undefined : popupErrorPrompt
+        );
+      }
+
       throw data;
     }
 

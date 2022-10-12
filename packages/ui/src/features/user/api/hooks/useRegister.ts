@@ -1,7 +1,7 @@
-import { apiUserRegister } from '../apis';
 import { useMutation } from 'react-query';
-import { queryKey } from '../constants';
 
+import { apiUserRegister } from '../apis';
+import { queryKey } from '../constants';
 import type { UserRegisterFormSchema } from '../../model';
 
 type UseUserRegisterMutation = typeof useMutation<
@@ -10,6 +10,7 @@ type UseUserRegisterMutation = typeof useMutation<
   UserRegisterFormSchema
 >;
 type UserLoginMutationOptions = Parameters<UseUserRegisterMutation>[2];
+
 export function useUserRegisterAPI(options?: UserLoginMutationOptions) {
   const _useMutation = useMutation as UseUserRegisterMutation;
 

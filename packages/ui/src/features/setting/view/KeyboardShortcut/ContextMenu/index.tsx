@@ -1,5 +1,6 @@
 import type { HotkeyContent, UserHotkeyInfo } from '@ui/core/hotkey/types';
 import useThemeStyle from '@ui/styles/useThemeStyle';
+import { useSetState } from 'ahooks';
 import { useImperativeHandle, useRef } from 'react';
 import { Item, Menu, Separator, useContextMenu } from 'react-contexify';
 import { apply, tw } from 'twind';
@@ -8,7 +9,6 @@ import { css } from 'twind/css';
 import type { ShortcutConfigModalProps } from './ShortcutConfigModal';
 import ShortcutConfigModal from './ShortcutConfigModal';
 import type { ShortcutRenderSourceItem } from '../utils';
-import { useSetState } from 'ahooks';
 
 const MENU_ID = 'keyboard-shortcut-menu';
 
@@ -71,19 +71,15 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
 
           return (
             <>
-              <Item onClick={handleUpdateShortcut} disabled={!allowUpdate}>
+              <Item onClick={updateShortcut} disabled={!allowUpdate}>
                 更改键绑定
               </Item>
-              <Item onClick={handleAddShortcut}>添加键绑定</Item>
+              <Item onClick={addShortcut}>添加键绑定</Item>
               <Separator />
-              <Item onClick={handleDisableShortcut} disabled={allowDisabled}>
+              <Item onClick={disableShortcut} disabled={allowDisabled}>
                 禁用
               </Item>
-              <Item
-                onClick={handleDeleteShortcut}
-                className="delete"
-                disabled={!allowDelete}
-              >
+              <Item onClick={deleteShortcut} className="delete" disabled={!allowDelete}>
                 删除
               </Item>
             </>
@@ -101,20 +97,20 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
     console.log('configuredShortcut', configuredShortcut);
   }
 
-  function handleUpdateShortcut() {
+  function updateShortcut() {
     console.log('updateShortcut');
     shortcutConfigModalRef.current?.open();
   }
 
-  function handleAddShortcut() {
+  function addShortcut() {
     console.log('addShortcut');
   }
 
-  function handleDeleteShortcut() {
+  function deleteShortcut() {
     console.log('deleteShortcut');
   }
 
-  function handleDisableShortcut() {
+  function disableShortcut() {
     console.log('disableShortcut');
   }
 }

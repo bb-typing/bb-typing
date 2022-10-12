@@ -12,7 +12,7 @@ import type {
 import { filterHotkeyMapByPlatform, filterHotkeyPlatform } from '@ui/core/hotkey/utils';
 import { Platform } from '@ui/utils/platform';
 import { pick } from 'lodash';
-import { O } from 'ts-toolbelt';
+import type { O } from 'ts-toolbelt';
 
 export type ShortcutRenderSourceItem = (
   | ({
@@ -54,6 +54,7 @@ export function convertToRenderSource(
       const isSupportedPlatform = actionConfig.supportedPlatforms.includes(
         Platform.OS as any
       );
+
       if (!isSupportedPlatform) return;
 
       const userHotkeyInfos = currentPlatformUserHotkeyMap[actionName];
@@ -71,6 +72,7 @@ export function convertToRenderSource(
               if (notSupportedHotkeyPlatform) return;
 
               let existsInUserHotkey = false;
+
               userHotkeyInfos?.forEach(userHotkeyInfo => {
                 if (userHotkeyInfo.defaultOriginId === platformHotkeyInfo.id) {
                   existsInUserHotkey = true;

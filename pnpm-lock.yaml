@@ -105,7 +105,8 @@ importers:
       '@mantine/hooks': ^5.5.4
       '@mantine/notifications': ^5.5.4
       '@mantine/spotlight': ^5.5.4
-      '@mimi-utils/super-status-box': ^0.0.1
+      '@mimi-utils/super-status-box': ^0.0.2
+      '@tabler/icons': ^1.103.0
       ahooks: ^3.7.1
       axios: ^0.27.2
       clsx: ^1.2.1
@@ -132,7 +133,8 @@ importers:
       '@mantine/hooks': 5.5.4
       '@mantine/notifications': 5.5.4_e3tlrbshi5mdci4l7f7gs6kjja
       '@mantine/spotlight': 5.5.4_e3tlrbshi5mdci4l7f7gs6kjja
-      '@mimi-utils/super-status-box': 0.0.1
+      '@mimi-utils/super-status-box': 0.0.2
+      '@tabler/icons': 1.103.0
       ahooks: 3.7.1
       axios: 0.27.2
       clsx: 1.2.1
@@ -1134,8 +1136,8 @@ packages:
       react: '>=16.8.0'
     dev: false
 
-  /@mimi-utils/super-status-box/0.0.1:
-    resolution: {integrity: sha512-SeVVupZEluiVT2S9h7T02M1b9IFfI3yekGnMuaTQYKWHGGkhHOX0KXxYBclQGU+7izpt1sujo1GRw+O6b/gYxw==}
+  /@mimi-utils/super-status-box/0.0.2:
+    resolution: {integrity: sha512-tYLm5zZ1wl/+WUcpHpAbYr6z2e19auaaFC+MYME0V6T+uK/nuAcerTWYI1XHB0iUu5+gk2S1yT1dxKR2QAQENA==}
     dev: false
 
   /@mimi-utils/types/0.0.3_27xp2vo6u2h6673cvfqmckqjdi:
@@ -1584,6 +1586,18 @@ packages:
     dependencies:
       defer-to-connect: 1.1.3
     dev: true
+
+  /@tabler/icons/1.103.0:
+    resolution: {integrity: sha512-oXUNf/Bn+88Xm+uWVht9MRRB/usDtjNrzKr7XhlB1P6V4vpWdG68OMffEONDbFqvEMC/eGYfhLI/PUHsR2XN4A==}
+    peerDependencies:
+      react: ^16.x || 17.x || 18.x
+      react-dom: ^16.x || 17.x || 18.x
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+    dev: false
 
   /@testing-library/dom/8.18.1:
     resolution: {integrity: sha512-oEvsm2B/WtcHKE+IcEeeCqNU/ltFGaVyGbpcm4g/2ytuT49jrlH9x5qRKL/H3A6yfM4YAbSbC0ceT5+9CEXnLg==}
