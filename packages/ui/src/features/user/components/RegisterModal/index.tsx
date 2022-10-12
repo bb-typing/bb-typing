@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
-import { APIResponse } from '@ui/core/axios/types';
+import { APIResponse } from '../../../../core/request/types';
 import { useUpdateEffect } from 'ahooks';
 import { pick } from 'lodash';
 import { SVGProps } from 'react';

@@ -1,4 +1,4 @@
-import { defineRequest } from '@ui/core/axios/utils';
+import { defineRequest } from '../../../core/request/utils';
 
 export const apiUserLogin = defineRequest('/typing-service/account/login', 'post');
 
