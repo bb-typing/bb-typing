@@ -34,5 +34,5 @@ actionController.subscribe('user:exit-current-login', () => {
     });
 
     useUserStore.getState().clearUserInfo();
-  }, 2000);
+  }, 300);
 });
