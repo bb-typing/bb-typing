@@ -42,7 +42,7 @@ function UserRegisterModal(props: UserRegisterProps): JSX.Element {
     password: ''
   });
   const { isLoading: userLoginLoading, mutateAsync: userLoginFetch } = useUserLogin({
-    onSuccess(data, variables, context) {
+    onSuccess() {
       setVisible(false);
       useLoginModalStore.getState().setVisible(false);
     }
@@ -90,11 +90,7 @@ function UserRegisterModal(props: UserRegisterProps): JSX.Element {
 
         {userRegisterLoading ? null : quickLoggingIn ? (
           <Alert mt={20} color="green" icon={<Loader color="green" />}>
-            正在登录中，
-            <Anchor component="button" type="button" onClick={cancelQuickLogin}>
-              点击此处
-            </Anchor>
-            取消快速登录
+            正在快速登录中...
           </Alert>
         ) : (
           showSuccessfulAlert && (
@@ -147,10 +143,6 @@ function UserRegisterModal(props: UserRegisterProps): JSX.Element {
 
   function quickLogin() {
     userLoginFetch(cacheUserRegisterForm.current);
-  }
-
-  function cancelQuickLogin() {
-    // TODO: query cancel
   }
 
   function backLogin() {
