@@ -3,7 +3,7 @@ import useThemeStyle from '@ui/styles/useThemeStyle';
 import { useSetState } from 'ahooks';
 import { useImperativeHandle, useRef } from 'react';
 import { Item, Menu, Separator, useContextMenu } from 'react-contexify';
-import { apply, tw } from 'twind';
+import { tw } from 'twind';
 import { css } from 'twind/css';
 
 import type { ShortcutConfigModalProps } from './ShortcutConfigModal';
@@ -26,12 +26,13 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
 
   const shortcutConfigModalRef = useRef() as ShortcutConfigModalProps['contextRef'];
   const style = useStyle();
-  const { show: showMenu } = useContextMenu({
-    id: MENU_ID
-  });
+  const { show: showMenu } = useContextMenu({ id: MENU_ID });
 
   const [{ currentShortcut }, setStates] = useSetState({
     currentShortcut: null as ShortcutRenderSourceItem | null
+  });
+  const cacheData = useRef({
+    operationMode: 'update' as 'update' | 'add'
   });
 
   useImperativeHandle(contextRef, () => ({
@@ -55,7 +56,7 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
             hasDefinedHotkeyContent &&
             ((isUserDefined && currentShortcut.status === 'enable') || isDefaultDefined);
 
-          const allowDisabled =
+          const allowDisable =
             !hasDefinedHotkeyContent ||
             (isDefaultDefined && hasDefinedHotkeyContent) ||
             (isUserDefined && currentShortcut.status === 'enable');
@@ -76,7 +77,7 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
               </Item>
               <Item onClick={addShortcut}>添加键绑定</Item>
               <Separator />
-              <Item onClick={disableShortcut} disabled={allowDisabled}>
+              <Item onClick={disableShortcut} disabled={allowDisable}>
                 禁用
               </Item>
               <Item onClick={deleteShortcut} className="delete" disabled={!allowDelete}>
@@ -94,16 +95,20 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
   );
 
   function handleConfiguredShortcut(configuredShortcut: HotkeyContent) {
-    console.log('configuredShortcut', configuredShortcut);
+    console.log({
+      configuredShortcut,
+      ...cacheData.current
+    });
   }
 
   function updateShortcut() {
-    console.log('updateShortcut');
+    cacheData.current.operationMode = 'update';
     shortcutConfigModalRef.current?.open();
   }
 
   function addShortcut() {
-    console.log('addShortcut');
+    cacheData.current.operationMode = 'add';
+    shortcutConfigModalRef.current?.open();
   }
 
   function deleteShortcut() {

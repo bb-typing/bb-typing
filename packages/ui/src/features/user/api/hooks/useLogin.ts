@@ -2,7 +2,7 @@ import { showNotification } from '@mantine/notifications';
 import { useMutation } from 'react-query';
 
 import { apiUserLogin } from '../apis';
-import { queryKey } from '../constants';
+import { userQueryKey } from '../constants';
 import type { UserLoginFormSchema } from '../../model';
 import { useUserStore } from '../../store';
 
@@ -18,7 +18,7 @@ export function useUserLogin(options?: UserLoginMutationOptions) {
   const { onSuccess, ...otherOptions } = options || {};
 
   return _useMutation({
-    mutationKey: queryKey.userLogin,
+    mutationKey: userQueryKey.userLogin,
     mutationFn: params =>
       apiUserLogin({
         params,

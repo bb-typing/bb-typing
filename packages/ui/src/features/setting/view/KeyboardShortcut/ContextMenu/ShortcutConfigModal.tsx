@@ -51,6 +51,7 @@ function ShortcutConfigModal(props: ShortcutConfigModalProps): JSX.Element {
       opened={visible}
       centered={true}
       onClose={() => setStates({ visible: false })}
+      closeOnEscape={false}
       title="快捷键设置"
     >
       <div
