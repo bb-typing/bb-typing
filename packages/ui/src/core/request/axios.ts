@@ -1,14 +1,15 @@
+import { useUserStore } from '@ui/features/user/store';
 import type { AxiosRequestConfig } from 'axios';
 import Axios from 'axios';
 
 import type { APIResponse, RequestConfig } from './types';
-import { errorMessagePopup, getToken } from './utils';
+import { errorMessagePopup } from './utils';
 
 function authRequestInterceptor(config: AxiosRequestConfig) {
-  const token = getToken();
+  const { token } = useUserStore.getState().userInfo ?? {};
 
   if (token) {
-    config.headers!.authorization = `${token}`;
+    config.headers!.Authorization = `Bearer ${token}`;
   }
 
   config.headers!.Accept = 'application/json';

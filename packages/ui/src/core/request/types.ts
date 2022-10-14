@@ -1,5 +1,4 @@
 import type { NotificationProps } from '@mantine/core';
-import type { GetContentBetweenTwoChar } from '@mimi-utils/types';
 import type { AxiosRequestConfig } from 'axios';
 import type { Simplify } from 'type-fest';
 
@@ -33,12 +32,29 @@ namespace GetResponse {
   export type _<OperationInfo> = By200<OperationInfo>;
 }
 
-type GetCoreInfo<Path extends keyof paths, Method extends keyof paths[Path]> = {
+type GetURLPlaceholder<Body> = Body extends {
+  parameters: { path: infer P extends Record<string, string> };
+}
+  ? {
+      [K in keyof P]: P[K] | AnyString;
+    }
+  : unknown;
+
+type FilterParams<P> = P extends Array<unknown>
+  ? [P[0]] extends [never]
+    ? { params: never }
+    : { params: P }
+  : { params: P };
+
+type GetCoreInfo<
+  Path extends keyof paths,
+  Method extends keyof paths[Path],
+  Body extends paths[Path] = paths[Path]
+> = {
   [M in Method]: {
-    params: GetParamsByMethod._<Method, paths[Path][Method]>;
-    response: GetResponse._<paths[Path][Method]>;
-    urlPlaceholder: Record<GetContentBetweenTwoChar<Path, '{', '}'>, string>;
-  };
+    response: GetResponse._<Body[M]>;
+    urlPlaceholder: GetURLPlaceholder<Body[M]>;
+  } & FilterParams<GetParamsByMethod._<M, Body[M]>>;
 };
 
 export type APISchema = {

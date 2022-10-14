@@ -7,10 +7,6 @@ import type { ErrorCode } from './error-code';
 import { errorCodeStatus } from './error-code';
 import type { APIPath, APISchema, InternalConfig } from './types';
 
-export function getToken(): string {
-  return JSON.parse(localStorage.getItem(`bb_typewrite_token`) as string);
-}
-
 export function defineRequest<T extends APIPath, M extends keyof APISchema[T]>(
   url: T,
   method: M
@@ -22,11 +18,18 @@ export function defineRequest<T extends APIPath, M extends keyof APISchema[T]>(
   type HasURLPlaceholder = U.ListOf<keyof URLPlaceholder>['length'] extends 0
     ? false
     : true;
+  type FilteredURLPlaceholder = HasURLPlaceholder extends true
+    ? { urlPlaceholder: URLPlaceholder }
+    : {};
+
+  type FilterParams<P> = [P] extends [never]
+    ? { params?: Partial<Record<AnyString | '无参数', unknown>> }
+    : { params: P };
 
   return (
-    options: InternalConfig & {
-      params: APISchema[T][M]['params'] & Record<string, unknown>;
-    } & (HasURLPlaceholder extends true ? { urlPlaceholder: URLPlaceholder } : {}),
+    options: InternalConfig &
+      FilteredURLPlaceholder &
+      FilterParams<APISchema[T][M]['params'] & Record<string, unknown>>,
     axiosConfig: Partial<AxiosRequestConfig> = {}
   ) => {
     const { params, popupErrorPrompt = true } = options;
@@ -35,9 +38,11 @@ export function defineRequest<T extends APIPath, M extends keyof APISchema[T]>(
       if ('urlPlaceholder' in options) {
         let filteredURL = url as any;
 
-        Object.entries(options.urlPlaceholder).forEach(([placeholder, value]) => {
-          filteredURL = filteredURL.replace(`{${placeholder}}`, value);
-        });
+        Object.entries(options.urlPlaceholder as Record<string, string>).forEach(
+          ([placeholder, value]) => {
+            filteredURL = filteredURL.replace(`{${placeholder}}`, value);
+          }
+        );
 
         return filteredURL;
       }

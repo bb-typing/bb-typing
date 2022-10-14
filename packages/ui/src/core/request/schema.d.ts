@@ -89,6 +89,7 @@ export interface components {
     AccountDto: {
       /** Format: int64 */
       id?: number;
+      ip?: string;
       password?: string;
       username?: string;
     };
