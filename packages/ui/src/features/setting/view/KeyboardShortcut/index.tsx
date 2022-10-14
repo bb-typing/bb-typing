@@ -1,6 +1,7 @@
 import { Kbd, Table } from '@mantine/core';
 import { useTrackedHotkeyState } from '@ui/core/hotkey/';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
+import useThemeStyle from '@ui/styles/useThemeStyle';
 import { modifierKeyBeautify } from '@ui/utils/keyboard-shortcut';
 import React, { memo, useMemo, useRef } from 'react';
 import { tw } from 'twind';
@@ -16,6 +17,7 @@ interface ViewShortcutKeyProps {}
 const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
   const { userHotkeyMap } = useTrackedHotkeyState();
   const contextMenuRef = useRef() as ContextMenuProps['contextRef'];
+  const t = useThemeStyle();
 
   const renderSource = useMemo(
     () => convertToRenderSource(userHotkeyMap),
@@ -36,6 +38,11 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
             onContextMenu={event => {
               contextMenuRef.current?.open(event, shortcut);
             }}
+            className={tw(
+              `focus:(bg-[${t.selector(t.mt.colors.dark[5], t.mt.colors.gray[1])}])`,
+              `hover:(bg-[${t.selector(t.mt.colors.dark[6], t.mt.colors.gray[0])}])`
+            )}
+            tabIndex={0}
           >
             <td>{shortcut.actionConfig.commands[1]}</td>
             <td>{hasHotkeyContent ? renderShortcuts(shortcut.hotkeyContent!) : '-'}</td>
