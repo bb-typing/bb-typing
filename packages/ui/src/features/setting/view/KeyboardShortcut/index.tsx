@@ -2,7 +2,8 @@ import { Kbd, Table } from '@mantine/core';
 import { useTrackedHotkeyState } from '@ui/core/hotkey/';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
 import useThemeStyle from '@ui/styles/useThemeStyle';
-import { modifierKeyBeautify } from '@ui/utils/keyboard-shortcut';
+import { modifierKeyBeautify, normalKeyBeautify } from '@ui/utils/keyboard-shortcut';
+import { useMount } from 'ahooks';
 import React, { memo, useMemo, useRef } from 'react';
 import { tw } from 'twind';
 
@@ -11,6 +12,7 @@ import 'react-contexify/dist/ReactContexify.css';
 import type { ContextMenuProps } from './ContextMenu';
 import ContextMenu from './ContextMenu';
 import { convertToRenderSource } from './utils';
+import { apiUserShortcutGet } from '../../api/apis';
 
 interface ViewShortcutKeyProps {}
 
@@ -18,6 +20,14 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
   const { userHotkeyMap } = useTrackedHotkeyState();
   const contextMenuRef = useRef() as ContextMenuProps['contextRef'];
   const t = useThemeStyle();
+
+  useMount(() => {
+    apiUserShortcutGet({
+      urlPlaceholder: {
+        type: 'shortcut'
+      }
+    });
+  });
 
   const renderSource = useMemo(
     () => convertToRenderSource(userHotkeyMap),
@@ -45,7 +55,15 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
             tabIndex={0}
           >
             <td>{shortcut.actionConfig.commands[1]}</td>
-            <td>{hasHotkeyContent ? renderShortcuts(shortcut.hotkeyContent!) : '-'}</td>
+            <td>
+              {isUserDefined
+                ? shortcut.status === 'delete'
+                  ? '-'
+                  : renderShortcuts(shortcut.hotkeyContent!)
+                : hasHotkeyContent
+                ? renderShortcuts(shortcut.hotkeyContent!)
+                : '-'}
+            </td>
             <td>{isUserDefined ? '用户' : '默认'}</td>
           </tr>
         );
@@ -62,6 +80,10 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
         if (!modifierKey) return null;
 
         if (Array.isArray(modifierKey)) {
+          if (modifierKey.length === 0) {
+            return null;
+          }
+
           return modifierKey.map(key => (
             <Kbd key={key} className={tw`mr-[4px]`}>
               {modifierKeyBeautify(key)}
@@ -72,11 +94,29 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
         return <Kbd className={tw`mr-[4px]`}>{modifierKeyBeautify(modifierKey)}</Kbd>;
       })();
 
+      const normalKeyJSX: React.ReactNode = (() => {
+        if (!normalKey) return null;
+
+        if (Array.isArray(normalKey)) {
+          if (normalKey.length === 0) {
+            return null;
+          }
+
+          return normalKey.map(key => (
+            <Kbd key={key} className={tw`mr-[4px]`}>
+              {normalKeyBeautify(key)}
+            </Kbd>
+          ));
+        }
+
+        return <Kbd className={tw`mr-[4px]`}>{normalKeyBeautify(normalKey)}</Kbd>;
+      })();
+
       return (
         <div>
           {modifierKeyJSX}
-          <span className={tw`mx-[3px]`}>+</span>
-          <Kbd>{normalKey}</Kbd>
+          {normalKeyJSX && modifierKeyJSX && <span className={tw`mx-[3px]`}>+</span>}
+          {normalKeyJSX}
         </div>
       );
     }

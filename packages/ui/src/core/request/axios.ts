@@ -12,7 +12,7 @@ function authRequestInterceptor(config: AxiosRequestConfig) {
     config.headers!.Authorization = `Bearer ${token}`;
   }
 
-  config.headers!.Accept = 'application/json';
+  config.headers!['Content-Type'] = 'application/json';
 
   return config;
 }
@@ -40,7 +40,7 @@ axiosInstance.interceptors.response.use(
       throw data;
     }
 
-    return data;
+    return data.result;
   },
   error => {
     return Promise.reject(error);

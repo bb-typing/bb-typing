@@ -16,7 +16,13 @@ export function useUserRegisterAPI(options?: UserLoginMutationOptions) {
 
   return _useMutation({
     mutationKey: userQueryKey.userRegister,
-    mutationFn: params => apiUserRegister({ params }),
+    mutationFn: params =>
+      apiUserRegister({
+        params,
+        popupErrorPrompt: {
+          title: '注册失败'
+        }
+      }),
     ...options
   });
 }

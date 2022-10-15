@@ -3,7 +3,6 @@ import { actionController } from '@ui/core/action';
 import type { ActionConfigOption } from '@ui/core/action/types';
 import type {
   BaseHotkeyInfo,
-  BaseHotkeyMap,
   HotkeyContent,
   HotkeyPlatform,
   UserHotkeyInfo,
@@ -11,19 +10,15 @@ import type {
 } from '@ui/core/hotkey/types';
 import { filterHotkeyMapByPlatform, filterHotkeyPlatform } from '@ui/core/hotkey/utils';
 import { Platform } from '@ui/utils/platform';
-import { pick } from 'lodash';
 import type { O } from 'ts-toolbelt';
 
 export type ShortcutRenderSourceItem = (
   | ({
       type: 'user';
-    } & O.Omit<UserHotkeyInfo, 'scope' | 'name' | 'supportedPlatforms'>)
+    } & UserHotkeyInfo)
   | ({
       type: 'default';
-    } & O.Omit<
-      O.Optional<BaseHotkeyInfo, 'id' | 'hotkeyContent'>,
-      'scope' | 'name' | 'supportedPlatforms'
-    >)
+    } & O.Optional<BaseHotkeyInfo, 'id' | 'hotkeyContent'>)
 ) & {
   actionConfig: ActionConfigOption;
 };
@@ -76,11 +71,12 @@ export function convertToRenderSource(
               userHotkeyInfos?.forEach(userHotkeyInfo => {
                 if (userHotkeyInfo.defaultOriginId === platformHotkeyInfo.id) {
                   existsInUserHotkey = true;
-                  source[actionName] = [
-                    ...(source[actionName] || []),
-                    { type: 'user', actionConfig, ...userHotkeyInfo }
-                  ];
                 }
+
+                source[actionName] = [
+                  ...(source[actionName] || []),
+                  { type: 'user', actionConfig, ...userHotkeyInfo }
+                ];
               });
 
               if (!existsInUserHotkey) {
@@ -90,7 +86,9 @@ export function convertToRenderSource(
                     type: 'default',
                     actionConfig,
                     id: platformHotkeyInfo.id,
-                    hotkeyContent: platformHotkeyInfo
+                    hotkeyContent: platformHotkeyInfo,
+                    scope: module.scope,
+                    supportedPlatforms: actionConfig.supportedPlatforms
                   }
                 ];
               }
@@ -103,7 +101,12 @@ export function convertToRenderSource(
         if (notExistsInUserHotkey) {
           source[actionName] = [
             ...(source[actionName] ?? []),
-            { type: 'default', actionConfig }
+            {
+              type: 'default',
+              actionConfig,
+              scope: module.scope,
+              supportedPlatforms: actionConfig.supportedPlatforms
+            }
           ];
         } else {
           userHotkeyInfos.forEach(userHotkeyInfo => {

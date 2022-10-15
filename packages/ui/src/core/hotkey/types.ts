@@ -22,8 +22,7 @@ export type BaseHotkeyMap = Partial<
   Record<ActionConfigName | AnyString, Partial<Record<HotkeyPlatform, BaseHotkeyInfo[]>>>
 >;
 
-export interface UserHotkeyInfo extends Omit<BaseHotkeyInfo, 'id'> {
-  id: string;
+export interface UserHotkeyInfo extends BaseHotkeyInfo {
   defaultOriginId?: string;
   updateTime: number;
   status: 'enable' | 'disable' | 'delete';
@@ -42,6 +41,30 @@ export interface HotkeyStoreState {
 
 export interface HotkeyStoreAction {
   setUserHotkeyMap: (value: HotkeyStoreState['userHotkeyMap']) => void;
+  updateUserHotkeyMap: (
+    actionName: ActionConfigName | AnyString,
+    operation: (
+      | {
+          type: 'add' | 'update';
+          hotkeyContent: HotkeyContent;
+        }
+      | {
+          type: 'delete' | 'disable' | 'enable';
+        }
+    ) & {
+      defaultOriginId: string;
+      hotkeyPlatform: HotkeyPlatform;
+    } & (
+        | {
+            hotkeyType: 'user';
+            hotkeyInfo: UserHotkeyInfo;
+          }
+        | {
+            hotkeyType: 'default';
+            hotkeyInfo: BaseHotkeyInfo;
+          }
+      )
+  ) => void;
 }
 
 export interface HotkeyStoreComputed {

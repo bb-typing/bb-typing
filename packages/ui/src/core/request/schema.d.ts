@@ -659,10 +659,6 @@ export interface operations {
         /** type */
         type: 'hue' | 'layout' | 'shortcut';
       };
-      query: {
-        /** content */
-        content?: string;
-      };
     };
     responses: {
       /** OK */
@@ -679,6 +675,11 @@ export interface operations {
       403: unknown;
       /** Not Found */
       404: unknown;
+    };
+    requestBody: {
+      content: {
+        'application/json': { [key: string]: { [key: string]: unknown } };
+      };
     };
   };
   getArticleByIdUsingGET: {

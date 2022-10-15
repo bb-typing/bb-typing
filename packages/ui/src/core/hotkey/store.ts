@@ -1,14 +1,22 @@
+import _ from 'lodash';
+import { nanoid } from 'nanoid';
 import { createTrackedSelector } from 'react-tracked';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import type { HotkeyStoreAction, HotkeyStoreComputed, HotkeyStoreState } from './types';
+import type {
+  HotkeyStoreAction,
+  HotkeyStoreComputed,
+  HotkeyStoreState,
+  UserHotkeyInfo
+} from './types';
 import {
   defaultHotkeysInitializer,
   filterHotkeyMapByPlatform,
   filterHotkeyPlatform
 } from './utils';
+import { actionController } from '../action';
 
 type Store = HotkeyStoreState & HotkeyStoreAction;
 
@@ -27,6 +35,105 @@ export const useHotkeyStore = create<
       setUserHotkeyMap: userHotkeyMap =>
         set(state => {
           state.userHotkeyMap = userHotkeyMap;
+        }),
+      updateUserHotkeyMap: (actionName, operation) =>
+        set((state: HotkeyStoreState) => {
+          const updateTime = Date.now();
+          const { supportedPlatforms, scope } = operation.hotkeyInfo;
+
+          _.set(
+            state.userHotkeyMap,
+            [actionName, operation.hotkeyPlatform],
+            state.userHotkeyMap[actionName]?.[operation.hotkeyPlatform] || []
+          );
+
+          const userHotkeyOrigins =
+            state.userHotkeyMap[actionName]![operation.hotkeyPlatform]!;
+
+          switch (operation.type) {
+            case 'add': {
+              userHotkeyOrigins.push({
+                hotkeyContent: operation.hotkeyContent,
+                id: nanoid(),
+                status: 'enable',
+                supportedPlatforms,
+                scope,
+                updateTime
+              });
+
+              break;
+            }
+
+            case 'update': {
+              if (operation.hotkeyType === 'user') {
+                userHotkeyOrigins.forEach(userHotkeyInfo => {
+                  if (userHotkeyInfo.id === operation.hotkeyInfo.id) {
+                    userHotkeyInfo.updateTime = updateTime;
+                    userHotkeyInfo.hotkeyContent = operation.hotkeyContent;
+                  }
+                });
+              } else {
+                userHotkeyOrigins.push({
+                  hotkeyContent: operation.hotkeyContent,
+                  defaultOriginId: operation.defaultOriginId,
+                  id: nanoid(),
+                  status: 'enable',
+                  supportedPlatforms,
+                  scope,
+                  updateTime
+                });
+              }
+
+              break;
+            }
+
+            case 'disable': {
+              if (operation.hotkeyType === 'user') {
+                userHotkeyOrigins.forEach(userHotkeyInfo => {
+                  if (userHotkeyInfo.id === operation.hotkeyInfo.id) {
+                    userHotkeyInfo.updateTime = updateTime;
+                    userHotkeyInfo.status = 'disable';
+                  }
+                });
+              }
+
+              break;
+            }
+
+            case 'delete': {
+              if (operation.hotkeyType === 'user') {
+                _.remove(
+                  userHotkeyOrigins,
+                  userHotkeyInfo => userHotkeyInfo.id === operation.hotkeyInfo.id
+                );
+              } else {
+                userHotkeyOrigins.push({
+                  defaultOriginId: operation.defaultOriginId,
+                  hotkeyContent: operation.hotkeyInfo.hotkeyContent,
+                  id: nanoid(),
+                  status: 'delete',
+                  supportedPlatforms,
+                  scope,
+                  updateTime
+                });
+              }
+
+              break;
+            }
+
+            case 'enable': {
+              userHotkeyOrigins.forEach(userHotkeyInfo => {
+                if (operation.hotkeyType === 'user') {
+                  if (userHotkeyInfo.id === operation.hotkeyInfo.id) {
+                    userHotkeyInfo.updateTime = updateTime;
+                    userHotkeyInfo.status = 'enable';
+                  }
+                }
+              });
+
+              break;
+            }
+          }
         })
 
       //#endregion  //*======== action ===========

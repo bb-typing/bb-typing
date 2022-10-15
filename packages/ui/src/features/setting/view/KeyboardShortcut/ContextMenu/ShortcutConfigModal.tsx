@@ -136,7 +136,8 @@ function ShortcutConfigModal(props: ShortcutConfigModalProps): JSX.Element {
     } else {
       const [keyAlias] = (Object.entries(omit(extendedNormalCodeMap, 'Return')).find(
         ([, aliasContent]) =>
-          typeof aliasContent === 'string' && aliasContent === eventCode
+          (typeof aliasContent === 'string' && aliasContent === eventCode) ||
+          (Array.isArray(aliasContent) && (aliasContent as any).includes(eventCode))
       ) ?? []) as [MergedNormalCode, any] | [];
 
       const hasKeyAlias = !!keyAlias;

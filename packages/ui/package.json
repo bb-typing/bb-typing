@@ -23,6 +23,7 @@
     "history": "^5.3.0",
     "immer": "^9.0.12",
     "kbar": "^0.1.0-beta.36",
+    "nanoid": "^4.0.0",
     "react-contexify": "^5.0.0",
     "react-error-boundary": "^3.1.4",
     "react-hook-form": "^7.37.0",

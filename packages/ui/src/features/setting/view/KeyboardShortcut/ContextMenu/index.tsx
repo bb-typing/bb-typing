@@ -1,4 +1,6 @@
+import { useHotkeyStore } from '@ui/core/hotkey';
 import type { HotkeyContent, UserHotkeyInfo } from '@ui/core/hotkey/types';
+import { filterHotkeyPlatform } from '@ui/core/hotkey/utils';
 import useThemeStyle from '@ui/styles/useThemeStyle';
 import { useSetState } from 'ahooks';
 import { useImperativeHandle, useRef } from 'react';
@@ -34,6 +36,7 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
   const cacheData = useRef({
     operationMode: 'update' as 'update' | 'add'
   });
+  const currentHotkeyPlatform = filterHotkeyPlatform()!;
 
   useImperativeHandle(contextRef, () => ({
     open(event, currentShortcut) {
@@ -95,10 +98,20 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
   );
 
   function handleConfiguredShortcut(configuredShortcut: HotkeyContent) {
-    console.log({
-      configuredShortcut,
-      ...cacheData.current
-    });
+    if (currentShortcut) {
+      useHotkeyStore.getState().updateUserHotkeyMap(currentShortcut.actionConfig.name, {
+        type: cacheData.current.operationMode,
+        hotkeyContent: configuredShortcut,
+        hotkeyPlatform: currentHotkeyPlatform,
+        defaultOriginId:
+          currentShortcut.type === 'user'
+            ? currentShortcut.defaultOriginId!
+            : currentShortcut.id!,
+
+        hotkeyType: currentShortcut.type,
+        hotkeyInfo: currentShortcut as any
+      });
+    }
   }
 
   function updateShortcut() {
@@ -112,11 +125,35 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
   }
 
   function deleteShortcut() {
-    console.log('deleteShortcut');
+    if (currentShortcut) {
+      useHotkeyStore.getState().updateUserHotkeyMap(currentShortcut.actionConfig.name, {
+        type: 'delete',
+        hotkeyPlatform: currentHotkeyPlatform,
+        defaultOriginId:
+          currentShortcut.type === 'user'
+            ? currentShortcut.defaultOriginId!
+            : currentShortcut.id!,
+
+        hotkeyType: currentShortcut.type,
+        hotkeyInfo: currentShortcut as any
+      });
+    }
   }
 
   function disableShortcut() {
-    console.log('disableShortcut');
+    if (currentShortcut) {
+      useHotkeyStore.getState().updateUserHotkeyMap(currentShortcut.actionConfig.name, {
+        type: 'delete',
+        hotkeyPlatform: currentHotkeyPlatform,
+        defaultOriginId:
+          currentShortcut.type === 'user'
+            ? currentShortcut.defaultOriginId!
+            : currentShortcut.id!,
+
+        hotkeyType: currentShortcut.type,
+        hotkeyInfo: currentShortcut as any
+      });
+    }
   }
 }
 

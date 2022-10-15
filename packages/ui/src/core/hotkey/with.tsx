@@ -12,6 +12,7 @@ import type {
   BaseHotkeyMap,
   HotkeyContent,
   HotkeyPlatform,
+  UserHotkeyInfo,
   UserHotkeyMap
 } from './types';
 import {
@@ -157,7 +158,7 @@ function converToHotkeyConfigs(
     };
   }
 
-  function isUsableHotkey(hotkeyInfo: BaseHotkeyInfo): boolean {
+  function isUsableHotkey(hotkeyInfo: BaseHotkeyInfo | UserHotkeyInfo): boolean {
     const isSupportCurrentPlatform = hotkeyInfo.supportedPlatforms.includes(Platform.OS);
     let isEnableStatus = true;
 

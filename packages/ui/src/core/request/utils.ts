@@ -24,12 +24,12 @@ export function defineRequest<T extends APIPath, M extends keyof APISchema[T]>(
 
   type FilterParams<P> = [P] extends [never]
     ? { params?: Partial<Record<AnyString | '无参数', unknown>> }
-    : { params: P };
+    : { params?: P };
 
   return (
     options: InternalConfig &
       FilteredURLPlaceholder &
-      FilterParams<APISchema[T][M]['params'] & Record<string, unknown>>,
+      FilterParams<APISchema[T][M]['params'] | Record<string, unknown>>,
     axiosConfig: Partial<AxiosRequestConfig> = {}
   ) => {
     const { params, popupErrorPrompt = true } = options;

@@ -1,4 +1,4 @@
-import type { MergedModifierCode } from 'super-hotkey';
+import type { MergedModifierCode, MergedNormalCode } from 'super-hotkey';
 
 import { Platform } from './platform';
 
@@ -11,6 +11,10 @@ export function modifierKeyBeautify(key: MergedModifierCode | AnyString): string
     default:
       return key.toLocaleLowerCase();
   }
+}
+
+export function normalKeyBeautify(key: MergedNormalCode | AnyString): string {
+  return key.toLocaleLowerCase();
 }
 
 export function modifierKeysReorder(
