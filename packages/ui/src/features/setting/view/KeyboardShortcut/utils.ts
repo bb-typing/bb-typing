@@ -55,6 +55,8 @@ export function convertToRenderSource(
       const userHotkeyInfos = currentPlatformUserHotkeyMap[actionName];
 
       if ('defaultHotkeys' in actionConfig && actionConfig.defaultHotkeys.length !== 0) {
+        const addedUserHotkeyIds = new Set<string>();
+
         actionConfig.defaultHotkeys.forEach(defaultHotkeyInfo => {
           Object.entries(defaultHotkeyInfo).forEach(
             ([hotkeyPlatform, platformHotkeyInfo]: [
@@ -66,20 +68,19 @@ export function convertToRenderSource(
 
               if (notSupportedHotkeyPlatform) return;
 
-              let existsInUserHotkey = false;
+              const userHotkeyInfoOfEqualDefault = userHotkeyInfos?.find(
+                userHotkeyInfo => userHotkeyInfo.defaultOriginId === platformHotkeyInfo.id
+              );
+              const existsInUserHotkey = !!userHotkeyInfoOfEqualDefault;
 
-              userHotkeyInfos?.forEach(userHotkeyInfo => {
-                if (userHotkeyInfo.defaultOriginId === platformHotkeyInfo.id) {
-                  existsInUserHotkey = true;
-                }
-
+              if (existsInUserHotkey) {
                 source[actionName] = [
                   ...(source[actionName] || []),
-                  { type: 'user', actionConfig, ...userHotkeyInfo }
+                  { type: 'user', actionConfig, ...userHotkeyInfoOfEqualDefault }
                 ];
-              });
 
-              if (!existsInUserHotkey) {
+                addedUserHotkeyIds.add(userHotkeyInfoOfEqualDefault.id);
+              } else {
                 source[actionName] = [
                   ...(source[actionName] || []),
                   {
@@ -95,8 +96,17 @@ export function convertToRenderSource(
             }
           );
         });
+
+        userHotkeyInfos?.forEach(userHotkeyInfo => {
+          if (addedUserHotkeyIds.has(userHotkeyInfo.id)) return;
+
+          source[actionName] = [
+            ...(source[actionName] || []),
+            { type: 'user', actionConfig, ...userHotkeyInfo }
+          ];
+        });
       } else {
-        const notExistsInUserHotkey = !userHotkeyInfos;
+        const notExistsInUserHotkey = !userHotkeyInfos?.length;
 
         if (notExistsInUserHotkey) {
           source[actionName] = [
@@ -117,57 +127,12 @@ export function convertToRenderSource(
           });
         }
       }
+
+      if (source[actionName]?.length > 1) {
+        source[actionName] = source[actionName].filter(item => !!item.hotkeyContent);
+      }
     });
   });
-
-  // Object.entries(currentPlatformDefaultHotkeyMap).forEach(
-  //   ([actionName, defaultHotkeyInfos]) => {
-  //     const actionConfig = actionController.getActionByName(actionName)!;
-
-  //     defaultHotkeyInfos.forEach(defaultHotkeyInfo => {
-  //       const notExistsInUserHotkey = !currentPlatformUserHotkeyMap[actionName]?.some(
-  //         userHotkey => userHotkey.defaultOriginId === defaultHotkeyInfo.id
-  //       );
-  //       const isSupportedPlatform = defaultHotkeyInfo.supportedPlatforms.includes(
-  //         Platform.OS as any
-  //       );
-
-  //       if (notExistsInUserHotkey && isSupportedPlatform) {
-  //         source[actionName] = [
-  //           ...(source[actionName] ?? []),
-  //           {
-  //             type: 'default',
-  //             actionConfig,
-  //             ...defaultHotkeyInfo
-  //           }
-  //         ];
-  //       }
-  //     });
-  //   }
-  // );
-
-  // Object.entries(currentPlatformUserHotkeyMap).forEach(
-  //   ([actionName, userHotkeyInfos]) => {
-  //     const actionConfig = actionController.getActionByName(actionName)!;
-
-  //     userHotkeyInfos.forEach(userHotkeyInfo => {
-  //       const isSupportedPlatform = userHotkeyInfo.supportedPlatforms.includes(
-  //         Platform.OS as any
-  //       );
-
-  //       if (isSupportedPlatform) {
-  //         source[actionName] = [
-  //           ...(source[actionName] ?? []),
-  //           {
-  //             type: 'user',
-  //             actionConfig,
-  //             ...userHotkeyInfo
-  //           }
-  //         ];
-  //       }
-  //     });
-  //   }
-  // );
 
   return source;
 }

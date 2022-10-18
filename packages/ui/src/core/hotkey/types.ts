@@ -22,10 +22,10 @@ export type BaseHotkeyMap = Partial<
   Record<ActionConfigName | AnyString, Partial<Record<HotkeyPlatform, BaseHotkeyInfo[]>>>
 >;
 
-export interface UserHotkeyInfo extends BaseHotkeyInfo {
+export interface UserHotkeyInfo extends Omit<BaseHotkeyInfo, 'hotkeyContent'> {
   defaultOriginId?: string;
   updateTime: number;
-  status: 'enable' | 'disable' | 'delete';
+  hotkeyContent: HotkeyContent | null;
 }
 
 export type UserHotkeyMap = Partial<
@@ -49,10 +49,10 @@ export interface HotkeyStoreAction {
           hotkeyContent: HotkeyContent;
         }
       | {
-          type: 'delete' | 'disable' | 'enable';
+          type: 'delete';
         }
     ) & {
-      defaultOriginId: string;
+      defaultOriginId?: string;
       hotkeyPlatform: HotkeyPlatform;
     } & (
         | {

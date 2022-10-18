@@ -16,7 +16,6 @@ import {
   filterHotkeyMapByPlatform,
   filterHotkeyPlatform
 } from './utils';
-import { actionController } from '../action';
 
 type Store = HotkeyStoreState & HotkeyStoreAction;
 
@@ -55,7 +54,6 @@ export const useHotkeyStore = create<
               userHotkeyOrigins.push({
                 hotkeyContent: operation.hotkeyContent,
                 id: nanoid(),
-                status: 'enable',
                 supportedPlatforms,
                 scope,
                 updateTime
@@ -77,23 +75,9 @@ export const useHotkeyStore = create<
                   hotkeyContent: operation.hotkeyContent,
                   defaultOriginId: operation.defaultOriginId,
                   id: nanoid(),
-                  status: 'enable',
                   supportedPlatforms,
                   scope,
                   updateTime
-                });
-              }
-
-              break;
-            }
-
-            case 'disable': {
-              if (operation.hotkeyType === 'user') {
-                userHotkeyOrigins.forEach(userHotkeyInfo => {
-                  if (userHotkeyInfo.id === operation.hotkeyInfo.id) {
-                    userHotkeyInfo.updateTime = updateTime;
-                    userHotkeyInfo.status = 'disable';
-                  }
                 });
               }
 
@@ -102,34 +86,35 @@ export const useHotkeyStore = create<
 
             case 'delete': {
               if (operation.hotkeyType === 'user') {
-                _.remove(
-                  userHotkeyOrigins,
-                  userHotkeyInfo => userHotkeyInfo.id === operation.hotkeyInfo.id
-                );
+                for (let index = userHotkeyOrigins.length - 1; index >= 0; index--) {
+                  const fromDefault = !!userHotkeyOrigins[index].defaultOriginId;
+                  const equalId = userHotkeyOrigins[index].id === operation.hotkeyInfo.id;
+                  const equalDefaultOriginId =
+                    userHotkeyOrigins[index].defaultOriginId ===
+                    operation.defaultOriginId;
+
+                  if (equalId) {
+                    if (fromDefault && equalDefaultOriginId) {
+                      userHotkeyOrigins[index] = {
+                        ...userHotkeyOrigins[index],
+                        hotkeyContent: null,
+                        updateTime
+                      };
+                    } else {
+                      userHotkeyOrigins.splice(index, 1);
+                    }
+                  }
+                }
               } else {
                 userHotkeyOrigins.push({
+                  hotkeyContent: null,
                   defaultOriginId: operation.defaultOriginId,
-                  hotkeyContent: operation.hotkeyInfo.hotkeyContent,
                   id: nanoid(),
-                  status: 'delete',
                   supportedPlatforms,
                   scope,
                   updateTime
                 });
               }
-
-              break;
-            }
-
-            case 'enable': {
-              userHotkeyOrigins.forEach(userHotkeyInfo => {
-                if (operation.hotkeyType === 'user') {
-                  if (userHotkeyInfo.id === operation.hotkeyInfo.id) {
-                    userHotkeyInfo.updateTime = updateTime;
-                    userHotkeyInfo.status = 'enable';
-                  }
-                }
-              });
 
               break;
             }
@@ -170,9 +155,13 @@ export const useComputedHotkeyState = (): HotkeyStoreComputed => {
           const defaultHotkeyInfo = defaultHotkeyInfos?.at(-1);
 
           if (userDefinedHotkeyInfos) {
-            const userHighestPriorityHotkeyInfo = userDefinedHotkeyInfos
-              .sort((a, b) => a.updateTime - b.updateTime)
-              .find(hotkeyInfo => hotkeyInfo.status === 'enable');
+            const [userHighestPriorityHotkeyInfo] = userDefinedHotkeyInfos
+              .filter(
+                item => item.hotkeyContent?.modifierKey || item.hotkeyContent?.normalKey
+              )
+              .sort((a, b) => a.updateTime - b.updateTime) as [
+              UserHotkeyInfo | undefined
+            ];
 
             result[actionName] = (userHighestPriorityHotkeyInfo ||
               defaultHotkeyInfo) as any;

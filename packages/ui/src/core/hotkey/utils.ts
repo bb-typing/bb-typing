@@ -58,10 +58,7 @@ type PlatformHotkeyMap<H extends BaseHotkeyInfo | UserHotkeyInfo> = Partial<
   Record<ActionConfigName | AnyString, Array<H>>
 >;
 
-type ScopePlatformHotkeyMap = Record<
-  ActionConfigName | AnyString,
-  Array<BaseHotkeyInfo | UserHotkeyInfo>
->;
+type ScopePlatformHotkeyMap<T> = Record<ActionConfigName | AnyString, Array<T>>;
 
 /** 根据「平台」过滤出「热键对象」 */
 export function filterHotkeyMapByPlatform<
@@ -74,7 +71,7 @@ export function filterHotkeyMapByPlatform<
   targetPlatform: Exclude<HotkeyPlatform, 'default'> | undefined,
   includeDefaultPlatform = true
 ): Partial<PlatformHotkeyMap<C>> {
-  const filteredResult: PlatformHotkeyMap<C> = {} as any;
+  const filteredResult = {} as PlatformHotkeyMap<C>;
 
   Object.entries(hotkeyMap).forEach(([actionName, platformHotInfoMap]) => {
     if (platformHotInfoMap) {
@@ -98,8 +95,8 @@ export function filterHotkeyMapByPlatform<
 export function filterPlatformHotkeyMapByScope<T extends BaseHotkeyInfo | UserHotkeyInfo>(
   platformHotkeyMap: PlatformHotkeyMap<T>,
   scope: ActionConfigScope
-): ScopePlatformHotkeyMap {
-  const filteredResult: ScopePlatformHotkeyMap = {} as any;
+): ScopePlatformHotkeyMap<T> {
+  const filteredResult = {} as ScopePlatformHotkeyMap<T>;
 
   Object.entries(platformHotkeyMap).forEach(([actionName, hotkeyInfos]) => {
     filteredResult[actionName] = hotkeyInfos!.filter(hotkey => hotkey.scope === scope);

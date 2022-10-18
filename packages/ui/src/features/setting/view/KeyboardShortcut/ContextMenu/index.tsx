@@ -1,5 +1,5 @@
 import { useHotkeyStore } from '@ui/core/hotkey';
-import type { HotkeyContent, UserHotkeyInfo } from '@ui/core/hotkey/types';
+import type { HotkeyContent } from '@ui/core/hotkey/types';
 import { filterHotkeyPlatform } from '@ui/core/hotkey/utils';
 import useThemeStyle from '@ui/styles/useThemeStyle';
 import { useSetState } from 'ahooks';
@@ -13,6 +13,8 @@ import ShortcutConfigModal from './ShortcutConfigModal';
 import type { ShortcutRenderSourceItem } from '../utils';
 
 const MENU_ID = 'keyboard-shortcut-menu';
+
+type ccc = number & keyof String;
 
 export interface ContextMenuProps {
   contextRef: React.RefObject<{
@@ -53,24 +55,12 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
 
           const isUserDefined = currentShortcut.type === 'user';
           const isDefaultDefined = currentShortcut.type === 'default';
-          const hasDefinedHotkeyContent = currentShortcut.hotkeyContent !== undefined;
+          const hasDefinedHotkeyContent = !!currentShortcut.hotkeyContent;
 
-          const allowUpdate =
-            hasDefinedHotkeyContent &&
-            ((isUserDefined && currentShortcut.status === 'enable') || isDefaultDefined);
+          const allowUpdate = hasDefinedHotkeyContent;
 
-          const allowDisable =
-            !hasDefinedHotkeyContent ||
-            (isDefaultDefined && hasDefinedHotkeyContent) ||
-            (isUserDefined && currentShortcut.status === 'enable');
-
-          // 是用户定义的，且热键状态处于「启用、禁用」时，才显示「删除」项
-          // 是默认定义的，且热键内容存在，才显示「删除」项
           const allowDelete =
-            (isUserDefined &&
-              (['enable', 'disable'] as UserHotkeyInfo['status'][]).includes(
-                currentShortcut.status
-              )) ||
+            (isUserDefined && hasDefinedHotkeyContent) ||
             (isDefaultDefined && hasDefinedHotkeyContent);
 
           return (
@@ -80,9 +70,6 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
               </Item>
               <Item onClick={addShortcut}>添加键绑定</Item>
               <Separator />
-              <Item onClick={disableShortcut} disabled={allowDisable}>
-                禁用
-              </Item>
               <Item onClick={deleteShortcut} className="delete" disabled={!allowDelete}>
                 删除
               </Item>
@@ -105,8 +92,8 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
         hotkeyPlatform: currentHotkeyPlatform,
         defaultOriginId:
           currentShortcut.type === 'user'
-            ? currentShortcut.defaultOriginId!
-            : currentShortcut.id!,
+            ? currentShortcut.defaultOriginId
+            : currentShortcut.id,
 
         hotkeyType: currentShortcut.type,
         hotkeyInfo: currentShortcut as any
@@ -131,24 +118,8 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
         hotkeyPlatform: currentHotkeyPlatform,
         defaultOriginId:
           currentShortcut.type === 'user'
-            ? currentShortcut.defaultOriginId!
-            : currentShortcut.id!,
-
-        hotkeyType: currentShortcut.type,
-        hotkeyInfo: currentShortcut as any
-      });
-    }
-  }
-
-  function disableShortcut() {
-    if (currentShortcut) {
-      useHotkeyStore.getState().updateUserHotkeyMap(currentShortcut.actionConfig.name, {
-        type: 'delete',
-        hotkeyPlatform: currentHotkeyPlatform,
-        defaultOriginId:
-          currentShortcut.type === 'user'
-            ? currentShortcut.defaultOriginId!
-            : currentShortcut.id!,
+            ? currentShortcut.defaultOriginId
+            : currentShortcut.id,
 
         hotkeyType: currentShortcut.type,
         hotkeyInfo: currentShortcut as any
@@ -190,7 +161,7 @@ function useStyle() {
             color: #d83c3e;
           }
           &__content {
-            color: ${t.selector('#fff', '#4f5660')};
+            color: ${t.selector('#fff', '#333')};
             font-weight: 500;
             padding: 1px 9px;
             box-sizing: border-box;
