@@ -52,6 +52,8 @@ export const axiosInterceptor = {
 
         throw data;
       }
+
+      return response;
     }
   }
 };
