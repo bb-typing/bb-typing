@@ -128,8 +128,15 @@ export function convertToRenderSource(
         }
       }
 
+      // [null, null, 1] 整理成 [1]。或是 [null, null] 整理成 [null]。即：全部都是null时，保留一个null。或是null与其他值时，保留其他值。
       if (source[actionName]?.length > 1) {
-        source[actionName] = source[actionName].filter(item => !!item.hotkeyContent);
+        const allHotkeyContentIsNull = source[actionName].every(
+          item => item.hotkeyContent === null
+        );
+
+        source[actionName] = allHotkeyContentIsNull
+          ? [source[actionName][0]]
+          : source[actionName].filter(item => !!item.hotkeyContent);
       }
     });
   });

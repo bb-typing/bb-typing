@@ -52,9 +52,6 @@ function CommandMenu(props: CommandMenuProps): JSX.Element {
       searchPlaceholder="搜索页面或功能命令..."
       highlightQuery={false}
       actionComponent={MenuItem}
-      // actionsWrapperComponent={({ children }) => {
-      //   return <div className={tw``}>{children}</div>;
-      // 　}
       limit={999}
       shortcut={null}
       nothingFoundMessage="没有找到相关的命令"
