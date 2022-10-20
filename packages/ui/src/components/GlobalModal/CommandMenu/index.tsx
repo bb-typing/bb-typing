@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 
 import MenuItem from './MenuItem';
 
-export function TablerSearch(props: SVGProps<SVGSVGElement>) {
+function TablerSearch(props: SVGProps<SVGSVGElement>) {
   return (
     <svg width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       <g
@@ -48,6 +48,10 @@ function CommandMenu(props: CommandMenuProps): JSX.Element {
   return (
     <SpotlightProvider
       actions={spotlightActions}
+      searchInputProps={{
+        // 加 name 是为了避免与其他「无 name 的 form-input」产生冲突，从而导致「autocomplete」的问题
+        name: 'table-search'
+      }}
       searchIcon={<TablerSearch fontSize={18} />}
       searchPlaceholder="搜索页面或功能命令..."
       highlightQuery={false}
