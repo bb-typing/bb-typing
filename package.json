@@ -61,8 +61,7 @@
     "vitest": "^0.24.0"
   },
   "dependencies": {
-    "mitt": "^3.0.0",
-    "super-hotkey": "file:../super-hotkey"
+    "mitt": "^3.0.0"
   },
   "resolutions": {},
   "lint-staged": {
