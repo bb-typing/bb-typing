@@ -1,7 +1,11 @@
 import { Button, Kbd, Modal } from '@mantine/core';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
 import useThemeStyle from '@ui/styles/useThemeStyle';
-import { modifierKeyBeautify, modifierKeysReorder } from '@ui/utils/keyboard-shortcut';
+import {
+  modifierKeyBeautify,
+  modifierKeysReorder,
+  normalKeysReorder
+} from '@ui/utils/keyboard-shortcut';
 import { useSetState } from 'ahooks';
 import { motion } from 'framer-motion';
 import { omit } from 'lodash';
@@ -159,6 +163,8 @@ function ShortcutConfigModal(props: ShortcutConfigModalProps): JSX.Element {
     }
 
     _currentShortcut.modifiers = modifierKeysReorder(_currentShortcut.modifiers);
+    _currentShortcut.normals = normalKeysReorder(_currentShortcut.normals);
+
     setStates({ currentShortcut: _currentShortcut });
   }
 
