@@ -86,7 +86,7 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
 
   function handleConfiguredShortcut(configuredShortcut: HotkeyContent) {
     if (currentShortcut) {
-      useHotkeyStore.getState().updateUserHotkeyMap(currentShortcut.actionConfig.name, {
+      useHotkeyStore.getState().updateActiveHotkey(currentShortcut.actionConfig.name, {
         type: cacheData.current.operationMode,
         hotkeyContent: configuredShortcut,
         hotkeyPlatform: currentHotkeyPlatform,
@@ -113,7 +113,7 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
 
   function deleteShortcut() {
     if (currentShortcut) {
-      useHotkeyStore.getState().updateUserHotkeyMap(currentShortcut.actionConfig.name, {
+      useHotkeyStore.getState().updateActiveHotkey(currentShortcut.actionConfig.name, {
         type: 'delete',
         hotkeyPlatform: currentHotkeyPlatform,
         defaultOriginId:

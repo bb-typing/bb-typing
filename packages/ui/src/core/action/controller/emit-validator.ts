@@ -10,7 +10,7 @@ function actionEmitValidator(actionName: ActionConfigName, ...args: any[]): bool
 
       return hasLogin;
     },
-    'system:open-user-login'() {
+    'user:open-login'() {
       const notLogin = !useUserStore.getState().userInfo !== null;
 
       return notLogin;

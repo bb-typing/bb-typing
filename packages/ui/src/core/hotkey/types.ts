@@ -35,13 +35,22 @@ export type UserHotkeyMap = Partial<
 //#region  //*=========== store ===========
 
 export interface HotkeyStoreState {
+  activeHotkeyType: 'user' | 'local';
   defaultHotkeyMap: BaseHotkeyMap;
   userHotkeyMap: UserHotkeyMap;
+  localHotkeyMap: UserHotkeyMap;
 }
 
-export interface HotkeyStoreAction {
+export interface HotkeyStoreActions {
   setUserHotkeyMap: (value: HotkeyStoreState['userHotkeyMap']) => void;
-  updateUserHotkeyMap: (
+  setActiveHotkeyType(value: HotkeyStoreState['activeHotkeyType']): void;
+  switchActiveHotkeyType(): void;
+  syncHotkeyMap(
+    source: HotkeyStoreState['activeHotkeyType'],
+    target: HotkeyStoreState['activeHotkeyType'],
+    mode: 'pure' | 'merge'
+  ): void;
+  updateActiveHotkey: (
     actionName: ActionConfigName | AnyString,
     operation: (
       | {
@@ -67,10 +76,13 @@ export interface HotkeyStoreAction {
   ) => void;
 }
 
-export interface HotkeyStoreComputed {
+export interface HotkeyStoreComputedVal {
   currentPlatformLatestUsableHotkeyInfoMap: Partial<
     Record<ActionConfigName | AnyString, UserHotkeyInfo | BaseHotkeyInfo>
   >;
+  currentActiveHotkeyMap:
+    | HotkeyStoreState['userHotkeyMap']
+    | HotkeyStoreState['localHotkeyMap'];
 }
 
 //#endregion  //*======== store ===========

@@ -8,7 +8,6 @@ export const layoutActionConfigs = defineActionConfig('layout', [
     name: 'layout:sidebar-switch' as const,
     supportedPlatforms: ['web:mac', 'web:win', 'desktop:mac', 'desktop:win'],
     commands: ['Layout: Switch sidebar mode', '布局：切换侧边栏模式'],
-    description: '切换侧边栏模式',
     defaultHotkeys: [
       {
         default: {

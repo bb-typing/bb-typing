@@ -2,11 +2,10 @@ import { Platform } from '@ui/utils/platform';
 import { useMount, useUnmount } from 'ahooks';
 import type { JSXElementConstructor, ReactNode } from 'react';
 import { useEffect, useMemo, useRef } from 'react';
-import type { CallbackOptions } from 'super-hotkey';
 import superHotkey from 'super-hotkey';
 import type { F } from 'ts-toolbelt';
 
-import { useHotkeyStore } from './store';
+import { useComputedHotkeyState, useHotkeyStore } from './store';
 import type {
   BaseHotkeyInfo,
   BaseHotkeyMap,
@@ -20,7 +19,7 @@ import {
   filterHotkeyPlatform,
   filterPlatformHotkeyMapByScope
 } from './utils';
-import type { ActionConfigName, ActionConfigScope } from '../action';
+import type { ActionConfigScope } from '../action';
 import { actionController, useActionStore } from '../action';
 
 interface WithHotkeyOptions {
@@ -36,20 +35,21 @@ export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
   options?: WithHotkeyOptions
 ): JSXElementConstructor<P> {
   return function (props) {
-    const { defaultHotkeyMap, userHotkeyMap } = useHotkeyStore();
+    const { defaultHotkeyMap } = useHotkeyStore();
+    const { currentActiveHotkeyMap } = useComputedHotkeyState();
 
     const hotkeyConfigs = useMemo(() => {
       return converToHotkeyConfigs(
         {
           default: defaultHotkeyMap,
-          user: userHotkeyMap
+          currentActive: currentActiveHotkeyMap
         },
         {
           hotkeyPlatform: filterHotkeyPlatform(),
           scope
         }
       );
-    }, [defaultHotkeyMap, userHotkeyMap]);
+    }, [defaultHotkeyMap, currentActiveHotkeyMap]);
 
     return (
       <HotKeyWrapper configs={hotkeyConfigs} {...options} scope={scope}>
@@ -129,7 +129,7 @@ function HotKeyWrapper(
 
 function converToHotkeyConfigs(
   configOrigin: {
-    user: UserHotkeyMap;
+    currentActive: UserHotkeyMap;
     default: BaseHotkeyMap;
   },
   options: {
@@ -141,7 +141,7 @@ function converToHotkeyConfigs(
 
   const currentScopeHotkey = {
     user: filterPlatformHotkeyMapByScope(
-      filterHotkeyMapByPlatform<1>(configOrigin.user, options.hotkeyPlatform),
+      filterHotkeyMapByPlatform<1>(configOrigin.currentActive, options.hotkeyPlatform),
       options.scope
     ),
     default: filterPlatformHotkeyMapByScope(

@@ -72,7 +72,7 @@ export const useComputedActionState = (): ActionStoreComputed => {
 
         const names: IgnoreActionNames = [
           'system:open-search-modal',
-          ['system:open-user-login', userLoggedIn],
+          ['user:open-login', userLoggedIn],
           ['user:exit-current-login', !userLoggedIn]
         ];
 

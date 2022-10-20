@@ -6,8 +6,8 @@ import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import type {
-  HotkeyStoreAction,
-  HotkeyStoreComputed,
+  HotkeyStoreActions,
+  HotkeyStoreComputedVal,
   HotkeyStoreState,
   UserHotkeyInfo
 } from './types';
@@ -17,7 +17,7 @@ import {
   filterHotkeyPlatform
 } from './utils';
 
-type Store = HotkeyStoreState & HotkeyStoreAction;
+type Store = HotkeyStoreState & HotkeyStoreActions;
 
 export const useHotkeyStore = create<
   Store,
@@ -26,32 +26,64 @@ export const useHotkeyStore = create<
   persist(
     immer(set => ({
       //#region  //*=========== state ===========
+      activeHotkeyType: 'local',
       defaultHotkeyMap: defaultHotkeysInitializer(),
       userHotkeyMap: {},
+      localHotkeyMap: {},
       //#endregion  //*======== state ===========
       //#region  //*=========== action ===========
+      switchActiveHotkeyType: () =>
+        set(state => {
+          const isLocale = state.activeHotkeyType === 'local';
+
+          state.activeHotkeyType = isLocale ? 'user' : 'local';
+        }),
+      setActiveHotkeyType: newActiveHotkeyType =>
+        set(state => {
+          state.activeHotkeyType = newActiveHotkeyType;
+        }),
+
+      syncHotkeyMap: (source, target, mode) =>
+        set(state => {
+          const sourceMap =
+            source === 'user' ? state.userHotkeyMap : state.localHotkeyMap;
+
+          if (mode === 'merge') {
+            state[target === 'user' ? 'userHotkeyMap' : 'localHotkeyMap'] = _.merge(
+              {},
+              sourceMap,
+              state[target === 'user' ? 'userHotkeyMap' : 'localHotkeyMap']
+            );
+          } else {
+            state[target === 'user' ? 'userHotkeyMap' : 'localHotkeyMap'] = sourceMap;
+          }
+        }),
 
       setUserHotkeyMap: userHotkeyMap =>
         set(state => {
           state.userHotkeyMap = userHotkeyMap;
         }),
-      updateUserHotkeyMap: (actionName, operation) =>
+      updateActiveHotkey: (actionName, operation) =>
         set((state: HotkeyStoreState) => {
           const updateTime = Date.now();
           const { supportedPlatforms, scope } = operation.hotkeyInfo;
+          const currentActiveHotkey =
+            state.activeHotkeyType === 'local'
+              ? state.localHotkeyMap
+              : state.userHotkeyMap;
 
           _.set(
-            state.userHotkeyMap,
+            currentActiveHotkey,
             [actionName, operation.hotkeyPlatform],
-            state.userHotkeyMap[actionName]?.[operation.hotkeyPlatform] || []
+            currentActiveHotkey[actionName]?.[operation.hotkeyPlatform] || []
           );
 
-          const userHotkeyOrigins =
-            state.userHotkeyMap[actionName]![operation.hotkeyPlatform]!;
+          const updateHotkeyOrigins =
+            currentActiveHotkey[actionName]![operation.hotkeyPlatform]!;
 
           switch (operation.type) {
             case 'add': {
-              userHotkeyOrigins.push({
+              updateHotkeyOrigins.push({
                 hotkeyContent: operation.hotkeyContent,
                 id: nanoid(),
                 supportedPlatforms,
@@ -64,14 +96,14 @@ export const useHotkeyStore = create<
 
             case 'update': {
               if (operation.hotkeyType === 'user') {
-                userHotkeyOrigins.forEach(userHotkeyInfo => {
+                updateHotkeyOrigins.forEach(userHotkeyInfo => {
                   if (userHotkeyInfo.id === operation.hotkeyInfo.id) {
                     userHotkeyInfo.updateTime = updateTime;
                     userHotkeyInfo.hotkeyContent = operation.hotkeyContent;
                   }
                 });
               } else {
-                userHotkeyOrigins.push({
+                updateHotkeyOrigins.push({
                   hotkeyContent: operation.hotkeyContent,
                   defaultOriginId: operation.defaultOriginId,
                   id: nanoid(),
@@ -86,27 +118,28 @@ export const useHotkeyStore = create<
 
             case 'delete': {
               if (operation.hotkeyType === 'user') {
-                for (let index = userHotkeyOrigins.length - 1; index >= 0; index--) {
-                  const fromDefault = !!userHotkeyOrigins[index].defaultOriginId;
-                  const equalId = userHotkeyOrigins[index].id === operation.hotkeyInfo.id;
+                for (let index = updateHotkeyOrigins.length - 1; index >= 0; index--) {
+                  const fromDefault = !!updateHotkeyOrigins[index].defaultOriginId;
+                  const equalId =
+                    updateHotkeyOrigins[index].id === operation.hotkeyInfo.id;
                   const equalDefaultOriginId =
-                    userHotkeyOrigins[index].defaultOriginId ===
+                    updateHotkeyOrigins[index].defaultOriginId ===
                     operation.defaultOriginId;
 
                   if (equalId) {
                     if (fromDefault && equalDefaultOriginId) {
-                      userHotkeyOrigins[index] = {
-                        ...userHotkeyOrigins[index],
+                      updateHotkeyOrigins[index] = {
+                        ...updateHotkeyOrigins[index],
                         hotkeyContent: null,
                         updateTime
                       };
                     } else {
-                      userHotkeyOrigins.splice(index, 1);
+                      updateHotkeyOrigins.splice(index, 1);
                     }
                   }
                 }
               } else {
-                userHotkeyOrigins.push({
+                updateHotkeyOrigins.push({
                   hotkeyContent: null,
                   defaultOriginId: operation.defaultOriginId,
                   id: nanoid(),
@@ -125,7 +158,11 @@ export const useHotkeyStore = create<
     })),
     {
       name: 'bb-store-hotkey',
-      partialize: state => ({ userHotkeyMap: state.userHotkeyMap })
+      partialize: state => ({
+        activeHotkeyType: state.activeHotkeyType,
+        userHotkey: state.userHotkeyMap,
+        localHotkey: state.localHotkeyMap
+      })
     }
   )
 );
@@ -133,14 +170,16 @@ export const useHotkeyStore = create<
 export const useTrackedHotkeyState =
   createTrackedSelector<HotkeyStoreState>(useHotkeyStore);
 
-export const useComputedHotkeyState = (): HotkeyStoreComputed => {
+export const useComputedHotkeyState = (): HotkeyStoreComputedVal => {
   const getState = useTrackedHotkeyState;
 
   return {
     get currentPlatformLatestUsableHotkeyInfoMap() {
-      const result: HotkeyStoreComputed['currentPlatformLatestUsableHotkeyInfoMap'] = {};
+      const result: HotkeyStoreComputedVal['currentPlatformLatestUsableHotkeyInfoMap'] =
+        {};
 
-      const { defaultHotkeyMap, userHotkeyMap } = getState();
+      const { defaultHotkeyMap: defaultHotkeyMap, userHotkeyMap: userHotkeyMap } =
+        getState();
       const currentHotkeyPlatform = filterHotkeyPlatform();
 
       const defaultPlatformHotkeyMap = filterHotkeyMapByPlatform(
@@ -176,6 +215,19 @@ export const useComputedHotkeyState = (): HotkeyStoreComputed => {
       );
 
       return result;
+    },
+    get currentActiveHotkeyMap() {
+      const {
+        activeHotkeyType,
+        userHotkeyMap: userHotkeyMap,
+        localHotkeyMap: localHotkeyMap
+      } = getState();
+
+      return activeHotkeyType === 'local' ? localHotkeyMap : userHotkeyMap;
     }
   };
+};
+
+export const useHotkeyActions = (): HotkeyStoreActions => {
+  return useHotkeyStore.getState();
 };

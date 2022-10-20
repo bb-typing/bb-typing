@@ -1,8 +1,11 @@
-import { Kbd, Table } from '@mantine/core';
-import { useTrackedHotkeyState } from '@ui/core/hotkey/';
+import { Button, Divider, Kbd, Select, Table, Tooltip } from '@mantine/core';
+import { useHotkeyActions, useTrackedHotkeyState } from '@ui/core/hotkey/';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
+import { apiGetUserSetting } from '@ui/features/user/api/apis';
+import { useComputedUserState } from '@ui/features/user/store';
 import useThemeStyle from '@ui/styles/useThemeStyle';
 import { modifierKeyBeautify, normalKeyBeautify } from '@ui/utils/keyboard-shortcut';
+import { useMount } from 'ahooks';
 import React, { memo, useMemo, useRef } from 'react';
 import { tw } from 'twind';
 
@@ -15,7 +18,12 @@ import { convertToRenderSource } from './utils';
 interface ViewShortcutKeyProps {}
 
 const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
-  const { userHotkeyMap } = useTrackedHotkeyState();
+  const { userHotkeyMap, activeHotkeyType } = useTrackedHotkeyState();
+  const hotkeyActions = useHotkeyActions();
+  const { userLoggedIn } = useComputedUserState();
+
+  const activeHotkeyIsLocal = activeHotkeyType === 'local';
+
   const contextMenuRef = useRef() as ContextMenuProps['contextRef'];
   const t = useThemeStyle();
 
@@ -106,7 +114,25 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
   })();
 
   return (
-    <>
+    <div className={tw`box-border p-[8px]`}>
+      <div className={tw`flex`}>
+        <Select
+          value={activeHotkeyType}
+          data={[
+            { value: 'local', label: '本地' },
+            { value: 'user', label: '用户', disabled: !userLoggedIn }
+          ]}
+          className={tw`w-[200px] mr-[5px]`}
+          onChange={value => {
+            hotkeyActions.setActiveHotkeyType(value as any);
+          }}
+        />
+
+        <Tooltip label={`同步至「${activeHotkeyIsLocal ? '用户' : '本地'}」中`}>
+          <Button disabled={activeHotkeyIsLocal && !userLoggedIn}>同步</Button>
+        </Tooltip>
+      </div>
+      <Divider my="xs" labelPosition="center" />
       <Table>
         <thead>
           <tr>
@@ -118,7 +144,7 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
         <tbody>{rows}</tbody>
       </Table>
       <ContextMenu contextRef={contextMenuRef} />
-    </>
+    </div>
   );
 };
 
