@@ -16,7 +16,7 @@ pipeline {
     }
     steps {
       sh '''
-      yarn install pnpm -g
+      yarn global add pnpm
       pnpm install
       pnpm web:build
     '''
