@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": ">=pnpm@7.12.0",
   "engines": {
-    "node": "=17.0.0"
+    "node": ">=17.0.0"
   },
   "workspaces": [
     "packages/*"
@@ -12,6 +12,7 @@
   "scripts": {
     "type-check": "tsx ./scripts/type-check.ts",
     "web:dev": "cd packages/web && pnpm dev",
+    "web:build": "cd packages/web && pnpm build",
     "desktop:dev": "cd packages/desktop && pnpm dev",
     "lint": "npm run type-check && lint-staged",
     "lint-fix": "eslint ./ --fix",

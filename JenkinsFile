@@ -1,0 +1,32 @@
+pipeline {
+  agent none
+    parameters {
+      string(name: 'targetPath', defaultValue: 'packages/web/dist', description: '生成资源文件夹')
+      string(name: 'serverPath', defaultValue: '/usr/local/src/liubility/ui/', description: '远程服务路径')
+      string(name: 'remoteIp', defaultValue: '192.168.1.150', description: '部署到远程IP地址')
+      string(name: 'remoteUser', defaultValue: 'root', description: '部署到远程用户')
+    }
+  stages {
+    stage('Build') {
+      agent {
+        docker {
+          image 'node:17-alpine3.12'
+          args '-v /root/node/.m2:/root/.m2'
+      }
+    }
+    steps {
+      sh '''
+      yarn global add pnpm
+      pnpm install
+      pnpm web:build
+    '''
+    }
+  }
+  stage('Upload'){
+    agent any
+      steps{
+        sh "scp -r ${params.targetPath}* ${params.remoteUser}@${params.remoteIp}:${params.serverPath}"
+      }
+    }
+  }
+}
