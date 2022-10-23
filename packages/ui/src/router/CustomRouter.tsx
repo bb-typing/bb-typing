@@ -20,6 +20,7 @@ function CustomRouter({
       location={state.location}
       navigationType={state.action}
       navigator={history}
+      basename="/ui"
     />
   );
 }
