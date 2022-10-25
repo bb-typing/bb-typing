@@ -18,7 +18,7 @@
     "lint-fix": "eslint ./ --fix",
     "clean": "rimraf **/node_modules",
     "api-schema:update": "tsx ./scripts/api-schema-update.ts",
-    "prepare": "husky install"
+    "prepare": "simple-git-hooks"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
@@ -41,7 +41,6 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "execa": "6.1.0",
-    "husky": "^8.0.1",
     "jsdom": "^20.0.0",
     "lint-staged": "^13.0.3",
     "lodash": "^4.17.21",
@@ -52,10 +51,11 @@
     "react-dev-inspector": "^1.8.1",
     "react-dom": "^18.2.0",
     "rimraf": "^3.0.2",
+    "simple-git-hooks": "^2.8.1",
     "ts-toolbelt": "^9.6.0",
     "tsx": "^3.8.0",
     "type-fest": "^2.16.0",
-    "typescript": "4.9.0-dev.20221007",
+    "typescript": "4.9.0-dev.20221024",
     "vite": "^3.1.7",
     "vite-plugin-svgr": "^2.2.0",
     "vitest": "^0.24.0"
@@ -63,7 +63,10 @@
   "dependencies": {
     "mitt": "^3.0.0"
   },
-  "resolutions": {},
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint",
+    "commit-msg": "pnpm exec commitlint -e $1 -g ./commitlint.config.ts"
+  },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
       "eslint . --ext ts --ext tsx"
