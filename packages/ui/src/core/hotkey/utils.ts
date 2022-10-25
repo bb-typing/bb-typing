@@ -1,4 +1,5 @@
 import { Platform } from '@ui/utils/platform';
+import _ from 'lodash';
 
 import type {
   BaseHotkeyInfo,
@@ -14,7 +15,6 @@ import { actionController } from '../action';
 
 export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'] {
   const actionConfigModules = actionController.getActions();
-
   const defaultHotkeys: HotkeyStoreState['defaultHotkeyMap'] = {};
 
   actionConfigModules.forEach(module => {
@@ -24,7 +24,6 @@ export function defaultHotkeysInitializer(): HotkeyStoreState['defaultHotkeyMap'
       const actionName = config.name;
 
       if (!('defaultHotkeys' in config)) return;
-
       config.defaultHotkeys.forEach(hotkeyMap => {
         Object.entries(hotkeyMap).forEach(
           ([_platform, hotkeyContent]: [unknown, HotkeyContent & { id: string }]) => {
@@ -119,8 +118,41 @@ export function filterHotkeyPlatform(): Exclude<HotkeyPlatform, 'default'> | und
 
 //#endregion  //*======== filter ===========
 
-export function isUserHotkeyInfo(
-  hotkeyInfo: BaseHotkeyInfo | UserHotkeyInfo
-): hotkeyInfo is UserHotkeyInfo {
-  return 'updateTime' in hotkeyInfo;
+export function mergeHotkeyOfUserAndLocal(
+  targetMap: UserHotkeyMap,
+  sourceMap: UserHotkeyMap
+) {
+  return _.mergeWith(
+    {},
+    targetMap,
+    sourceMap,
+    (targetValue: UserHotkeyInfo[], sourceValue: UserHotkeyInfo[]) => {
+      if (Array.isArray(sourceValue)) {
+        // 如果 targetValue 不存在，则直接返回 sourceValue
+        if (!targetValue) {
+          return sourceValue;
+        }
+
+        // 否则，遍历 sourceValue，判断 targetValue 中是否存在相同的 hotkey
+        // 如果存在，则根据两者的 updateTime 来决定是否覆盖（取最新的）
+        // 如果不存在，则直接添加
+        return sourceValue
+          .map(sourceItem => {
+            const targetHotkeyOfSameHotkey = targetValue.find(targetItem =>
+              // 只需判断 hotkeyContent，其余的都是一样的
+              _.isEqual(targetItem.hotkeyContent, sourceItem.hotkeyContent)
+            );
+
+            if (!targetHotkeyOfSameHotkey) {
+              return sourceItem;
+            }
+
+            return sourceItem.updateTime > targetHotkeyOfSameHotkey.updateTime
+              ? sourceItem
+              : targetHotkeyOfSameHotkey;
+          })
+          .concat(targetValue);
+      }
+    }
+  );
 }

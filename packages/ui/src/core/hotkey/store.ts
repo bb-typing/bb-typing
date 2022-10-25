@@ -49,11 +49,7 @@ export const useHotkeyStore = create<
             source === 'user' ? state.userHotkeyMap : state.localHotkeyMap;
 
           if (mode === 'merge') {
-            state[target === 'user' ? 'userHotkeyMap' : 'localHotkeyMap'] = _.merge(
-              {},
-              sourceMap,
-              state[target === 'user' ? 'userHotkeyMap' : 'localHotkeyMap']
-            );
+            // ...
           } else {
             state[target === 'user' ? 'userHotkeyMap' : 'localHotkeyMap'] = sourceMap;
           }
