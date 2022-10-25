@@ -19,13 +19,13 @@ it('sortModifierKeys - 修饰键的排序', () => {
 });
 
 it('keyStrSorter - 按键字符串的排序', () => {
-  expect(normalKeysReorder(['$', 'AltGraph'])).toBe(['AltGraph', '$']);
+  expect(normalKeysReorder(['$', 'AltGraph'])).toMatchObject(['$', 'AltGraph']);
 
-  expect(normalKeysReorder(['$', 'KeyR'])).toBe(['$', 'KeyR']);
+  expect(normalKeysReorder(['$', 'KeyR'])).toMatchObject(['$', 'KeyR']);
 
-  expect(normalKeysReorder(['$', 'KeyR', 'KeyA'])).toBe(['$', 'KeyA', 'KeyR']);
+  expect(normalKeysReorder(['$', 'KeyR', 'KeyA'])).toMatchObject(['$', 'KeyA', 'KeyR']);
 
-  expect(normalKeysReorder(['$', 'KeyR', 'KeyA', 'KeyB'])).toBe([
+  expect(normalKeysReorder(['$', 'KeyR', 'KeyA', 'KeyB'])).toMatchObject([
     '$',
     'KeyA',
     'KeyB',
