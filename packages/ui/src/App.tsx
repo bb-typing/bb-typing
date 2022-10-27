@@ -14,8 +14,9 @@ import { tw } from 'twind';
 
 import './styles/global.css';
 
-import GlobalModal from './components/GlobalModal';
 import { withScopeHotkey } from './core/hotkey';
+import GlobalInitializeProvider from './providers/GlobalInitialize';
+import GlobalModalProvider from './providers/GlobalModal';
 import { appHistory, CustomRouter, Routes } from './router';
 import { useThemeStore, useTrackedThemeState } from './stores/theme';
 import { queryClient } from './utils/libs/react-query';
@@ -53,16 +54,19 @@ export const App = withScopeHotkey(
         >
           <MantineProvider withGlobalStyles withNormalizeCSS theme={{ colorScheme }}>
             <NotificationsProvider position="top-center">
-              <ErrorBoundary FallbackComponent={ErrorFallback}>
-                <QueryClientProvider client={queryClient}>
-                  {import.meta.env.DEV && <ReactQueryDevtools />}
-                  {import.meta.env.DEV && <Inspector />}
-                  <CustomRouter history={appHistory}>
-                    <Routes />
-                  </CustomRouter>
-                  <GlobalModal />
-                </QueryClientProvider>
-              </ErrorBoundary>
+              <CustomRouter history={appHistory}>
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
+                  <QueryClientProvider client={queryClient}>
+                    {import.meta.env.DEV && <ReactQueryDevtools />}
+                    {import.meta.env.DEV && <Inspector />}
+                    <GlobalInitializeProvider>
+                      <GlobalModalProvider>
+                        <Routes />
+                      </GlobalModalProvider>
+                    </GlobalInitializeProvider>
+                  </QueryClientProvider>
+                </ErrorBoundary>
+              </CustomRouter>
             </NotificationsProvider>
           </MantineProvider>
         </ColorSchemeProvider>

@@ -4,4 +4,4 @@ export { useActionStore, useTrackedActionStore } from './store';
 
 export type { ActionConfigName, ActionConfigScope } from './types';
 
-import './handlers';
+export { actionHandlersInitializer } from './handlers';

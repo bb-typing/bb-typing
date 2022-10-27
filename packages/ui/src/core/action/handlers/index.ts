@@ -1,4 +1,6 @@
-import './layout';
-import './navigation';
-import './system';
-import './user';
+export function actionHandlersInitializer() {
+  import('./layout');
+  import('./navigation');
+  import('./system');
+  import('./user');
+}
