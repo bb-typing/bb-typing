@@ -133,7 +133,7 @@ export function mergeHotkeyOfUserAndLocal(
           return sourceValue;
         }
 
-        const excludedTargetIds: string[] = [];
+        const excludedOrAddedTargetIds: string[] = [];
 
         // 否则，遍历 sourceValue，判断 targetValue 中是否存在相同的 hotkey
         // 如果存在，则根据两者的 updateTime 来决定是否覆盖（取最新的）
@@ -149,15 +149,17 @@ export function mergeHotkeyOfUserAndLocal(
               return sourceItem;
             }
 
-            if (sourceItem.updateTime > targetHotkeyOfSameHotkey.updateTime) {
-              excludedTargetIds.push(targetHotkeyOfSameHotkey.id);
+            excludedOrAddedTargetIds.push(targetHotkeyOfSameHotkey.id);
 
+            if (sourceItem.updateTime > targetHotkeyOfSameHotkey.updateTime) {
               return sourceItem;
             } else {
               return targetHotkeyOfSameHotkey;
             }
           })
-          .concat(targetValue.filter(item => !excludedTargetIds.includes(item.id)));
+          .concat(
+            targetValue.filter(item => !excludedOrAddedTargetIds.includes(item.id))
+          );
       }
     }
   );

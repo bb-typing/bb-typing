@@ -1,11 +1,18 @@
 import { Button, Divider, Kbd, Select, Table, Tooltip } from '@mantine/core';
-import { useHotkeyActions, useTrackedHotkeyState } from '@ui/core/hotkey/';
+import type { NotificationProps } from '@mantine/notifications';
+import { showNotification } from '@mantine/notifications';
+import { defineVariables } from '@shared/types/base';
+import {
+  useComputedHotkeyState,
+  useHotkeyActions,
+  useTrackedHotkeyState
+} from '@ui/core/hotkey/';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
-import { apiGetUserSetting } from '@ui/features/user/api/apis';
+import { apiSaveUserSetting } from '@ui/features/user/api/apis';
+import { useUserSaveSettingAPI } from '@ui/features/user/api/hooks/useSaveSetting';
 import { useComputedUserState } from '@ui/features/user/store';
 import useThemeStyle from '@ui/styles/useThemeStyle';
 import { modifierKeyBeautify, normalKeyBeautify } from '@ui/utils/keyboard-shortcut';
-import { useMount } from 'ahooks';
 import React, { memo, useMemo, useRef } from 'react';
 import { tw } from 'twind';
 
@@ -18,7 +25,9 @@ import { convertToRenderSource } from './utils';
 interface ViewShortcutKeyProps {}
 
 const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
-  const { userHotkeyMap, activeHotkeyType } = useTrackedHotkeyState();
+  const { activeHotkeyType } = useTrackedHotkeyState();
+  const { currentActiveHotkeyMap } = useComputedHotkeyState();
+
   const hotkeyActions = useHotkeyActions();
   const { userLoggedIn } = useComputedUserState();
 
@@ -27,9 +36,12 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
   const contextMenuRef = useRef() as ContextMenuProps['contextRef'];
   const t = useThemeStyle();
 
+  const { isLoading: userSaveSettingLoading, mutateAsync: userSaveSetting } =
+    useUserSaveSettingAPI();
+
   const renderSource = useMemo(
-    () => convertToRenderSource(userHotkeyMap),
-    [userHotkeyMap]
+    () => convertToRenderSource(currentActiveHotkeyMap),
+    [currentActiveHotkeyMap]
   );
 
   const rows = (() => {
@@ -129,7 +141,13 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
         />
 
         <Tooltip label={`同步至「${activeHotkeyIsLocal ? '用户' : '本地'}」中`}>
-          <Button disabled={activeHotkeyIsLocal && !userLoggedIn}>同步</Button>
+          <Button
+            loading={userSaveSettingLoading}
+            disabled={activeHotkeyIsLocal && !userLoggedIn}
+            onClick={syncHotkey}
+          >
+            同步
+          </Button>
         </Tooltip>
       </div>
       <Divider my="xs" labelPosition="center" />
@@ -146,6 +164,30 @@ const ViewKeyboardShortcut: React.FC<ViewShortcutKeyProps> = props => {
       <ContextMenu contextRef={contextMenuRef} />
     </div>
   );
+
+  async function syncHotkey() {
+    if (activeHotkeyIsLocal) {
+      const mergedUserHotkeyMap = hotkeyActions.syncHotkeyMap('local', 'user', 'merge');
+
+      hotkeyActions.setUserHotkeyMap(mergedUserHotkeyMap);
+
+      await userSaveSetting({ type: 'shortcut', params: mergedUserHotkeyMap });
+
+      showNotification({
+        title: '操作成功',
+        message: '快捷键已同步至「用户」内',
+        color: 'green'
+      });
+    } else {
+      hotkeyActions.syncHotkeyMap('user', 'local', 'merge');
+
+      showNotification({
+        title: '操作成功',
+        message: '快捷键已同步至「本地」内',
+        color: 'green'
+      });
+    }
+  }
 };
 
 export default memo(ViewKeyboardShortcut);

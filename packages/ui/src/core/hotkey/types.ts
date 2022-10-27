@@ -45,11 +45,14 @@ export interface HotkeyStoreActions {
   setUserHotkeyMap: (value: HotkeyStoreState['userHotkeyMap']) => void;
   setActiveHotkeyType(value: HotkeyStoreState['activeHotkeyType']): void;
   switchActiveHotkeyType(): void;
+  /**
+   * @returns 合并后的结果
+   */
   syncHotkeyMap(
     source: HotkeyStoreState['activeHotkeyType'],
     target: HotkeyStoreState['activeHotkeyType'],
     mode: 'pure' | 'merge'
-  ): void;
+  ): UserHotkeyMap;
   updateActiveHotkey: (
     actionName: ActionConfigName | AnyString,
     operation: (

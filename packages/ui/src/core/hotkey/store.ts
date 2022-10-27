@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { nanoid } from 'nanoid';
-import { createTrackedSelector } from 'react-tracked';
+import { createTrackedSelector, getUntrackedObject } from 'react-tracked';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -9,12 +9,14 @@ import type {
   HotkeyStoreActions,
   HotkeyStoreComputedVal,
   HotkeyStoreState,
-  UserHotkeyInfo
+  UserHotkeyInfo,
+  UserHotkeyMap
 } from './types';
 import {
   defaultHotkeysInitializer,
   filterHotkeyMapByPlatform,
-  filterHotkeyPlatform
+  filterHotkeyPlatform,
+  mergeHotkeyOfUserAndLocal
 } from './utils';
 
 type Store = HotkeyStoreState & HotkeyStoreActions;
@@ -43,18 +45,25 @@ export const useHotkeyStore = create<
           state.activeHotkeyType = newActiveHotkeyType;
         }),
 
-      syncHotkeyMap: (source, target, mode) =>
+      syncHotkeyMap: (source, target, mode) => {
+        const targetKey = target === 'user' ? 'userHotkeyMap' : 'localHotkeyMap';
+        let targetValue!: UserHotkeyMap;
+
         set(state => {
           const sourceMap =
             source === 'user' ? state.userHotkeyMap : state.localHotkeyMap;
 
           if (mode === 'merge') {
-            // ...
+            targetValue = mergeHotkeyOfUserAndLocal(state[targetKey], sourceMap);
           } else {
-            state[target === 'user' ? 'userHotkeyMap' : 'localHotkeyMap'] = sourceMap;
+            targetValue = sourceMap;
           }
-        }),
 
+          return { ...state, [targetKey]: targetValue };
+        });
+
+        return targetValue;
+      },
       setUserHotkeyMap: userHotkeyMap =>
         set(state => {
           state.userHotkeyMap = userHotkeyMap;
@@ -156,8 +165,8 @@ export const useHotkeyStore = create<
       name: 'bb-store-hotkey',
       partialize: state => ({
         activeHotkeyType: state.activeHotkeyType,
-        userHotkey: state.userHotkeyMap,
-        localHotkey: state.localHotkeyMap
+        userHotkeyMap: state.userHotkeyMap,
+        localHotkeyMap: state.localHotkeyMap
       })
     }
   )
@@ -213,13 +222,11 @@ export const useComputedHotkeyState = (): HotkeyStoreComputedVal => {
       return result;
     },
     get currentActiveHotkeyMap() {
-      const {
-        activeHotkeyType,
-        userHotkeyMap: userHotkeyMap,
-        localHotkeyMap: localHotkeyMap
-      } = getState();
+      const { activeHotkeyType, userHotkeyMap, localHotkeyMap } = getState();
 
-      return activeHotkeyType === 'local' ? localHotkeyMap : userHotkeyMap;
+      return getUntrackedObject(
+        activeHotkeyType === 'local' ? localHotkeyMap : userHotkeyMap
+      )!;
     }
   };
 };

@@ -1,3 +1,4 @@
+import { useHotkeyStore } from '@ui/core/hotkey';
 import { useUserStore } from '@ui/features/user/store';
 
 import type { ActionConfigName } from '../types';
@@ -14,6 +15,14 @@ function actionEmitValidator(actionName: ActionConfigName, ...args: any[]): bool
       const notLogin = !useUserStore.getState().userInfo !== null;
 
       return notLogin;
+    },
+    'system:switch-keyboard-source'() {
+      const activeHotkeyIsUser = useHotkeyStore.getState().activeHotkeyType === 'user';
+      const hasLogin = useUserStore.getState().userInfo !== null;
+
+      if (activeHotkeyIsUser) return true;
+
+      return hasLogin;
     }
   };
 
