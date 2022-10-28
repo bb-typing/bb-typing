@@ -18,14 +18,16 @@ import {
 import { useSetState, useUpdateEffect } from 'ahooks';
 import { useRef } from 'react';
 import { tw } from 'twind';
-import './action-handler';
 
+import { loadActionHandler } from './action-handler';
 import { useStore, useTrackedState } from './store';
 import { useStore as useLoginModalStore } from '../LoginModal/store';
 import { useUserLogin } from '../../api/hooks/useLogin';
 import { useUserRegisterAPI } from '../../api/hooks/useRegister';
 import type { UserRegisterFormSchema } from '../../model';
 import { userRegisterFormSchema } from '../../model';
+
+loadActionHandler();
 
 interface UserRegisterProps {}
 

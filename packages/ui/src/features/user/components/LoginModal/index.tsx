@@ -11,13 +11,15 @@ import { useForm, zodResolver } from '@mantine/form';
 import { useUpdateEffect } from 'ahooks';
 import { pick } from 'lodash';
 import { useRef } from 'react';
-import './action-handler';
 
+import { loadActionHandler } from './action-handler';
 import { useStore, useTrackedState } from './store';
 import { useStore as useRegisterModalStore } from '../RegisterModal/store';
 import { useUserLogin } from '../../api/hooks/useLogin';
 import type { UserLoginFormSchema } from '../../model';
 import { userLoginFormSchema } from '../../model';
+
+loadActionHandler();
 
 interface UserLoginProps {}
 
