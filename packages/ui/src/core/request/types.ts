@@ -1,7 +1,8 @@
+import type { NotificationProps } from '@mantine/core';
+import type { AxiosRequestConfig } from 'axios';
 import type { Simplify } from 'type-fest';
 
 import type { paths } from './schema';
-import type { GetContentBetweenTwoChar } from '@mimi-utils/types';
 
 namespace GetParamsByMethod {
   type ByPost<O> = O extends {
@@ -31,12 +32,29 @@ namespace GetResponse {
   export type _<OperationInfo> = By200<OperationInfo>;
 }
 
-type GetCoreInfo<Path extends keyof paths, Method extends keyof paths[Path]> = {
+type GetURLPlaceholder<Body> = Body extends {
+  parameters: { path: infer P extends Record<string, string> };
+}
+  ? {
+      [K in keyof P]: P[K] | AnyString;
+    }
+  : unknown;
+
+type FilterParams<P> = P extends Array<unknown>
+  ? [P[0]] extends [never]
+    ? { params: never }
+    : { params: P }
+  : { params: P };
+
+type GetCoreInfo<
+  Path extends keyof paths,
+  Method extends keyof paths[Path],
+  Body extends paths[Path] = paths[Path]
+> = {
   [M in Method]: {
-    params: GetParamsByMethod._<Method, paths[Path][Method]>;
-    response: GetResponse._<paths[Path][Method]>;
-    urlPlaceholder: Record<GetContentBetweenTwoChar<Path, '{', '}'>, string>;
-  };
+    response: GetResponse._<Body[M]>;
+    urlPlaceholder: GetURLPlaceholder<Body[M]>;
+  } & FilterParams<GetParamsByMethod._<M, Body[M]>>;
 };
 
 export type APISchema = {
@@ -56,11 +74,22 @@ export type GetAPIResponse<
   Method extends keyof APISchema[Path]
 > = APISchema[Path][Method]['response'];
 
+export interface InternalConfig {
+  /**
+   * @default true
+   */
+  popupErrorPrompt?: boolean | (Partial<NotificationProps> & {});
+}
+
+export type RequestConfig = AxiosRequestConfig & {
+  _internal: Required<InternalConfig>;
+};
+
 declare module 'axios' {
   interface AxiosInstance extends Axios {
     <U extends APIPath, M extends keyof APISchema[U]>(
-      url: U,
-      config?: Omit<AxiosRequestConfig, 'data' | 'params' | 'method'> & {
+      url: U | AnyString,
+      config?: Omit<RequestConfig, 'data' | 'params' | 'method'> & {
         method?: M | AnyString;
         data?: APISchema[U][M]['params'];
         params?: APISchema[U][M]['params'];

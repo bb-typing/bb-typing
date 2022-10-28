@@ -22,11 +22,10 @@ export type BaseHotkeyMap = Partial<
   Record<ActionConfigName | AnyString, Partial<Record<HotkeyPlatform, BaseHotkeyInfo[]>>>
 >;
 
-export interface UserHotkeyInfo extends Omit<BaseHotkeyInfo, 'id'> {
-  id: string;
+export interface UserHotkeyInfo extends Omit<BaseHotkeyInfo, 'hotkeyContent'> {
   defaultOriginId?: string;
   updateTime: number;
-  status: 'enable' | 'disable' | 'delete';
+  hotkeyContent: HotkeyContent | null;
 }
 
 export type UserHotkeyMap = Partial<
@@ -36,18 +35,58 @@ export type UserHotkeyMap = Partial<
 //#region  //*=========== store ===========
 
 export interface HotkeyStoreState {
+  activeHotkeyType: 'user' | 'local';
   defaultHotkeyMap: BaseHotkeyMap;
   userHotkeyMap: UserHotkeyMap;
+  localHotkeyMap: UserHotkeyMap;
 }
 
-export interface HotkeyStoreAction {
+export interface HotkeyStoreActions {
   setUserHotkeyMap: (value: HotkeyStoreState['userHotkeyMap']) => void;
+  setActiveHotkeyType(value: HotkeyStoreState['activeHotkeyType']): void;
+  cleanUserHotkeyMap(): void;
+  switchActiveHotkeyType(): void;
+  /**
+   * @returns 合并后的结果
+   */
+  syncHotkeyMap(
+    source: HotkeyStoreState['activeHotkeyType'],
+    target: HotkeyStoreState['activeHotkeyType'],
+    mode: 'pure' | 'merge'
+  ): UserHotkeyMap;
+  updateActiveHotkey: (
+    actionName: ActionConfigName | AnyString,
+    operation: (
+      | {
+          type: 'add' | 'update';
+          hotkeyContent: HotkeyContent;
+        }
+      | {
+          type: 'delete';
+        }
+    ) & {
+      defaultOriginId?: string;
+      hotkeyPlatform: HotkeyPlatform;
+    } & (
+        | {
+            hotkeyType: 'user';
+            hotkeyInfo: UserHotkeyInfo;
+          }
+        | {
+            hotkeyType: 'default';
+            hotkeyInfo: BaseHotkeyInfo;
+          }
+      )
+  ) => void;
 }
 
-export interface HotkeyStoreComputed {
+export interface HotkeyStoreComputedVal {
   currentPlatformLatestUsableHotkeyInfoMap: Partial<
     Record<ActionConfigName | AnyString, UserHotkeyInfo | BaseHotkeyInfo>
   >;
+  currentActiveHotkeyMap:
+    | HotkeyStoreState['userHotkeyMap']
+    | HotkeyStoreState['localHotkeyMap'];
 }
 
 //#endregion  //*======== store ===========

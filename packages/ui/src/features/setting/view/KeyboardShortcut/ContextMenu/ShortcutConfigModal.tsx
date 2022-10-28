@@ -1,7 +1,11 @@
 import { Button, Kbd, Modal } from '@mantine/core';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
 import useThemeStyle from '@ui/styles/useThemeStyle';
-import { modifierKeyBeautify, modifierKeysReorder } from '@ui/utils/keyboard-shortcut';
+import {
+  modifierKeyBeautify,
+  modifierKeysReorder,
+  normalKeysReorder
+} from '@ui/utils/keyboard-shortcut';
 import { useSetState } from 'ahooks';
 import { motion } from 'framer-motion';
 import { omit } from 'lodash';
@@ -51,6 +55,8 @@ function ShortcutConfigModal(props: ShortcutConfigModalProps): JSX.Element {
       opened={visible}
       centered={true}
       onClose={() => setStates({ visible: false })}
+      closeOnEscape={false}
+      closeOnClickOutside={false}
       title="快捷键设置"
     >
       <div
@@ -135,7 +141,8 @@ function ShortcutConfigModal(props: ShortcutConfigModalProps): JSX.Element {
     } else {
       const [keyAlias] = (Object.entries(omit(extendedNormalCodeMap, 'Return')).find(
         ([, aliasContent]) =>
-          typeof aliasContent === 'string' && aliasContent === eventCode
+          (typeof aliasContent === 'string' && aliasContent === eventCode) ||
+          (Array.isArray(aliasContent) && (aliasContent as any).includes(eventCode))
       ) ?? []) as [MergedNormalCode, any] | [];
 
       const hasKeyAlias = !!keyAlias;
@@ -156,6 +163,8 @@ function ShortcutConfigModal(props: ShortcutConfigModalProps): JSX.Element {
     }
 
     _currentShortcut.modifiers = modifierKeysReorder(_currentShortcut.modifiers);
+    _currentShortcut.normals = normalKeysReorder(_currentShortcut.normals);
+
     setStates({ currentShortcut: _currentShortcut });
   }
 

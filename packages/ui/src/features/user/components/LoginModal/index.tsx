@@ -1,5 +1,4 @@
 import {
-  Alert,
   Anchor,
   Button,
   Checkbox,
@@ -9,15 +8,18 @@ import {
   TextInput
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { showNotification } from '@mantine/notifications';
-import { APIResponse } from '@ui/core/axios/types';
 import { useUpdateEffect } from 'ahooks';
 import { pick } from 'lodash';
-import { useUserLoginAPI } from '../../api/hooks/useUserLogin';
-import { UserLoginFormSchema, userLoginFormSchema } from '../../model';
-import './action-handler';
+import { useRef } from 'react';
 
+import { loadActionHandler } from './action-handler';
 import { useStore, useTrackedState } from './store';
+import { useStore as useRegisterModalStore } from '../RegisterModal/store';
+import { useUserLogin } from '../../api/hooks/useLogin';
+import type { UserLoginFormSchema } from '../../model';
+import { userLoginFormSchema } from '../../model';
+
+loadActionHandler();
 
 interface UserLoginProps {}
 
@@ -27,14 +29,10 @@ export type FormSchema = UserLoginFormSchema & {
 
 function UserLoginModal(props: UserLoginProps): JSX.Element {
   const { visible, formValues } = useTrackedState();
+  const firstInputRef = useRef<HTMLInputElement>(null);
   const { setVisible, setFormValues } = useStore.getState();
-  const { isLoading: userLoginLoading, mutateAsync: userLoginFetch } = useUserLoginAPI({
+  const { isLoading: userLoginLoading, mutateAsync: userLoginFetch } = useUserLogin({
     onSuccess: () => {
-      showNotification({
-        title: '登录成功',
-        message: '欢迎回来',
-        color: 'green'
-      });
       setVisible(false);
       if (form.values.rememberPassword) {
         setFormValues(form.values);
@@ -43,16 +41,6 @@ function UserLoginModal(props: UserLoginProps): JSX.Element {
           username: '',
           password: '',
           rememberPassword: false
-        });
-      }
-    },
-    onError(_error, variables, context) {
-      const error = _error as APIResponse;
-      if (error.code === 20001) {
-        showNotification({
-          title: '登录失败',
-          message: '用户名或密码错误',
-          color: 'red'
         });
       }
     }
@@ -66,6 +54,10 @@ function UserLoginModal(props: UserLoginProps): JSX.Element {
   useUpdateEffect(() => {
     if (!visible) {
       form.setValues({ ...formValues });
+    } else {
+      setTimeout(() => {
+        firstInputRef.current?.focus();
+      }, 50);
     }
   }, [visible]);
 
@@ -77,8 +69,13 @@ function UserLoginModal(props: UserLoginProps): JSX.Element {
       closeOnClickOutside={false}
       title="用户登录"
     >
-      <form onSubmit={form.onSubmit(handleFormSubmit)}>
-        <TextInput withAsterisk label="用户名" {...form.getInputProps('username')} />
+      <form onSubmit={form.onSubmit(formSubmit)}>
+        <TextInput
+          ref={firstInputRef}
+          withAsterisk
+          label="用户名"
+          {...form.getInputProps('username')}
+        />
         <PasswordInput withAsterisk label="密码" {...form.getInputProps('password')} />
         <Checkbox
           mt="md"
@@ -92,7 +89,7 @@ function UserLoginModal(props: UserLoginProps): JSX.Element {
             component="button"
             type="button"
             color="dimmed"
-            onClick={() => {}}
+            onClick={toRegister}
             size="xs"
           >
             没有账户？注册
@@ -105,8 +102,13 @@ function UserLoginModal(props: UserLoginProps): JSX.Element {
     </Modal>
   );
 
-  async function handleFormSubmit(values: FormSchema) {
+  async function formSubmit(values: FormSchema) {
     userLoginFetch(pick(values, ['username', 'password']));
+  }
+
+  function toRegister() {
+    setVisible(false);
+    useRegisterModalStore.getState().setVisible(true);
   }
 }
 

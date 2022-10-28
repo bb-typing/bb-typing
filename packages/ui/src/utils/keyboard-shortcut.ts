@@ -1,4 +1,4 @@
-import type { MergedModifierCode } from 'super-hotkey';
+import type { MergedModifierCode, MergedNormalCode } from 'super-hotkey';
 
 import { Platform } from './platform';
 
@@ -11,6 +11,10 @@ export function modifierKeyBeautify(key: MergedModifierCode | AnyString): string
     default:
       return key.toLocaleLowerCase();
   }
+}
+
+export function normalKeyBeautify(key: MergedNormalCode | AnyString): string {
+  return key.toLocaleLowerCase();
 }
 
 export function modifierKeysReorder(
@@ -37,4 +41,28 @@ export function modifierKeysReorder(
   };
 
   return modifiers.sort((a, b) => modifierKeyPriorityMap[a] - modifierKeyPriorityMap[b]);
+}
+
+export function normalKeysReorder(normalKeys: MergedNormalCode[]): MergedNormalCode[] {
+  return normalKeys.sort(keyCompareFn);
+
+  function keyCompareFn(aKeyStr: string, bKeyStr: string): number {
+    const aKeyChars = aKeyStr.split('');
+    const bKeyChars = bKeyStr.split('');
+
+    if (aKeyChars.length === bKeyChars.length) {
+      const aKeyCodePoints = aKeyChars.map(char => char.codePointAt(0)!);
+      const bKeyCodePoints = bKeyChars.map(char => char.codePointAt(0)!);
+
+      for (let i = 0; i < aKeyCodePoints.length; i++) {
+        if (aKeyCodePoints[i] !== bKeyCodePoints[i]) {
+          return aKeyCodePoints[i] - bKeyCodePoints[i];
+        }
+      }
+
+      return 0;
+    } else {
+      return aKeyChars.length - bKeyChars.length;
+    }
+  }
 }

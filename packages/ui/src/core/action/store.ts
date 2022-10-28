@@ -27,7 +27,7 @@ export const useActionStore = create<
       activeScopes: [],
       //#endregion  //*======== state ===========
 
-      //#region  //*=========== action ===========
+      //#region  //*=========== actions ===========
       addActiveScope: scope =>
         set(state => {
           const includeScopeInActives = state.activeScopes.includes(scope);
@@ -44,7 +44,7 @@ export const useActionStore = create<
             state.activeScopes.splice(indexToDel, 1);
           }
         })
-      //#endregion  //*======== action ===========
+      //#endregion  //*======== actions ===========
     })),
     {
       name: 'bb-store-action',
@@ -65,12 +65,15 @@ export const useComputedActionState = (): ActionStoreComputed => {
       const { activeScopes } = useState();
 
       type IgnoreActionNames = Array<
-        ActionConfigName | [name: ActionConfigName, show: boolean]
+        ActionConfigName | [name: ActionConfigName, ignore: boolean]
       >;
       const ignoreActionNames: IgnoreActionNames = (() => {
+        const { userLoggedIn } = useComputedUserState();
+
         const names: IgnoreActionNames = [
           'system:open-search-modal',
-          ['system:open-user-login', useComputedUserState().userLoggedIn]
+          ['user:open-login', userLoggedIn],
+          ['user:exit-current-login', !userLoggedIn]
         ];
 
         return names;
@@ -87,9 +90,9 @@ export const useComputedActionState = (): ActionStoreComputed => {
           );
           const isIgnoredAction = ignoreActionNames.some(item => {
             if (Array.isArray(item)) {
-              const [name, show] = item;
+              const [name, ignore] = item;
 
-              return config.name === name && show;
+              return config.name === name && ignore;
             }
 
             return config.name === item;

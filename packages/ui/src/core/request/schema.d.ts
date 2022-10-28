@@ -4,6 +4,9 @@
  */
 
 export interface paths {
+  '/typing-service/account/checkToken': {
+    post: operations['checkTokenUsingPOST'];
+  };
   '/typing-service/account/login': {
     post: operations['loginUsingPOST'];
   };
@@ -22,6 +25,9 @@ export interface paths {
   };
   '/typing-service/account/history/uploadHistoryAndArticle': {
     post: operations['uploadHistoryAndArticleUsingPOST'];
+  };
+  '/typing-service/account/history/uploadTypingDetail': {
+    post: operations['uploadTypingDetailUsingPOST'];
   };
   '/typing-service/version/test/codeLength': {
     post: operations['codeLengthUsingPOST'];
@@ -89,6 +95,7 @@ export interface components {
     AccountDto: {
       /** Format: int64 */
       id?: number;
+      ip?: string;
       password?: string;
       username?: string;
     };
@@ -331,6 +338,15 @@ export interface components {
       bodies?: components['schemas']['WordLibListPageVO'][];
       headers?: components['schemas']['Header'][];
     };
+    /** TypeChar */
+    TypeChar: {
+      character?: string;
+      /** Format: int64 */
+      deleteTime?: number;
+      mistake?: boolean;
+      /** Format: int64 */
+      typingTime?: number;
+    };
     /** TypeHistoryDto */
     TypeHistoryDto: {
       /** Format: int64 */
@@ -368,6 +384,13 @@ export interface components {
       userId?: number;
       /** Format: double */
       wordRate?: number;
+    };
+    /** TypedWordsDTO */
+    TypedWordsDTO: {
+      /** Format: int64 */
+      historyId?: number;
+      typeCodes?: string;
+      typeWords?: components['schemas']['Words'][];
     };
     /** TypingHistory */
     TypingHistory: {
@@ -526,10 +549,45 @@ export interface components {
       /** Format: int32 */
       wordMaxLength?: number;
     };
+    /** Words */
+    Words: {
+      codeTips?: string;
+      codesChar?: components['schemas']['TypeChar'][];
+      /** Format: int64 */
+      typingTime?: number;
+      wordTips?: string;
+      wordsChar?: components['schemas']['TypeChar'][];
+    };
   };
 }
 
 export interface operations {
+  checkTokenUsingPOST: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+  };
   loginUsingPOST: {
     parameters: {
       header: {
@@ -658,10 +716,6 @@ export interface operations {
         /** type */
         type: 'hue' | 'layout' | 'shortcut';
       };
-      query: {
-        /** content */
-        content?: string;
-      };
     };
     responses: {
       /** OK */
@@ -678,6 +732,11 @@ export interface operations {
       403: unknown;
       /** Not Found */
       404: unknown;
+    };
+    requestBody: {
+      content: {
+        'application/json': { [key: string]: { [key: string]: unknown } };
+      };
     };
   };
   getArticleByIdUsingGET: {
@@ -736,6 +795,37 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': components['schemas']['HistoryArticleDto'];
+      };
+    };
+  };
+  uploadTypingDetailUsingPOST: {
+    parameters: {
+      header: {
+        /** 令牌 */
+        Authorization?: string;
+        /** 用户id */
+        userId?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['Result«string»'];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TypedWordsDTO'];
       };
     };
   };

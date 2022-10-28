@@ -1,6 +1,6 @@
-import { createBrowserHistory } from 'history';
+import { createHashHistory } from 'history';
 
-export const appHistory = createBrowserHistory();
+export const appHistory = createHashHistory();
 
 export { default as CustomRouter } from './CustomRouter';
 

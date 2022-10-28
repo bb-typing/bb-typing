@@ -18,7 +18,7 @@
     "lint-fix": "eslint ./ --fix",
     "clean": "rimraf **/node_modules",
     "api-schema:update": "tsx ./scripts/api-schema-update.ts",
-    "prepare": "husky install"
+    "prepare": "simple-git-hooks"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
@@ -30,6 +30,7 @@
     "@testing-library/user-event": "^14.3.0",
     "@type-challenges/utils": "^0.1.1",
     "@types/lodash": "^4.14.182",
+    "@types/node": "^18.11.5",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
@@ -41,30 +42,32 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "execa": "6.1.0",
-    "husky": "^8.0.1",
     "jsdom": "^20.0.0",
     "lint-staged": "^13.0.3",
     "lodash": "^4.17.21",
     "openapi-typescript": "^5.4.1",
     "picocolors": "^1.0.0",
-    "prettier": "3.0.0-alpha.1",
+    "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dev-inspector": "^1.8.1",
     "react-dom": "^18.2.0",
     "rimraf": "^3.0.2",
+    "simple-git-hooks": "^2.8.1",
     "ts-toolbelt": "^9.6.0",
     "tsx": "^3.8.0",
-    "type-fest": "^2.16.0",
-    "typescript": "4.9.0-dev.20221007",
+    "type-fest": "^3.1.0",
+    "typescript": "4.9.0-dev.20221024",
     "vite": "^3.1.7",
     "vite-plugin-svgr": "^2.2.0",
     "vitest": "^0.24.0"
   },
   "dependencies": {
-    "mitt": "^3.0.0",
-    "super-hotkey": "file:../super-hotkey"
+    "mitt": "^3.0.0"
   },
-  "resolutions": {},
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint",
+    "commit-msg": "pnpm exec commitlint -e $1 -g ./commitlint.config.ts"
+  },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
       "eslint . --ext ts --ext tsx"

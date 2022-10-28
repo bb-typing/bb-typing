@@ -4,6 +4,7 @@ import type { ActionConfigOption } from '../types';
 import { defineActionConfig } from '../utils';
 
 export const globalActionConfigs = defineActionConfig('global', [
+  //#region  //*=========== System ===========
   defineVariables<ActionConfigOption>()({
     name: 'system:desktop:close-app' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win'],
@@ -58,15 +59,42 @@ export const globalActionConfigs = defineActionConfig('global', [
     __params_type__: defineType<unknown>()
   }),
   defineVariables<ActionConfigOption>()({
-    name: 'system:open-user-login' as const,
+    name: 'system:switch-keyboard-source' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
-    commands: ['System: Open User Login Window', '系统：打开用户登录窗'],
+    commands: ['System: Switch Keyboard Source', '系统：切换快捷键来源'],
+    description: '切换快捷键来源，在本地、用户之间切换',
     __params_type__: defineType<unknown>()
   }),
+  //#endregion  //*======== System ===========
+
+  //#region  //*=========== User ===========
+  defineVariables<ActionConfigOption>()({
+    name: 'user:open-login' as const,
+    supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
+    commands: ['User: Open User Login Window', '用户：打开用户登录窗'],
+    __params_type__: defineType<unknown>()
+  }),
+  defineVariables<ActionConfigOption>()({
+    name: 'user:open-register' as const,
+    supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
+    commands: ['User: Open User Register Window', '用户：打开用户注册窗'],
+    __params_type__: defineType<unknown>()
+  }),
+  defineVariables<ActionConfigOption>()({
+    name: 'user:exit-current-login' as const,
+    supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
+    commands: ['User: Exit Current Login', '用户：退出当前登录'],
+    __params_type__: defineType<unknown>()
+  }),
+
+  //#endregion  //*======== User ===========
+
+  //#region  //*=========== Navigation ===========
   defineVariables<ActionConfigOption>()({
     name: 'navigation:open-keyboard-shortcuts' as const,
     supportedPlatforms: ['desktop:mac', 'desktop:win', 'web:mac', 'web:win'],
     commands: ['Navigation: Open Keyboard Shortcuts', '导航：打开快捷键配置'],
     __params_type__: defineType<unknown>()
   })
+  //#endregion  //*======== Navigation ===========
 ]);

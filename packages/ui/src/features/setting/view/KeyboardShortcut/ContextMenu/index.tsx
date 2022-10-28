@@ -1,8 +1,11 @@
+import { useHotkeyStore } from '@ui/core/hotkey';
 import type { HotkeyContent } from '@ui/core/hotkey/types';
+import { filterHotkeyPlatform } from '@ui/core/hotkey/utils';
 import useThemeStyle from '@ui/styles/useThemeStyle';
+import { useSetState } from 'ahooks';
 import { useImperativeHandle, useRef } from 'react';
 import { Item, Menu, Separator, useContextMenu } from 'react-contexify';
-import { apply, tw } from 'twind';
+import { tw } from 'twind';
 import { css } from 'twind/css';
 
 import type { ShortcutConfigModalProps } from './ShortcutConfigModal';
@@ -10,6 +13,8 @@ import ShortcutConfigModal from './ShortcutConfigModal';
 import type { ShortcutRenderSourceItem } from '../utils';
 
 const MENU_ID = 'keyboard-shortcut-menu';
+
+type ccc = number & keyof String;
 
 export interface ContextMenuProps {
   contextRef: React.RefObject<{
@@ -22,30 +27,55 @@ export interface ContextMenuProps {
 
 function ContextMenu(props: ContextMenuProps): JSX.Element {
   const { contextRef } = props;
-  const currentShortcutRef = useRef<ShortcutRenderSourceItem>();
+
   const shortcutConfigModalRef = useRef() as ShortcutConfigModalProps['contextRef'];
   const style = useStyle();
-  const { show: showMenu } = useContextMenu({
-    id: MENU_ID
+  const { show: showMenu } = useContextMenu({ id: MENU_ID });
+
+  const [{ currentShortcut }, setStates] = useSetState({
+    currentShortcut: null as ShortcutRenderSourceItem | null
   });
+  const cacheData = useRef({
+    operationMode: 'update' as 'update' | 'add'
+  });
+  const currentHotkeyPlatform = filterHotkeyPlatform()!;
 
   useImperativeHandle(contextRef, () => ({
     open(event, currentShortcut) {
       showMenu(event);
-      currentShortcutRef.current = currentShortcut;
+      setStates({ currentShortcut });
     }
   }));
 
   return (
     <div className={style.wrapper}>
       <Menu id={MENU_ID} animation={false}>
-        <Item onClick={handleUpdateShortcut}>更改键绑定</Item>
-        <Item onClick={handleAddShortcut}>添加键绑定</Item>
-        <Separator />
-        <Item onClick={handleDisableShortcut}>禁用</Item>
-        <Item onClick={handleDeleteShortcut} className="delete">
-          删除
-        </Item>
+        {(() => {
+          if (!currentShortcut) return null;
+
+          const isUserDefined = currentShortcut.type === 'user';
+          const isDefaultDefined = currentShortcut.type === 'default';
+          const hasDefinedHotkeyContent = !!currentShortcut.hotkeyContent;
+
+          const allowUpdate = hasDefinedHotkeyContent;
+
+          const allowDelete =
+            (isUserDefined && hasDefinedHotkeyContent) ||
+            (isDefaultDefined && hasDefinedHotkeyContent);
+
+          return (
+            <>
+              <Item onClick={updateShortcut} disabled={!allowUpdate}>
+                更改键绑定
+              </Item>
+              <Item onClick={addShortcut}>添加键绑定</Item>
+              <Separator />
+              <Item onClick={deleteShortcut} className="delete" disabled={!allowDelete}>
+                删除
+              </Item>
+            </>
+          );
+        })()}
       </Menu>
       <ShortcutConfigModal
         contextRef={shortcutConfigModalRef}
@@ -55,24 +85,46 @@ function ContextMenu(props: ContextMenuProps): JSX.Element {
   );
 
   function handleConfiguredShortcut(configuredShortcut: HotkeyContent) {
-    console.log('configuredShortcut', configuredShortcut);
+    if (currentShortcut) {
+      useHotkeyStore.getState().updateActiveHotkey(currentShortcut.actionConfig.name, {
+        type: cacheData.current.operationMode,
+        hotkeyContent: configuredShortcut,
+        hotkeyPlatform: currentHotkeyPlatform,
+        defaultOriginId:
+          currentShortcut.type === 'user'
+            ? currentShortcut.defaultOriginId
+            : currentShortcut.id,
+
+        hotkeyType: currentShortcut.type,
+        hotkeyInfo: currentShortcut as any
+      });
+    }
   }
 
-  function handleUpdateShortcut() {
-    console.log('updateShortcut');
+  function updateShortcut() {
+    cacheData.current.operationMode = 'update';
     shortcutConfigModalRef.current?.open();
   }
 
-  function handleAddShortcut() {
-    console.log('addShortcut');
+  function addShortcut() {
+    cacheData.current.operationMode = 'add';
+    shortcutConfigModalRef.current?.open();
   }
 
-  function handleDeleteShortcut() {
-    console.log('deleteShortcut');
-  }
+  function deleteShortcut() {
+    if (currentShortcut) {
+      useHotkeyStore.getState().updateActiveHotkey(currentShortcut.actionConfig.name, {
+        type: 'delete',
+        hotkeyPlatform: currentHotkeyPlatform,
+        defaultOriginId:
+          currentShortcut.type === 'user'
+            ? currentShortcut.defaultOriginId
+            : currentShortcut.id,
 
-  function handleDisableShortcut() {
-    console.log('disableShortcut');
+        hotkeyType: currentShortcut.type,
+        hotkeyInfo: currentShortcut as any
+      });
+    }
   }
 }
 
@@ -109,7 +161,7 @@ function useStyle() {
             color: #d83c3e;
           }
           &__content {
-            color: ${t.selector('#fff', '#4f5660')};
+            color: ${t.selector('#fff', '#333')};
             font-weight: 500;
             padding: 1px 9px;
             box-sizing: border-box;

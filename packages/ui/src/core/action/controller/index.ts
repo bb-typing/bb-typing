@@ -1,8 +1,9 @@
 import type { Equal } from '@type-challenges/utils';
 import mitt from 'mitt';
 
-import { actionConfigModules } from './configs';
-import type { ActionConfigName, ActionNameParamsMap } from './types';
+import actionEmitValidator from './emit-validator';
+import { actionConfigModules } from '../configs';
+import type { ActionConfigName, ActionNameParamsMap } from '../types';
 
 export class ActionController {
   private eventBus = mitt<ActionNameParamsMap>();
@@ -27,9 +28,13 @@ export class ActionController {
     Params extends ActionNameParamsMap[Name] = ActionNameParamsMap[Name]
   >(
     name: Name,
-    ...args: Equal<Params, unknown> extends true ? [] : [params?: Params]
+    ...args: Equal<Params, unknown> extends true
+      ? any[]
+      : [params?: Params, ...rest: any[]]
   ): void {
-    this.eventBus.emit(name as any, (args as any)?.[0]);
+    if (actionEmitValidator(name)) {
+      this.eventBus.emit(name as any, (args as any)?.[0]);
+    }
   }
 
   public subscribe<

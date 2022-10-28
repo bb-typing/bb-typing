@@ -3,12 +3,14 @@ import { actionController } from '@ui/core/action';
 import type { ActionConfigOption } from '@ui/core/action/types';
 import type {
   BaseHotkeyInfo,
-  BaseHotkeyMap,
+  HotkeyContent,
+  HotkeyPlatform,
   UserHotkeyInfo,
   UserHotkeyMap
 } from '@ui/core/hotkey/types';
 import { filterHotkeyMapByPlatform, filterHotkeyPlatform } from '@ui/core/hotkey/utils';
 import { Platform } from '@ui/utils/platform';
+import type { O } from 'ts-toolbelt';
 
 export type ShortcutRenderSourceItem = (
   | ({
@@ -16,7 +18,7 @@ export type ShortcutRenderSourceItem = (
     } & UserHotkeyInfo)
   | ({
       type: 'default';
-    } & BaseHotkeyInfo)
+    } & O.Optional<BaseHotkeyInfo, 'id' | 'hotkeyContent'>)
 ) & {
   actionConfig: ActionConfigOption;
 };
@@ -27,71 +29,117 @@ type ShortcutRenderSource = Record<
 >;
 
 export function convertToRenderSource(
-  defaultHotkeyMap: BaseHotkeyMap,
   userHotkeyMap: UserHotkeyMap
 ): ShortcutRenderSource {
   const source: ShortcutRenderSource = {} as any;
 
   const currentHotkeyPlatform = filterHotkeyPlatform();
 
-  const currentPlatformDefaultHotkeyMap = filterHotkeyMapByPlatform(
-    defaultHotkeyMap,
-    currentHotkeyPlatform
-  );
-
   const currentPlatformUserHotkeyMap = filterHotkeyMapByPlatform<1>(
     userHotkeyMap,
     currentHotkeyPlatform
   );
 
-  Object.entries(currentPlatformDefaultHotkeyMap).forEach(
-    ([actionName, defaultHotkeyInfos]) => {
-      const actionConfig = actionController.getActionByName(actionName)!;
+  const actionConfigModules = actionController.getActions();
 
-      defaultHotkeyInfos.forEach(defaultHotkeyInfo => {
-        const notExistsInUserHotkey = !currentPlatformUserHotkeyMap[actionName]?.some(
-          userHotkey => userHotkey.defaultOriginId === defaultHotkeyInfo.id
-        );
-        const isSupportedPlatform = defaultHotkeyInfo.supportedPlatforms.includes(
-          Platform.OS as any
-        );
+  actionConfigModules.forEach(module => {
+    module.configs.forEach(actionConfig => {
+      const actionName = actionConfig.name;
 
-        if (notExistsInUserHotkey && isSupportedPlatform) {
+      const isSupportedPlatform = actionConfig.supportedPlatforms.includes(
+        Platform.OS as any
+      );
+
+      if (!isSupportedPlatform) return;
+
+      const userHotkeyInfos = currentPlatformUserHotkeyMap[actionName];
+
+      if ('defaultHotkeys' in actionConfig && actionConfig.defaultHotkeys.length !== 0) {
+        const addedUserHotkeyIds = new Set<string>();
+
+        actionConfig.defaultHotkeys.forEach(defaultHotkeyInfo => {
+          Object.entries(defaultHotkeyInfo).forEach(
+            ([hotkeyPlatform, platformHotkeyInfo]: [
+              HotkeyPlatform | AnyString,
+              HotkeyContent & { id: string }
+            ]) => {
+              const notSupportedHotkeyPlatform =
+                hotkeyPlatform !== 'default' && currentHotkeyPlatform !== hotkeyPlatform;
+
+              if (notSupportedHotkeyPlatform) return;
+
+              const userHotkeyInfoOfEqualDefault = userHotkeyInfos?.find(
+                userHotkeyInfo => userHotkeyInfo.defaultOriginId === platformHotkeyInfo.id
+              );
+              const existsInUserHotkey = !!userHotkeyInfoOfEqualDefault;
+
+              if (existsInUserHotkey) {
+                source[actionName] = [
+                  ...(source[actionName] || []),
+                  { type: 'user', actionConfig, ...userHotkeyInfoOfEqualDefault }
+                ];
+
+                addedUserHotkeyIds.add(userHotkeyInfoOfEqualDefault.id);
+              } else {
+                source[actionName] = [
+                  ...(source[actionName] || []),
+                  {
+                    type: 'default',
+                    actionConfig,
+                    id: platformHotkeyInfo.id,
+                    hotkeyContent: platformHotkeyInfo,
+                    scope: module.scope,
+                    supportedPlatforms: actionConfig.supportedPlatforms
+                  }
+                ];
+              }
+            }
+          );
+        });
+
+        userHotkeyInfos?.forEach(userHotkeyInfo => {
+          if (addedUserHotkeyIds.has(userHotkeyInfo.id)) return;
+
+          source[actionName] = [
+            ...(source[actionName] || []),
+            { type: 'user', actionConfig, ...userHotkeyInfo }
+          ];
+        });
+      } else {
+        const notExistsInUserHotkey = !userHotkeyInfos?.length;
+
+        if (notExistsInUserHotkey) {
           source[actionName] = [
             ...(source[actionName] ?? []),
             {
               type: 'default',
               actionConfig,
-              ...defaultHotkeyInfo
+              scope: module.scope,
+              supportedPlatforms: actionConfig.supportedPlatforms
             }
           ];
+        } else {
+          userHotkeyInfos.forEach(userHotkeyInfo => {
+            source[actionName] = [
+              ...(source[actionName] ?? []),
+              { type: 'user', actionConfig, ...userHotkeyInfo }
+            ];
+          });
         }
-      });
-    }
-  );
+      }
 
-  Object.entries(currentPlatformUserHotkeyMap).forEach(
-    ([actionName, userHotkeyInfos]) => {
-      const actionConfig = actionController.getActionByName(actionName)!;
-
-      userHotkeyInfos.forEach(userHotkeyInfo => {
-        const isSupportedPlatform = userHotkeyInfo.supportedPlatforms.includes(
-          Platform.OS as any
+      // [null, null, 1] 整理成 [1]。或是 [null, null] 整理成 [null]。即：全部都是null时，保留一个null。或是null与其他值时，保留其他值。
+      if (source[actionName]?.length > 1) {
+        const allHotkeyContentIsNull = source[actionName].every(
+          item => item.hotkeyContent === null
         );
 
-        if (isSupportedPlatform) {
-          source[actionName] = [
-            ...(source[actionName] ?? []),
-            {
-              type: 'user',
-              actionConfig,
-              ...userHotkeyInfo
-            }
-          ];
-        }
-      });
-    }
-  );
+        source[actionName] = allHotkeyContentIsNull
+          ? [source[actionName][0]]
+          : source[actionName].filter(item => !!item.hotkeyContent);
+      }
+    });
+  });
 
   return source;
 }

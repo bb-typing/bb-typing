@@ -2,25 +2,24 @@ import { Platform } from '@ui/utils/platform';
 import { useMount, useUnmount } from 'ahooks';
 import type { JSXElementConstructor, ReactNode } from 'react';
 import { useEffect, useMemo, useRef } from 'react';
-import type { CallbackOptions } from 'super-hotkey';
 import superHotkey from 'super-hotkey';
 import type { F } from 'ts-toolbelt';
 
-import { useHotkeyStore } from './store';
+import { useComputedHotkeyState, useHotkeyStore } from './store';
 import type {
   BaseHotkeyInfo,
   BaseHotkeyMap,
   HotkeyContent,
   HotkeyPlatform,
+  UserHotkeyInfo,
   UserHotkeyMap
 } from './types';
 import {
   filterHotkeyMapByPlatform,
   filterHotkeyPlatform,
-  filterPlatformHotkeyMapByScope,
-  isUserHotkeyInfo
+  filterPlatformHotkeyMapByScope
 } from './utils';
-import type { ActionConfigName, ActionConfigScope } from '../action';
+import type { ActionConfigScope } from '../action';
 import { actionController, useActionStore } from '../action';
 
 interface WithHotkeyOptions {
@@ -36,14 +35,21 @@ export function withScopeHotkey<P extends JSX.IntrinsicAttributes>(
   options?: WithHotkeyOptions
 ): JSXElementConstructor<P> {
   return function (props) {
-    const { defaultHotkeyMap, userHotkeyMap } = useHotkeyStore();
+    const { defaultHotkeyMap } = useHotkeyStore();
+    const { currentActiveHotkeyMap } = useComputedHotkeyState();
 
     const hotkeyConfigs = useMemo(() => {
-      return converToHotkeyConfigs([defaultHotkeyMap, userHotkeyMap], {
-        hotkeyPlatform: filterHotkeyPlatform(),
-        scope
-      });
-    }, [defaultHotkeyMap, userHotkeyMap]);
+      return converToHotkeyConfigs(
+        {
+          default: defaultHotkeyMap,
+          currentActive: currentActiveHotkeyMap
+        },
+        {
+          hotkeyPlatform: filterHotkeyPlatform(),
+          scope
+        }
+      );
+    }, [defaultHotkeyMap, currentActiveHotkeyMap]);
 
     return (
       <HotKeyWrapper configs={hotkeyConfigs} {...options} scope={scope}>
@@ -122,49 +128,66 @@ function HotKeyWrapper(
 }
 
 function converToHotkeyConfigs(
-  hotkeyMaps: Array<BaseHotkeyMap | UserHotkeyMap>,
+  configOrigin: {
+    currentActive: UserHotkeyMap;
+    default: BaseHotkeyMap;
+  },
   options: {
     hotkeyPlatform: Exclude<HotkeyPlatform, 'default'> | undefined;
     scope: ActionConfigScope;
   }
 ): HotkeyWrapperConfigs {
-  const configsResult: HotkeyWrapperConfigs = [];
+  const configs: HotkeyWrapperConfigs = [];
 
-  hotkeyMaps.forEach(hotkeyMap => {
-    const scopePlatformHotkeyMap = filterPlatformHotkeyMapByScope(
-      filterHotkeyMapByPlatform(hotkeyMap, options.hotkeyPlatform),
+  const currentScopeHotkey = {
+    user: filterPlatformHotkeyMapByScope(
+      filterHotkeyMapByPlatform<1>(configOrigin.currentActive, options.hotkeyPlatform),
       options.scope
-    );
+    ),
+    default: filterPlatformHotkeyMapByScope(
+      filterHotkeyMapByPlatform(configOrigin.default, options.hotkeyPlatform),
+      options.scope
+    )
+  };
 
-    Object.entries(scopePlatformHotkeyMap).forEach(([actionName, hotkeyInfos]) => {
-      hotkeyInfos.forEach(hotkeyInfo => {
-        if (isUsableHotkey(hotkeyInfo)) {
-          configsResult.push({
-            handler: getHotkeyHandler(actionName as ActionConfigName),
-            hotkeys: hotkeyInfos.map(item => item.hotkeyContent)
+  [currentScopeHotkey.default, currentScopeHotkey.user].forEach((hotkeyMap, index) => {
+    const isDefaultConfigOrigin = index === 0;
+
+    Object.entries(hotkeyMap).forEach(
+      ([actionName, hotkeyInfos]: [string, Array<UserHotkeyInfo | BaseHotkeyInfo>]) => {
+        const usableHotkeyInfos = hotkeyInfos.filter(hotkeyInfo => {
+          const isSupportCurrentPlatform = hotkeyInfo.supportedPlatforms.includes(
+            Platform.OS
+          );
+          const hasHotkeyContent = !!hotkeyInfo.hotkeyContent;
+
+          if (isSupportCurrentPlatform && hasHotkeyContent) {
+            if (isDefaultConfigOrigin) {
+              const existInUserHotkey = currentScopeHotkey.user[actionName]?.some(
+                userHotkeyInfo => userHotkeyInfo.defaultOriginId === hotkeyInfo.id
+              );
+
+              if (existInUserHotkey) return false;
+            }
+
+            return true;
+          }
+
+          return false;
+        });
+
+        if (usableHotkeyInfos.length !== 0) {
+          configs.push({
+            handler() {
+              // TODO: 此处的 hotkey-callback 暂先这样，如有需要再设计
+              (actionController as any).emit(actionName);
+            },
+            hotkeys: usableHotkeyInfos.map(item => item.hotkeyContent!)
           });
         }
-      });
-    });
+      }
+    );
   });
 
-  return configsResult;
-
-  function getHotkeyHandler(actionName: ActionConfigName): CallbackOptions['callback'] {
-    // TODO: 此处的 hotkey-callback 暂先这样，如有需要再设计
-    return event => {
-      (actionController as any).emit(actionName);
-    };
-  }
-
-  function isUsableHotkey(hotkeyInfo: BaseHotkeyInfo): boolean {
-    const isSupportCurrentPlatform = hotkeyInfo.supportedPlatforms.includes(Platform.OS);
-    let isEnableStatus = true;
-
-    if (isUserHotkeyInfo(hotkeyInfo)) {
-      isEnableStatus = hotkeyInfo.status === 'enable';
-    }
-
-    return isSupportCurrentPlatform && isEnableStatus;
-  }
+  return configs;
 }

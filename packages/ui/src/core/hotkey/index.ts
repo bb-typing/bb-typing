@@ -1,5 +1,10 @@
-export { useHotkeyStore, useTrackedHotkeyState, useComputedHotkeyState } from './store';
+export {
+  useHotkeyStore,
+  useTrackedHotkeyState,
+  useComputedHotkeyState,
+  useHotkeyActions
+} from './store';
 
-export type { DefaultHotkeys } from './types';
+export type { DefaultHotkeys, HotkeyContent } from './types';
 
 export { withScopeHotkey } from './with';
