@@ -37,6 +37,8 @@ function UserRegisterModal(props: UserRegisterProps): JSX.Element {
   const [{ showSuccessfulAlert }, setStates] = useSetState({
     showSuccessfulAlert: false
   });
+  const firstInputRef = useRef<HTMLInputElement>(null);
+
   const cacheUserRegisterForm = useRef<FormSchema>({
     username: '',
     password: ''
@@ -68,6 +70,10 @@ function UserRegisterModal(props: UserRegisterProps): JSX.Element {
     if (!visible) {
       form.reset();
       setStates({ showSuccessfulAlert: false });
+    } else {
+      setTimeout(() => {
+        firstInputRef.current?.focus();
+      }, 50);
     }
   }, [visible]);
 
@@ -85,7 +91,12 @@ function UserRegisterModal(props: UserRegisterProps): JSX.Element {
       styles={() => (quickLoggingIn ? { close: { cursor: 'not-allowed' } } : {})}
     >
       <form onSubmit={form.onSubmit(formSubmit)}>
-        <TextInput withAsterisk label="用户名" {...form.getInputProps('username')} />
+        <TextInput
+          ref={firstInputRef}
+          withAsterisk
+          label="用户名"
+          {...form.getInputProps('username')}
+        />
         <PasswordInput withAsterisk label="密码" {...form.getInputProps('password')} />
 
         {userRegisterLoading ? null : quickLoggingIn ? (
