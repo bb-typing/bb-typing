@@ -8,8 +8,10 @@ import {
   TextInput
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { useFocusTrap } from '@mantine/hooks';
 import { useUpdateEffect } from 'ahooks';
 import { pick } from 'lodash';
+import { useRef } from 'react';
 import './action-handler';
 
 import { useStore, useTrackedState } from './store';
@@ -26,6 +28,7 @@ export type FormSchema = UserLoginFormSchema & {
 
 function UserLoginModal(props: UserLoginProps): JSX.Element {
   const { visible, formValues } = useTrackedState();
+  const firstInputRef = useRef<HTMLInputElement>(null);
   const { setVisible, setFormValues } = useStore.getState();
   const { isLoading: userLoginLoading, mutateAsync: userLoginFetch } = useUserLogin({
     onSuccess: () => {
@@ -50,6 +53,10 @@ function UserLoginModal(props: UserLoginProps): JSX.Element {
   useUpdateEffect(() => {
     if (!visible) {
       form.setValues({ ...formValues });
+    } else {
+      setTimeout(() => {
+        firstInputRef.current?.focus();
+      }, 50);
     }
   }, [visible]);
 
@@ -62,7 +69,12 @@ function UserLoginModal(props: UserLoginProps): JSX.Element {
       title="用户登录"
     >
       <form onSubmit={form.onSubmit(formSubmit)}>
-        <TextInput withAsterisk label="用户名" {...form.getInputProps('username')} />
+        <TextInput
+          ref={firstInputRef}
+          withAsterisk
+          label="用户名"
+          {...form.getInputProps('username')}
+        />
         <PasswordInput withAsterisk label="密码" {...form.getInputProps('password')} />
         <Checkbox
           mt="md"
