@@ -33,6 +33,6 @@ actionController.subscribe('user:exit-current-login', () => {
       ...notificationProps
     });
 
-    useUserStore.getState().clearUserInfo();
+    useUserStore.getState().userLogout();
   }, 300);
 });

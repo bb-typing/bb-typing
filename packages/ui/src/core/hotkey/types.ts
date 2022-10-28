@@ -44,6 +44,7 @@ export interface HotkeyStoreState {
 export interface HotkeyStoreActions {
   setUserHotkeyMap: (value: HotkeyStoreState['userHotkeyMap']) => void;
   setActiveHotkeyType(value: HotkeyStoreState['activeHotkeyType']): void;
+  cleanUserHotkeyMap(): void;
   switchActiveHotkeyType(): void;
   /**
    * @returns 合并后的结果

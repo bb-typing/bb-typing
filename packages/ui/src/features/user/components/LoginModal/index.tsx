@@ -8,7 +8,6 @@ import {
   TextInput
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { useFocusTrap } from '@mantine/hooks';
 import { useUpdateEffect } from 'ahooks';
 import { pick } from 'lodash';
 import { useRef } from 'react';

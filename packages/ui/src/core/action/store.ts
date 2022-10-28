@@ -27,7 +27,7 @@ export const useActionStore = create<
       activeScopes: [],
       //#endregion  //*======== state ===========
 
-      //#region  //*=========== action ===========
+      //#region  //*=========== actions ===========
       addActiveScope: scope =>
         set(state => {
           const includeScopeInActives = state.activeScopes.includes(scope);
@@ -44,7 +44,7 @@ export const useActionStore = create<
             state.activeScopes.splice(indexToDel, 1);
           }
         })
-      //#endregion  //*======== action ===========
+      //#endregion  //*======== actions ===========
     })),
     {
       name: 'bb-store-action',

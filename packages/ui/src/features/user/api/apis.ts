@@ -13,3 +13,8 @@ export const apiSaveUserSetting = defineRequest(
   '/typing-service/account/setting/{type}',
   'post'
 );
+
+export const apiUserCheckToken = defineRequest(
+  '/typing-service/account/checkToken',
+  'post'
+);

@@ -33,7 +33,7 @@ export const useHotkeyStore = create<
       userHotkeyMap: {},
       localHotkeyMap: {},
       //#endregion  //*======== state ===========
-      //#region  //*=========== action ===========
+      //#region  //*=========== actions ===========
       switchActiveHotkeyType: () =>
         set(state => {
           const isLocale = state.activeHotkeyType === 'local';
@@ -68,6 +68,11 @@ export const useHotkeyStore = create<
         set(state => {
           state.userHotkeyMap = userHotkeyMap;
         }),
+      cleanUserHotkeyMap: () => {
+        set(state => {
+          state.userHotkeyMap = {};
+        });
+      },
       updateActiveHotkey: (actionName, operation) =>
         set((state: HotkeyStoreState) => {
           const updateTime = Date.now();
@@ -159,7 +164,7 @@ export const useHotkeyStore = create<
           }
         })
 
-      //#endregion  //*======== action ===========
+      //#endregion  //*======== actions ===========
     })),
     {
       name: 'bb-store-hotkey',

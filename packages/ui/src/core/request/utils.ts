@@ -1,6 +1,7 @@
 import { showNotification } from '@mantine/notifications';
+import type { Equal } from '@type-challenges/utils';
 import type { AxiosRequestConfig } from 'axios';
-import type { U } from 'ts-toolbelt';
+import type { O, U } from 'ts-toolbelt';
 
 import { axiosInstance } from './axios';
 import type { ErrorCode } from './error-code';
@@ -26,12 +27,17 @@ export function defineRequest<T extends APIPath, M extends keyof APISchema[T]>(
     ? { params?: Partial<Record<AnyString | '无参数', unknown>> }
     : { params?: P };
 
+  type Options = InternalConfig &
+    FilteredURLPlaceholder &
+    FilterParams<APISchema[T][M]['params'] | Record<string, unknown>>;
+
   return (
-    options: InternalConfig &
-      FilteredURLPlaceholder &
-      FilterParams<APISchema[T][M]['params'] | Record<string, unknown>>,
-    axiosConfig: Partial<AxiosRequestConfig> = {}
+    ...args: Equal<O.RequiredKeys<Options>, never> extends true
+      ? [options?: Options, axiosConfig?: Partial<AxiosRequestConfig>]
+      : [options: Options, axiosConfig?: Partial<AxiosRequestConfig>]
   ) => {
+    const [options = {}, axiosConfig] = args;
+
     const { params, popupErrorPrompt = true } = options;
 
     const filteredURL = (() => {
@@ -52,11 +58,11 @@ export function defineRequest<T extends APIPath, M extends keyof APISchema[T]>(
 
     return axiosInstance(filteredURL, {
       method,
-      ...(method === 'post' ? { data: params } : { params }),
+      ...(![null, undefined].includes(params as any) && method === 'post'
+        ? { data: params }
+        : { params }),
       ...axiosConfig,
-      _internal: {
-        popupErrorPrompt
-      }
+      _internal: { popupErrorPrompt }
     }) as Promise<Response>;
   };
 }

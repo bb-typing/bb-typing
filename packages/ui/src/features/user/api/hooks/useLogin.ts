@@ -34,6 +34,8 @@ export function useUserLogin(options?: UserLoginMutationOptions) {
         color: 'green'
       });
 
+      useUserStore.getState().loggedInUserInitializer();
+
       onSuccess?.(data, variables, context);
     },
     ...otherOptions

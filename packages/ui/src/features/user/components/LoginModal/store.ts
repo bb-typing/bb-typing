@@ -35,7 +35,7 @@ export const useStore = create<
       },
       //#endregion  //*======== state ===========
       //
-      //#region  //*=========== action ===========
+      //#region  //*=========== actions ===========
       setVisible: visible =>
         set(state => {
           state.visible = visible;
@@ -44,7 +44,7 @@ export const useStore = create<
         set(state => {
           state.formValues = formValues;
         })
-      //#endregion  //*======== action ===========
+      //#endregion  //*======== actions ===========
     })),
     {
       name: 'bb-store-user-login',

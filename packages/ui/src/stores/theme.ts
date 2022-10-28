@@ -29,7 +29,7 @@ export const useThemeStore = create<
       colorScheme: 'light',
       //#endregion  //*======== state ===========
 
-      //#region  //*=========== action ===========
+      //#region  //*=========== actions ===========
 
       toggleColorScheme: colorScheme =>
         set(state => {
@@ -40,7 +40,7 @@ export const useThemeStore = create<
           }
         })
 
-      //#endregion  //*======== action ===========
+      //#endregion  //*======== actions ===========
     })),
     {
       name: 'bb-store-theme',

@@ -21,13 +21,13 @@ export const useStore = create<Store, [['zustand/immer', Store]]>(
 
     //#endregion  //*======== state ===========
     //
-    //#region  //*=========== action ===========
+    //#region  //*=========== actions ===========
     setVisible: visible =>
       set(state => {
         state.visible = visible;
       })
 
-    //#endregion  //*======== action ===========
+    //#endregion  //*======== actions ===========
   }))
 );
 
