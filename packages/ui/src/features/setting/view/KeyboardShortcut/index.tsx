@@ -1,15 +1,12 @@
 import { Button, Divider, Kbd, Select, Table, Tooltip } from '@mantine/core';
-import type { NotificationProps } from '@mantine/notifications';
 import { showNotification } from '@mantine/notifications';
-import { defineVariables } from '@shared/types/base';
+import type { HotkeyContent } from '@ui/core/hotkey';
 import {
   useComputedHotkeyState,
   useHotkeyActions,
   useTrackedHotkeyState
-} from '@ui/core/hotkey/';
-import type { HotkeyContent } from '@ui/core/hotkey/types';
-import { apiSaveUserSetting } from '@ui/features/user/api/apis';
-import { useUserSaveSettingAPI } from '@ui/features/user/api/hooks/useSaveSetting';
+} from '@ui/core/hotkey';
+import { useUserSaveSettingAPI } from '@ui/features/user/api';
 import { useComputedUserState } from '@ui/features/user/store';
 import useThemeStyle from '@ui/styles/useThemeStyle';
 import { modifierKeyBeautify, normalKeyBeautify } from '@ui/utils/keyboard-shortcut';

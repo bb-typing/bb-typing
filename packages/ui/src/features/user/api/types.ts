@@ -3,7 +3,7 @@
  * 与 `view, component, ...` 有关的类型（即：非 `API` 的类型），请定义在 `model.ts` 中
  */
 
-import type { APISchema } from '../../../core/request/types';
+import type { APISchema } from '@ui/core/request';
 
 declare global {
   namespace APIUser {

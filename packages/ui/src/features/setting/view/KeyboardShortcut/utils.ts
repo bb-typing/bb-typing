@@ -1,14 +1,14 @@
 import type { ActionConfigName } from '@ui/core/action';
+import type { ActionConfigOption } from '@ui/core/action';
 import { actionController } from '@ui/core/action';
-import type { ActionConfigOption } from '@ui/core/action/types';
 import type {
   BaseHotkeyInfo,
   HotkeyContent,
   HotkeyPlatform,
   UserHotkeyInfo,
   UserHotkeyMap
-} from '@ui/core/hotkey/types';
-import { filterHotkeyMapByPlatform, filterHotkeyPlatform } from '@ui/core/hotkey/utils';
+} from '@ui/core/hotkey';
+import { filterHotkeyMapByPlatform, filterHotkeyPlatform } from '@ui/core/hotkey';
 import { Platform } from '@ui/utils/platform';
 import type { O } from 'ts-toolbelt';
 

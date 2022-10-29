@@ -5,6 +5,8 @@ export {
   useHotkeyActions
 } from './store';
 
-export type { DefaultHotkeys, HotkeyContent } from './types';
+export { filterHotkeyPlatform, filterHotkeyMapByPlatform } from './utils';
+
+export * from './types';
 
 export { withScopeHotkey } from './with';

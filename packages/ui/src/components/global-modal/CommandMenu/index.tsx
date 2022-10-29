@@ -1,8 +1,7 @@
 import type { SpotlightAction } from '@mantine/spotlight';
 import { SpotlightProvider } from '@mantine/spotlight';
 import type { ActionConfigName } from '@ui/core/action';
-import { actionController } from '@ui/core/action';
-import { useComputedActionState } from '@ui/core/action/store';
+import { actionController, useComputedActionState } from '@ui/core/action';
 import type { SVGProps } from 'react';
 import { useMemo } from 'react';
 

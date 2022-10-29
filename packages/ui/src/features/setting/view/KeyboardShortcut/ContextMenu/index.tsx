@@ -1,6 +1,6 @@
+import type { HotkeyContent } from '@ui/core/hotkey';
 import { useHotkeyStore } from '@ui/core/hotkey';
-import type { HotkeyContent } from '@ui/core/hotkey/types';
-import { filterHotkeyPlatform } from '@ui/core/hotkey/utils';
+import { filterHotkeyPlatform } from '@ui/core/hotkey';
 import useThemeStyle from '@ui/styles/useThemeStyle';
 import { useSetState } from 'ahooks';
 import { useImperativeHandle, useRef } from 'react';
@@ -13,8 +13,6 @@ import ShortcutConfigModal from './ShortcutConfigModal';
 import type { ShortcutRenderSourceItem } from '../utils';
 
 const MENU_ID = 'keyboard-shortcut-menu';
-
-type ccc = number & keyof String;
 
 export interface ContextMenuProps {
   contextRef: React.RefObject<{

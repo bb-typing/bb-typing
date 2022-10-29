@@ -1,7 +1,7 @@
 export { actionController } from './controller';
 
-export { useActionStore, useTrackedActionStore } from './store';
+export { useActionStore, useTrackedActionStore, useComputedActionState } from './store';
 
-export type { ActionConfigName, ActionConfigScope } from './types';
+export type { ActionConfigName, ActionConfigScope, ActionConfigOption } from './types';
 
 export { actionHandlersInitializer } from './handlers';

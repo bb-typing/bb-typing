@@ -1,5 +1,5 @@
 import { Button, Kbd, Modal } from '@mantine/core';
-import type { HotkeyContent } from '@ui/core/hotkey/types';
+import type { HotkeyContent } from '@ui/core/hotkey';
 import useThemeStyle from '@ui/styles/useThemeStyle';
 import {
   modifierKeyBeautify,

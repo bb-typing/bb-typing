@@ -1,6 +1,6 @@
 import { showNotification } from '@mantine/notifications';
 import { actionHandlersInitializer } from '@ui/core/action';
-import { apiUserCheckToken } from '@ui/features/user/api/apis';
+import { apiUserCheckToken } from '@ui/features/user/api';
 import { useComputedUserState, useUserActions } from '@ui/features/user/store';
 import { useMount } from 'ahooks';
 

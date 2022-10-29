@@ -1,4 +1,4 @@
-import { defineRequest } from '@ui/core/request/utils';
+import { defineRequest } from '@ui/core/request';
 
 export const apiUserLogin = defineRequest('/typing-service/account/login', 'post');
 
