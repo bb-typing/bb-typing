@@ -8,6 +8,33 @@
   "plugins": ["@typescript-eslint", "prettier", "simple-import-sort"],
   "rules": {
     "prettier/prettier": 2,
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/*/router/*"],
+            "message": "请使用 `/router` 进行导入"
+          },
+          {
+            "group": ["**/*/core/hotkey/*"],
+            "message": "请使用 `/core/hotkey` 进行导入"
+          },
+          {
+            "group": ["**/*/core/action/*"],
+            "message": "请使用 `/core/action` 进行导入"
+          },
+          {
+            "group": ["**/*/core/request/*"],
+            "message": "请使用 `/core/request` 进行导入"
+          },
+          {
+            "group": ["**/*/features/*/api/*"],
+            "message": "请使用 `/features/*/api` 进行导入"
+          }
+        ]
+      }
+    ],
     "@typescript-eslint/no-unused-vars": 1,
     "@typescript-eslint/no-use-before-define": 0,
     "@typescript-eslint/explicit-function-return-type": 0,
