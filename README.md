@@ -1,1 +1,1 @@
-# bb-typewrite
+# bb-typing
